@@ -2,8 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import FirebaseContextProvider from './context/FirebaseContext';
+import AuthContextProvider from './context/AuthContext';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const LandingApp = () => (
+    <FirebaseContextProvider>
+        <AuthContextProvider>
+            <App />
+        </AuthContextProvider>
+    </FirebaseContextProvider>
+)
+ReactDOM.render(<LandingApp />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
