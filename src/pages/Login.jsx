@@ -13,9 +13,9 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    function signwithGoogle() {
+    function signIn(doSignInWith) {
         setLoading(true);
-        firebase.doSignInWithGoogle().then(async res => {
+        doSignInWith().then(async res => {
             let user = res.user;
 
             if (user) {
@@ -77,7 +77,7 @@ const Login = () => {
                         <IonTitle>Log In</IonTitle>
                     </IonCardHeader>
                     <IonCardContent>
-                        <IonButton disabled={loading} onClick={signwithGoogle} size='default' expand='block'>Sign IN with  <IonIcon icon={logoGoogle} /></IonButton>
+                        <IonButton disabled={loading} onClick={()=>{signIn(firebase.doSignInWithGoogle)}} size='default' expand='block'>Sign IN with  <IonIcon icon={logoGoogle} /></IonButton>
                         {error && <IonText class='red-text' >{error}</IonText>}
                     </IonCardContent>
                 </IonCard>

@@ -37,6 +37,11 @@ class Firebase {
         return this.auth.signInWithPopup(provider);
     }
 
+    doSignInWithFacebook = async () => {
+        let provider = new firebase.auth.FacebookAuthProvider();
+        return this.auth.signInWithPopup(provider);
+    }
+
     doSignOut = () =>
         this.auth.signOut();
 
@@ -50,6 +55,8 @@ class Firebase {
     getCurrentUser = () => this.auth.currentUser;
     /**get user by uid */
     getUser = (uid) => this.firestore.collection(AppString.USERS).where(AppString.ID, '==', uid).get();
+    /** get all users */
+    getAllUsers = () => this.firestore.collection(AppString.USERS).get();
 
     user = (uid)=> this.firestore.collection(AppString.USERS).doc(uid)
     /**get all users */

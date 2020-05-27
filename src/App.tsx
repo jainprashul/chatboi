@@ -10,9 +10,9 @@ import {
   IonTabs
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle, people, personCircle } from 'ionicons/icons';
-import Tab1 from './pages/Tab1';
-import Tab2 from './pages/Tab2';
+import { ellipse, square, triangle, people, personCircle, chatbox } from 'ionicons/icons';
+import Dashboard from './pages/DashBoard';
+import UserList from './pages/UserList';
 import Tab3 from './pages/Tab3';
 
 /* Core CSS required for Ionic components to work properly */
@@ -42,23 +42,23 @@ const App: React.FC = () => (
       <IonTabs>
         <IonRouterOutlet>
           <Route path={ROUTE.signin} component={Login} exact={true} />
-          <Route path={ROUTE.chat} component={Tab2} exact={true} />
+          <Route path={ROUTE.chat} component={Dashboard} exact={true} />
           <Route path={ROUTE.profile} component={Tab3} exact={true}/>
-          <Route path={ROUTE.users} component={Tab3} exact={true}/>
+          <Route path={ROUTE.users} component={UserList} exact={true}/>
           <Route path="/" render={() => <Redirect to={ROUTE.chat} />} exact={true} />
         </IonRouterOutlet>
         <IonTabBar slot="bottom">
-          <IonTabButton tab="tab1" href="/tab1">
+          <IonTabButton tab="tab1" href={ROUTE.users}>
             <IonIcon icon={people} />
-            <IonLabel>Firends</IonLabel>
+            <IonLabel>Friends</IonLabel>
           </IonTabButton>
-          <IonTabButton tab="tab2" href="/tab2">
+          <IonTabButton tab="tab2" href={ROUTE.chat}>
+            <IonIcon icon={chatbox} />
+            <IonLabel>Chats</IonLabel>
+          </IonTabButton>
+          <IonTabButton tab="tab3" href={ROUTE.profile}>
             <IonIcon icon={personCircle} />
-            <IonLabel>Tab 2</IonLabel>
-          </IonTabButton>
-          <IonTabButton tab="tab3" href="/tab3">
-            <IonIcon icon={square} />
-            <IonLabel>Tab 3</IonLabel>
+            <IonLabel>Profile</IonLabel>
           </IonTabButton>
         </IonTabBar>
       </IonTabs>
