@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react'
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardContent, IonProgressBar, IonButton, IonIcon, IonText, useIonViewDidEnter } from '@ionic/react'
-import { logoGoogle } from 'ionicons/icons';
+import { logoGoogle, logoFacebook } from 'ionicons/icons';
 import { FirebaseContext } from '../context/FirebaseContext';
 import { createToast, useRouter, } from '../config/hooks';
 import { AppString } from '../config/const';
@@ -42,6 +42,7 @@ const Login = () => {
                 }
                 createToast("Login Sucess..")
                 setLoading(false);
+                setError(null);
                 router.push('/');
             }
 
@@ -77,7 +78,9 @@ const Login = () => {
                         <IonTitle>Log In</IonTitle>
                     </IonCardHeader>
                     <IonCardContent>
-                        <IonButton disabled={loading} onClick={()=>{signIn(firebase.doSignInWithGoogle)}} size='default' expand='block'>Sign IN with  <IonIcon icon={logoGoogle} /></IonButton>
+                        <IonButton disabled={loading} onClick={() => { signIn(firebase.doSignInWithGoogle) }} size='default' expand='block'>Sign IN with  <IonIcon icon={logoGoogle} /></IonButton>
+                        or
+                        <IonButton disabled={loading} onClick={()=>{signIn(firebase.doSignInWithFacebook)}} size='default' expand='block'>Sign IN with  <IonIcon icon={logoFacebook} /></IonButton>
                         {error && <IonText class='red-text' >{error}</IonText>}
                     </IonCardContent>
                 </IonCard>
