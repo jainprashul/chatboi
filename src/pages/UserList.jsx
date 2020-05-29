@@ -4,6 +4,7 @@ import { alertController } from '@ionic/core';
 import { FirebaseContext } from '../context/FirebaseContext';
 import { AppString, ROUTE } from '../config/const';
 import { logOut } from 'ionicons/icons';
+import withAuthorization from '../context/withAuthorization';
 
 const UserList = ({history}) => {
 
@@ -66,7 +67,9 @@ const UserList = ({history}) => {
 
 
   const ListUser = () => userList.map(user => (
-    <IonItem key={user.id}>
+    <IonItem key={user.id} href={ROUTE.chat} onClick={() => {
+      sessionStorage.setItem('peerUser', JSON.stringify(user))
+    }}>
       <IonAvatar slot='start'>
         <img src={user.photoUrl} alt="avatar" />
       </IonAvatar>
@@ -105,4 +108,4 @@ const UserList = ({history}) => {
   );
 };
 
-export default UserList;
+export default withAuthorization(UserList);

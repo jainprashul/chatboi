@@ -1,6 +1,7 @@
 import React from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
+import withAuthorization from '../context/withAuthorization';
 
 const Tab3 = () => {
   return (
@@ -18,4 +19,4 @@ const Tab3 = () => {
   );
 };
 
-export default Tab3;
+export default withAuthorization(Tab3);

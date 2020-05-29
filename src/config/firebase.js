@@ -58,8 +58,9 @@ class Firebase {
     /** get all users */
     getAllUsers = () => this.firestore.collection(AppString.USERS).get();
 
-    user = (uid)=> this.firestore.collection(AppString.USERS).doc(uid)
-    /**get all users */
+    user = (uid)=> this.firestore.collection(AppString.USERS).doc(uid);
+    
+    message = (chatid) => this.firestore.collection(AppString.MESSAGES).doc(chatid).collection(chatid);
     
 
 
