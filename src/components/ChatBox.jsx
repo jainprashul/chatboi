@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonImg, IonCard, IonCardContent, IonCardHeader, IonLabel, IonCardSubtitle, IonProgressBar, IonItem, useIonViewDidLeave, useIonViewWillEnter } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonImg, IonCard, IonCardContent, IonCardHeader, IonLabel, IonCardSubtitle, IonProgressBar, IonItem, useIonViewDidLeave, useIonViewWillEnter, IonInput, IonFooter } from '@ionic/react';
 import { alertController } from '@ionic/core';
 import { FirebaseContext } from '../context/FirebaseContext';
 import { logOut, image, pricetag, send, handRight } from 'ionicons/icons';
@@ -13,7 +13,7 @@ let listMessage = []
 let groupChatId = null;
 let currentPhotoFile = null;
 
-const ChatBox = ({ history, peerUser }) => {
+const ChatBox = ({ history, peerUser, loading, setLoading }) => {
 
   const firebase = useContext(FirebaseContext);
   let currentUser = {
@@ -22,7 +22,7 @@ const ChatBox = ({ history, peerUser }) => {
     nickname: localStorage.getItem(AppString.NICKNAME),
   }
 
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
   const [showStickers, setShowStickers] = useState(false);
   const messagesEnd = useRef(null)
@@ -157,19 +157,8 @@ const ChatBox = ({ history, peerUser }) => {
 
   return (
     <div>
-      <IonProgressBar hidden={!loading} type='indeterminate' ></IonProgressBar >
       <div className="viewChatBoard">
-        {/* Header */}
-        <div className="headerChatBoard">
-          <img
-            className="viewAvatarItem"
-            src={peerUser.photoUrl}
-            alt="icon avatar"
-          />
-          <span className="textHeaderChatBoard">
-            {peerUser.nickname}
-          </span>
-        </div>
+
 
         {/* List message */}
         <div className="viewListContentChat">
@@ -183,46 +172,34 @@ const ChatBox = ({ history, peerUser }) => {
         {/* Stickers */}
         {showStickers ? renderStickers() : null}
 
+        <IonFooter>
+          <IonToolbar className='bottom'>
+            <IonButtons slot='start'>
+              <IonButton onClick={() => imgInput.current.click()} >
+                <IonIcon icon={image} slot='icon-only'></IonIcon>
+              </IonButton>
+              <IonButton onClick={() => openListSticker()} >
+                <IonIcon icon={pricetag} slot='icon-only'></IonIcon>
+              </IonButton>
+            </IonButtons>
+            <IonInput placeholder='Type your Message...' value={msg} onIonChange={e => setMsg(e.target.value)} onKeyPress={onKeyboardPress}></IonInput>
+            <IonButtons slot='end'>
+              <IonButton onClick={() => { onSendMessage(msg, 0);}} >
+                <IonIcon icon={send} slot='icon-only'></IonIcon>
+              </IonButton>
+            </IonButtons>
+            <input
+              ref={imgInput}
+              accept="image/*"
+              className="viewInputGallery"
+              type="file"
+              onChange={onChoosePhoto}
+            />
+          </IonToolbar>
+          
+       </IonFooter>
         {/* View bottom */}
-        <div className="viewBottom">
-          <img
-            className="icOpenGallery"
-            src={image}
-            alt="icon open gallery"
-            onClick={() => imgInput.current.click()}
-          />
-          <input
-            ref={imgInput}
-            accept="image/*"
-            className="viewInputGallery"
-            type="file"
-            onChange={onChoosePhoto}
-          />
-
-          <img
-            className="icOpenSticker"
-            src={pricetag}
-            alt="icon open sticker"
-            onClick={openListSticker}
-          />
-
-          <input
-            className="viewInput"
-            placeholder="Type your message..."
-            value={msg}
-            onChange={event => {
-              setMsg(event.target.value)
-            }}
-            onKeyPress={onKeyboardPress}
-          />
-          <img
-            className="icSend"
-            src={send}
-            alt="icon send"
-            onClick={() => onSendMessage(msg, 0)}
-          />
-        </div>
-      </div>
+     </div>
 
     </div>
   )
@@ -235,8 +212,13 @@ const ChatBox = ({ history, peerUser }) => {
           // Item right (my message)
           if (item.type === 0) {
             viewMessages.push(
-              <div className="viewItemRight" key={item.timestamp}>
-                <span className="textContentItem">{item.context}</span>
+              <div className="viewItemRight2">
+                <div className="viewItemRight" key={item.timestamp}>
+                  <span className="textContentItem">{item.context}</span>
+                </div>
+                <p className="textTimeRight">
+                  {moment(Number(item.timestamp)).fromNow()}
+                </p>
               </div>
             )
           } else if (item.type === 1) {
@@ -247,6 +229,9 @@ const ChatBox = ({ history, peerUser }) => {
                   src={item.context}
                   alt="context message"
                 />
+                <p className="textTimeRight">
+                  {moment(Number(item.timestamp)).fromNow()}
+                </p>
               </div>
             )
           } else {
@@ -257,6 +242,9 @@ const ChatBox = ({ history, peerUser }) => {
                   src={getGifImage(item.context)}
                   alt="context message"
                 />
+                <p className="textTimeRight">
+                  {moment(Number(item.timestamp)).fromNow()}
+                </p>
               </div>
             )
           }
@@ -266,39 +254,30 @@ const ChatBox = ({ history, peerUser }) => {
             viewMessages.push(
               <div className="viewWrapItemLeft" key={item.timestamp}>
                 <div className="viewWrapItemLeft3">
-                  {isLastMessageLeft(index) ? (
-                    <img
-                      src={peerUser.photoUrl}
-                      alt="avatar"
-                      className="peerAvatarLeft"
-                    />
-                  ) : (
-                      <div className="viewPaddingLeft" />
-                    )}
+                  <img
+                    src={peerUser.photoUrl}
+                    alt="avatar"
+                    className="peerAvatarLeft"
+                  />
                   <div className="viewItemLeft">
                     <span className="textContentItem">{item.context}</span>
                   </div>
+                  
                 </div>
-                {isLastMessageLeft(index) ? (
-                  <span className="textTimeLeft">
-                    {moment(Number(item.timestamp)).format('ll')}
-                  </span>
-                ) : null}
+                <p className="textTimeLeft">
+                  {moment(Number(item.timestamp)).fromNow()}
+                </p>
               </div>
             )
           } else if (item.type === 1) {
             viewMessages.push(
               <div className="viewWrapItemLeft2" key={item.timestamp}>
                 <div className="viewWrapItemLeft3">
-                  {isLastMessageLeft(index) ? (
-                    <img
-                      src={peerUser.photoUrl}
-                      alt="avatar"
-                      className="peerAvatarLeft"
-                    />
-                  ) : (
-                      <div className="viewPaddingLeft" />
-                    )}
+                  <img
+                    src={peerUser.photoUrl}
+                    alt="avatar"
+                    className="peerAvatarLeft"
+                  />
                   <div className="viewItemLeft2">
                     <img
                       className="imgItemLeft"
@@ -307,26 +286,20 @@ const ChatBox = ({ history, peerUser }) => {
                     />
                   </div>
                 </div>
-                {isLastMessageLeft(index) ? (
-                  <span className="textTimeLeft">
-                    {moment(Number(item.timestamp)).format('ll')}
-                  </span>
-                ) : null}
+                <p className="textTimeLeft">
+                  {moment(Number(item.timestamp)).fromNow()}
+                </p>
               </div>
             )
           } else {
             viewMessages.push(
               <div className="viewWrapItemLeft2" key={item.timestamp}>
                 <div className="viewWrapItemLeft3">
-                  {isLastMessageLeft(index) ? (
-                    <img
-                      src={peerUser.photoUrl}
-                      alt="avatar"
-                      className="peerAvatarLeft"
-                    />
-                  ) : (
-                      <div className="viewPaddingLeft" />
-                    )}
+                  <img
+                    src={peerUser.photoUrl}
+                    alt="avatar"
+                    className="peerAvatarLeft"
+                  />
                   <div className="viewItemLeft3" key={item.timestamp}>
                     <img
                       className="imgItemLeft"
@@ -335,11 +308,9 @@ const ChatBox = ({ history, peerUser }) => {
                     />
                   </div>
                 </div>
-                {isLastMessageLeft(index) ? (
-                  <span className="textTimeLeft">
-                    {moment(Number(item.timestamp)).format('ll')}
-                  </span>
-                ) : null}
+                <p className="textTimeLeft">
+                  {moment(Number(item.timestamp)).fromNow()}
+                </p>
               </div>
             )
           }

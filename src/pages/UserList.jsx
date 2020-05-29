@@ -6,7 +6,7 @@ import { AppString, ROUTE } from '../config/const';
 import { logOut } from 'ionicons/icons';
 import withAuthorization from '../context/withAuthorization';
 
-const UserList = ({history}) => {
+const UserList = ({ history }) => {
 
   let currentUser = {
     id: localStorage.getItem(AppString.ID),
@@ -15,10 +15,10 @@ const UserList = ({history}) => {
   }
 
   const [userList, setUserList] = useState([])
-  
+
   const firebase = useContext(FirebaseContext);
   const [loading, setLoading] = useState(false)
-  
+
   async function getListUser() {
     let usrList = [];
     const res = await firebase.getAllUsers();
@@ -79,13 +79,13 @@ const UserList = ({history}) => {
       </IonLabel>
     </IonItem>
   ))
-  
+
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle className='ion-text-center ion-text-capitalize'>Chat Boio</IonTitle>
+          <IonTitle className='ion-text-center ion-text-capitalize'>Chat Boi</IonTitle>
           <IonButtons slot='end'>
             <IonButton onClick={signOut}>
               <IonIcon slot='icon-only' icon={logOut} />

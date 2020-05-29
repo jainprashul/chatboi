@@ -13,7 +13,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import { ellipse, square, triangle, people, personCircle, chatbox } from 'ionicons/icons';
 import Dashboard from './pages/DashBoard';
 import UserList from './pages/UserList';
-import Tab3 from './pages/Tab3';
+import Profile from './pages/Profile';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -43,7 +43,7 @@ const App: React.FC = () => (
         <IonRouterOutlet>
           <Route path={ROUTE.signin} component={Login} exact={true} />
           <Route path={ROUTE.chat} component={Dashboard} exact={true} />
-          <Route path={ROUTE.profile} component={Tab3} exact={true}/>
+          <Route path={ROUTE.profile} component={Profile} exact={true}/>
           <Route path={ROUTE.users} component={UserList} exact={true}/>
           <Route path="/" render={() => <Redirect to={ROUTE.chat} />} exact={true} />
         </IonRouterOutlet>

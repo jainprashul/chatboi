@@ -25,6 +25,7 @@
 .viewListContentChat {
     display: flex;
     flex: 3;
+    flex-grow: 2;
     flex-direction: column;
     overflow-y: scroll;
     padding-top: 10px;
@@ -124,7 +125,7 @@ input::placeholder {
 .viewItemRight2 {
     width: 300px;
     height: auto;
-    background-color: #e8e8e8;
+    /* background-color: #e8e8e8; */
     align-self: flex-end;
     margin-right: 20px;
     margin-top: 10px;
@@ -262,6 +263,14 @@ input::placeholder {
     font-size: 12px;
     font-style: italic;
     margin-left: 50px;
+}
+.textTimeRight {
+    color: #808888;
+    font-size: 12px;
+    font-style: italic;
+    margin-left: 50px;
+    text-align: right;
+    margin: 0;
 }
 
 /* Stickers */
@@ -501,3 +510,4 @@ input::placeholder {
     flex: 1;
     max-height: 90vh;
 }
+
