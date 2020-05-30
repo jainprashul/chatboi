@@ -79,6 +79,7 @@ input::placeholder {
     /* position: absolute; */
     left: 50%;
     right: 50%;
+    opacity: 0;
     align-self: center;
     top: 215px;
     background-color: rgba(1, 1, 1, 0.5);

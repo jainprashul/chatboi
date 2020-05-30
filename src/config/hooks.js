@@ -116,11 +116,15 @@ export function debounce(func, wait, immediate) {
 
 export function useTabHide() {
     useEffect(() => {
-        const tabbar = document.querySelector("ion-tab-bar");
-        tabbar.classList.toggle('ion-hide', true);
-        return () => {
-            tabbar.classList.toggle('ion-hide', false);
-        }
+        setTimeout(() => {
+            const tabbar = document.querySelector("ion-tab-bar");
+            tabbar.classList.toggle('ion-hide', true);
+            return () => {
+                tabbar.classList.toggle('ion-hide', false);
+                console.log('showed tab');
+
+            }
+        })
     }, [])
 }
 

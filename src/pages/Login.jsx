@@ -1,14 +1,41 @@
 import React, { useState, useContext } from 'react'
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardContent, IonProgressBar, IonButton, IonIcon, IonText, useIonViewDidEnter } from '@ionic/react'
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardContent, IonProgressBar, IonButton, IonIcon, IonText, useIonViewDidEnter, useIonViewWillEnter, useIonViewDidLeave } from '@ionic/react'
 import { logoGoogle, logoFacebook } from 'ionicons/icons';
 import { FirebaseContext } from '../context/FirebaseContext';
-import { createToast, useRouter, } from '../config/hooks';
+import { createToast, useRouter, useTabHide, } from '../config/hooks';
 import { AppString } from '../config/const';
 
+let btn;
+let deferredPrompt;
 const Login = () => {
 
     const firebase = useContext(FirebaseContext);
     let router = useRouter();
+    const [installHide, setInstallHide] = useState(true);
+    useIonViewWillEnter(() => {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            setInstallHide(false);
+        });
+
+        window.addEventListener('appinstalled', (event) => {
+            console.log('👍', 'appinstalled', event);
+        });
+    })
+
+    useIonViewDidEnter(() => {
+        const tabbar = document.querySelector("ion-tab-bar");
+        tabbar.classList.toggle('ion-hide', true);
+    })
+
+    useIonViewDidLeave(() => {
+        console.log('login page out');
+        const tabbar = document.querySelector("ion-tab-bar");
+        tabbar.classList.toggle('ion-hide', false);
+
+        
+    })
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -43,7 +70,7 @@ const Login = () => {
                 createToast("Login Sucess..")
                 setLoading(false);
                 setError(null);
-                router.push('/');
+                router.replace('/');
             }
 
         }).catch(err => {
@@ -73,6 +100,13 @@ const Login = () => {
 
             </IonHeader>
             <IonContent className='ion-margin ion-padding ion-text-center'>
+                <IonButton hidden={installHide} color='dark' expand='full' onClick={() => {
+                    const p = deferredPrompt;
+                    if (!p) { return }
+                    p.prompt();
+                    p.userChoice.then(res => setInstallHide(true));
+
+                }} >Install App</IonButton>
                 <IonCard sizeMd='10' className='ion-padding ion-text-center'>
                     <IonCardHeader>
                         <IonTitle>Log In</IonTitle>

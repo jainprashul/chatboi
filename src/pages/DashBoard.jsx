@@ -15,41 +15,13 @@ const Dashboard = ({ history }) => {
 
   const [loading, setLoading] = useState(false);
 
-  function signOut() {
-
-    alertController.create({
-      header: 'Sign Out !',
-      subHeader: "Are you sure?",
-      backdropDismiss: false,
-      buttons: [{
-        text: 'Yes',
-        role: 'ok',
-        cssClass: 'signout',
-        handler: () => {
-          firebase.doSignOut();
-          history.push(ROUTE.signin);
-        }
-      },
-      {
-        text: 'No',
-        role: 'cancel',
-        cssClass: 'signout',
-      }
-      ]
-    }).then(res => res.present());
-  }
 
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle className='ion-text-center ion-text-capitalize'>Chat Boi</IonTitle>
-          <IonButtons slot='end'>
-            <IonButton onClick={signOut}>
-              <IonIcon slot='icon-only' icon={logOut} />
-            </IonButton>
-          </IonButtons>
-        </IonToolbar>
+        {!peerUser && <IonToolbar>
+          <IonTitle className='ion-text-center ion-text-capitalize'>ChatBox</IonTitle>
+        </IonToolbar>}
         <IonProgressBar hidden={!loading} type='indeterminate' ></IonProgressBar >
 
         {peerUser && <div className="headerChatBoard">

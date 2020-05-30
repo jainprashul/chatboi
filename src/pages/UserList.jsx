@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent } from '@ionic/react';
 import { alertController } from '@ionic/core';
 import { FirebaseContext } from '../context/FirebaseContext';
 import { AppString, ROUTE } from '../config/const';
-import { logOut } from 'ionicons/icons';
+import { logOut, chevronDownCircleOutline } from 'ionicons/icons';
 import withAuthorization from '../context/withAuthorization';
 
 const UserList = ({ history }) => {
@@ -40,6 +40,12 @@ const UserList = ({ history }) => {
     setLoading(true)
     getListUser()
   }, [])
+
+  function doRefresh(e) {
+    getListUser().then(() => {
+      e.detail.complete()
+    })
+  }
 
   function signOut() {
 
@@ -85,18 +91,21 @@ const UserList = ({ history }) => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle className='ion-text-center ion-text-capitalize'>Chat Boi</IonTitle>
-          <IonButtons slot='end'>
-            <IonButton onClick={signOut}>
-              <IonIcon slot='icon-only' icon={logOut} />
-            </IonButton>
-          </IonButtons>
+          <IonTitle className='ion-text-center ion-text-capitalize'>Users</IonTitle>
+          
         </IonToolbar>
         <IonProgressBar hidden={!loading} type='indeterminate'></IonProgressBar>
 
       </IonHeader>
       <IonContent className='ion-padding'>
-
+        <IonRefresher slot="fixed" onIonRefresh={doRefresh}>
+          <IonRefresherContent
+            pullingIcon={chevronDownCircleOutline}
+            pullingText="Pull to refresh"
+            refreshingSpinner="circles"
+            refreshingText="Refreshing...">
+          </IonRefresherContent>
+        </IonRefresher>
         <IonList>
           <IonListHeader>
             <IonLabel>Chat List</IonLabel>
