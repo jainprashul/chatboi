@@ -94,6 +94,8 @@ const ChatBox = ({ history, peerUser, loading, setLoading }) => {
     const msgItem = {
       idFrom: currentUser.id,
       idTo: peerUser.id,
+      From: currentUser.nickname,
+      To : peerUser.nickname,
       timestamp,
       context: content.trim(),
       type

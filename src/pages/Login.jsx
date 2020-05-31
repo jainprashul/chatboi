@@ -7,6 +7,7 @@ import { AppString } from '../config/const';
 
 let btn;
 let deferredPrompt;
+
 const Login = () => {
 
     const firebase = useContext(FirebaseContext);
@@ -40,12 +41,23 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    async function saveDeviceToken() {
+        const uid = firebase.getCurrentUser().uid;
+        const token = await firebase.getPermission();
+        // save it to firebase user file
+        const tokenRef = firebase.user(uid).collection('tokens').doc(token);
+        await tokenRef.set({
+            token,
+            createdAt: Date(),
+        })
+    }
+
     function signIn(doSignInWith) {
         setLoading(true);
         doSignInWith().then(async res => {
             let user = res.user;
-
             if (user) {
+                await saveDeviceToken();
                 const result = await firebase.getUser(user.uid);
                 console.log(result);
                 if (result.docs.length === 0) {
@@ -54,7 +66,6 @@ const Login = () => {
                         localStorage.setItem(AppString.ID, user.uid);
                         localStorage.setItem(AppString.NICKNAME, user.displayName);
                         localStorage.setItem(AppString.PHOTO_URL, user.photoURL);
-
 
                     })
                 } else {

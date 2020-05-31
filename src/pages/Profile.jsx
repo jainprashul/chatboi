@@ -92,6 +92,32 @@ const Profile = ({history}) => {
     
   }
 
+  function deleteUser() {
+    alertController.create({
+      header: 'Delete User Profile !',
+      subHeader: "Are you sure?",
+      backdropDismiss: false,
+      buttons: [{
+        text: 'Yes',
+        role: 'ok',
+        cssClass: 'signout',
+        handler: () => {
+          firebase.deleteUser();
+          console.log('user deleted');
+          
+          firebase.doSignOut();
+          // history.replace(ROUTE.signin);
+        }
+      },
+      {
+        text: 'No',
+        role: 'cancel',
+        cssClass: 'signout',
+      }
+      ]
+    }).then(res => res.present());
+  }
+
   function signOut() {
 
     alertController.create({
@@ -104,7 +130,7 @@ const Profile = ({history}) => {
         cssClass: 'signout',
         handler: () => {
           firebase.doSignOut();
-          history.replace(ROUTE.signin);
+          // history.replace(ROUTE.signin);
         }
       },
       {
@@ -119,14 +145,16 @@ const Profile = ({history}) => {
 
   return (
     <IonPage>
-      <IonToolbar>
-        <IonTitle className='ion-text-center ion-text-capitalize'>PROFILE</IonTitle>
-        <IonButtons slot='end'>
-          <IonButton onClick={signOut}>
-            <IonIcon slot='icon-only' icon={logOut} />
-          </IonButton>
-        </IonButtons>
-      </IonToolbar>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle className='ion-text-center ion-text-capitalize'>PROFILE</IonTitle>
+          <IonButtons slot='end'>
+            <IonButton onClick={signOut}>
+              <IonIcon slot='icon-only' icon={logOut} />
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
       <IonContent className='ion-text-center ion-padding' >
         <img className="avatar" alt="Avatar" src={photoUrl} />
         <div onClick={()=>refInput.click()}><IonIcon icon={camera}></IonIcon></div>
@@ -152,6 +180,8 @@ const Profile = ({history}) => {
         </IonItem>
         <br/>
         <IonButton onClick={uploadAvatar}>Update</IonButton>
+        {/* <IonButton color='danger' expand='block' onClick={deleteUser}>Delete User</IonButton> */}
+
 
         <IonLoading isOpen={loading}></IonLoading>
       </IonContent>
