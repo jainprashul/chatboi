@@ -27,10 +27,12 @@ const fcm = admin.messaging();
 exports.subscribeToTopic = functions.firestore.document('users/{userId}/tokens/{token}').onCreate(async(snapshot, context) => {
     const token = snapshot.id;
     const topic = context.params.userId;
-    console.log(topic , token);
+    console.log('Topic : '+ topic , " Token: "+ token);
     const subscription = fcm.subscribeToTopic(token, topic);
     console.log((await subscription).successCount);
-    console.error((await subscription).errors);
+    if ((await subscription).errors) {
+        console.error((await subscription).errors);
+    }
     
     return subscription;
     
@@ -46,14 +48,33 @@ exports.sendMsgNotification = functions.firestore.document(`messages/{chatId}/{c
     // const tokensSnap = await db.collection('users').doc(idTo).collection('tokens').get();
     // const tokens = tokensSnap.docs.map(doc => doc.id);
     // console.log(tokens);
-    const notify = fcm.sendToTopic(idTo, {
-        notification: {
+    const notify = fcm.send({
+        topic: idTo,
+        data: {
             title: `${From} messaged you :`,
             body: type ? "Image received" : context,
-            icon: 'https://image.flaticon.com/icons/svg/2950/2950273.svg',
+            icon: 'https://firebasestorage.googleapis.com/v0/b/chatboio.appspot.com/o/love.png?alt=media',
+        },
+        webpush: {
+            fcmOptions: {
+                link: `https://chatboi.now.sh/chat?userId=${idFrom}`
+            },
+
         }
     })
-    console.log((await notify).messageId);
+    // const notify = fcm.sendToTopic(idTo, {
+    //     notification: {
+    //         title: `${From} messaged you :`,
+    //         body: type ? "Image received" : context,
+    //         icon: 'https://image.flaticon.com/icons/svg/2950/2950273.svg',
+    //     },
+    //     webpush: {
+    //         fcm_options: {
+    //             link : `https://chatboi.now.sh/chat?userId=${idFrom}`
+    //         }
+    //     }
+    // })
+    console.log((await notify).toString());
     return notify;
 });
 

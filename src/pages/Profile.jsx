@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonItem, IonLabel, IonInput, IonLoading } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonItem, IonLabel, IonInput, IonLoading, useIonViewDidEnter } from '@ionic/react';
 import { alertController } from '@ionic/core';
 import withAuthorization from '../context/withAuthorization';
 import { trailSignOutline, logOut, camera } from 'ionicons/icons';
@@ -14,16 +14,26 @@ let refInput;
 const Profile = ({history}) => {
   const firebase = useContext(FirebaseContext);
   const [loading, setLoading] = useState(false)
-  let currentUser = {
+
+  const [currentUser, setCurrentUser] = useState({
     id: localStorage.getItem(AppString.ID),
     avatar: localStorage.getItem(AppString.PHOTO_URL),
     nickname: localStorage.getItem(AppString.NICKNAME),
     aboutMe: localStorage.getItem(AppString.ABOUT_ME),
-  }
-
+  })
   const [photoUrl, setPhotoUrl] = useState(currentUser.avatar);
   const [nickname, setNickname] = useState(currentUser.nickname);
   const [aboutMe, setAboutMe] = useState(currentUser.aboutMe);
+  
+
+  useIonViewDidEnter(() => {
+    setCurrentUser({
+      id: localStorage.getItem(AppString.ID),
+      avatar: localStorage.getItem(AppString.PHOTO_URL),
+      nickname: localStorage.getItem(AppString.NICKNAME),
+      aboutMe: localStorage.getItem(AppString.ABOUT_ME),
+    });
+  })
 
   function onChangeAvatar(event) {
     if (event.target.files && event.target.files[0]) {

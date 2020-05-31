@@ -1,12 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent } from '@ionic/react';
-import { alertController } from '@ionic/core';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent } from '@ionic/react';
 import { FirebaseContext } from '../context/FirebaseContext';
 import { AppString, ROUTE } from '../config/const';
-import { logOut, chevronDownCircleOutline } from 'ionicons/icons';
+import { chevronDownCircleOutline, egg } from 'ionicons/icons';
 import withAuthorization from '../context/withAuthorization';
 
-const UserList = ({ history }) => {
+const UserList = () => {
 
   let currentUser = {
     id: localStorage.getItem(AppString.ID),
@@ -47,29 +46,6 @@ const UserList = ({ history }) => {
     })
   }
 
-  function signOut() {
-
-    alertController.create({
-      header: 'Sign Out !',
-      subHeader: "Are you sure?",
-      backdropDismiss: false,
-      buttons: [{
-        text: 'Yes',
-        role: 'ok',
-        cssClass: 'signout',
-        handler: () => {
-          firebase.doSignOut();
-          history.push(ROUTE.signin);
-        }
-      },
-      {
-        text: 'No',
-        role: 'cancel',
-        cssClass: 'signout',
-      }
-      ]
-    }).then(res => res.present());
-  }
 
 
   const ListUser = () => userList.map(user => (
@@ -83,6 +59,7 @@ const UserList = ({ history }) => {
         {user.nickname}
         <p>About me: {user.aboutMe}</p>
       </IonLabel>
+      <IonIcon hidden={!user.isOnline} color='success' icon={egg} slot='end'></IonIcon>
     </IonItem>
   ))
 

@@ -2,10 +2,9 @@ import React, { useState, useContext } from 'react'
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardContent, IonProgressBar, IonButton, IonIcon, IonText, useIonViewDidEnter, useIonViewWillEnter, useIonViewDidLeave } from '@ionic/react'
 import { logoGoogle, logoFacebook } from 'ionicons/icons';
 import { FirebaseContext } from '../context/FirebaseContext';
-import { createToast, useRouter, useTabHide, } from '../config/hooks';
+import { createToast, useRouter, } from '../config/hooks';
 import { AppString } from '../config/const';
 
-let btn;
 let deferredPrompt;
 
 const Login = () => {
@@ -61,7 +60,7 @@ const Login = () => {
                 const result = await firebase.getUser(user.uid);
                 console.log(result);
                 if (result.docs.length === 0) {
-                    setNewUserData(user).then(data => {
+                    setNewUserData(user).then(() => {
                         // save to local
                         localStorage.setItem(AppString.ID, user.uid);
                         localStorage.setItem(AppString.NICKNAME, user.displayName);
@@ -115,7 +114,7 @@ const Login = () => {
                     const p = deferredPrompt;
                     if (!p) { return }
                     p.prompt();
-                    p.userChoice.then(res => setInstallHide(true));
+                    p.userChoice.then(() => setInstallHide(true));
 
                 }} >Install App</IonButton>
                 <IonCard sizeMd='10' className='ion-padding ion-text-center'>

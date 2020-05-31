@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 /* eslint-disable no-undef */
 importScripts('https://www.gstatic.com/firebasejs/7.14.5/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/7.14.5/firebase-messaging.js');
@@ -13,17 +14,25 @@ firebase.initializeApp({
 // Retrieve an instance of Firebase Messaging so that it can handle background
 // messages.
 const messaging = firebase.messaging();
-
+let url = '';
 messaging.setBackgroundMessageHandler(function(payload) {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
   // Customize notification here
-  const notificationTitle = 'Background Message Title';
+  const notificationTitle = payload.data.title;
   const notificationOptions = {
-    body: 'Background Message body.',
-    icon: '/firebase-logo.png'
+    body: payload.data.body,
+    icon: payload.data.icon
   };
-
-  // eslint-disable-next-line no-restricted-globals
+  url = payload.fcmOptions.link
   return self.registration.showNotification(notificationTitle,
     notificationOptions);
+});
+
+self.addEventListener('notificationclick', function (event) {
+  const clickedNotification = event.notification;
+  clickedNotification.close()
+
+  // Do something as the result of the notification click
+  const promiseChain = clients.openWindow(url);
+  event.waitUntil(promiseChain);
 });

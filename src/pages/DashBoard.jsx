@@ -1,19 +1,25 @@
-import React, { useState, useContext } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonImg, IonCard, IonCardContent, IonCardHeader, IonLabel, IonCardSubtitle, IonProgressBar } from '@ionic/react';
-import { alertController } from '@ionic/core';
+import React, { useState, useContext, useEffect } from 'react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar } from '@ionic/react';
 import { FirebaseContext } from '../context/FirebaseContext';
-import { logOut } from 'ionicons/icons';
-import { AppString, ROUTE } from '../config/const';
 import WelcomeBox from '../components/WelcomeBox';
 import withAuthorization from '../context/withAuthorization';
 import ChatBox from '../components/ChatBox';
-const Dashboard = ({ history }) => {
+const Dashboard = () => {
   const firebase = useContext(FirebaseContext);
 
-  let peerUser = JSON.parse(sessionStorage.getItem('peerUser'));
+  // let peerUser = JSON.parse(sessionStorage.getItem('peerUser'));
+  useEffect(() => {
+    setPeerUser(JSON.parse(sessionStorage.getItem('peerUser')));
+    
+    firebase.checkPresence(localStorage.getItem('id'))
+    return () => {
+      setPeerUser(JSON.parse(sessionStorage.getItem('peerUser')));
+    }
+  }, [firebase])
   // console.log(peerUser);
 
   const [loading, setLoading] = useState(false);
+  const [peerUser, setPeerUser] = useState(JSON.parse(sessionStorage.getItem('peerUser')));
 
 
   return (

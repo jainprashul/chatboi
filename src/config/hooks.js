@@ -139,3 +139,4 @@ export function createToast(msg, color = 'success') {
         message: msg,
     }).then(r => r.present()).catch(err => console.log(err));
 }
+

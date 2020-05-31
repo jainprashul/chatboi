@@ -1,19 +1,18 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonImg, IonCard, IonCardContent, IonCardHeader, IonLabel, IonCardSubtitle, IonProgressBar, IonItem, useIonViewDidLeave, useIonViewWillEnter, IonInput, IonFooter } from '@ionic/react';
-import { alertController } from '@ionic/core';
+import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, useIonViewWillEnter, IonInput, IonFooter } from '@ionic/react';
 import { FirebaseContext } from '../context/FirebaseContext';
-import { logOut, image, pricetag, send, handRight } from 'ionicons/icons';
-import { AppString, ROUTE, images } from '../config/const';
+import { image, pricetag, send, handRight } from 'ionicons/icons';
+import { AppString, images } from '../config/const';
 import { createToast } from '../config/hooks';
 import './chatbox.css'
 import moment from 'moment'
 
 let removeListener = null;
-let listMessage = []
+// let listMessage = []
 let groupChatId = null;
 let currentPhotoFile = null;
 
-const ChatBox = ({ history, peerUser, loading, setLoading }) => {
+const ChatBox = ({ peerUser, setLoading }) => {
 
   const firebase = useContext(FirebaseContext);
   let currentUser = {
@@ -25,6 +24,7 @@ const ChatBox = ({ history, peerUser, loading, setLoading }) => {
   // const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
   const [showStickers, setShowStickers] = useState(false);
+  const [listMessage, setListMessage] = useState([]);
   const messagesEnd = useRef(null)
   const imgInput = useRef(null);
 
@@ -40,6 +40,7 @@ const ChatBox = ({ history, peerUser, loading, setLoading }) => {
 
   useEffect(() => {
     scrollToBottom();
+    // getMsgHistory();
   });
 
 
@@ -54,20 +55,25 @@ const ChatBox = ({ history, peerUser, loading, setLoading }) => {
     if (removeListener) {
       removeListener();
     }
+    
     listMessage.length = 0
-    let msgList = []
+    // let msgList = []
     setLoading(true);
     groupChatId = (hashString(currentUser.id) <= hashString(peerUser.id)) ? `${currentUser.id}-${peerUser.id}` : `${peerUser.id}-${currentUser.id}`;
     console.log(groupChatId);
+
     removeListener = firebase.message(groupChatId).onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
         if (change.type === AppString.DOC_ADDED) {
-          msgList.push(change.doc.data());
+          // msgList.push(change.doc.data());
+          listMessage.push(change.doc.data());
         }
       })
-      listMessage = msgList;
+      // setListMessage(msgList);
+      // setMsg('')
       console.log('listening');
       setLoading(false);
+      // RenderListMessage();
     }, err => createToast(err.toString())
     )
   };
@@ -100,7 +106,7 @@ const ChatBox = ({ history, peerUser, loading, setLoading }) => {
       context: content.trim(),
       type
     }
-    console.log(groupChatId, timestamp);
+    // console.log(groupChatId, timestamp);
     firebase.message(groupChatId).doc(timestamp).set(msgItem).then(() => {
       setMsg('')
     }).catch(err => createToast(err.toString()));
@@ -164,7 +170,7 @@ const ChatBox = ({ history, peerUser, loading, setLoading }) => {
 
         {/* List message */}
         <div className="viewListContentChat">
-          {renderListMessage()}
+          <RenderListMessage/>
           <div
             style={{ float: 'left', clear: 'both' }}
             ref={messagesEnd}
@@ -206,16 +212,18 @@ const ChatBox = ({ history, peerUser, loading, setLoading }) => {
     </div>
   )
 
-  function renderListMessage() {
+  function RenderListMessage() {
+    console.log('render mesges');
+    
     if (listMessage.length > 0) {
       let viewMessages = [];
-      listMessage.forEach((item, index) => {
+      listMessage.forEach((item) => {
         if (item.idFrom === currentUser.id) {
           // Item right (my message)
           if (item.type === 0) {
             viewMessages.push(
-              <div className="viewItemRight2">
-                <div className="viewItemRight" key={item.timestamp}>
+              <div className="viewItemRight2" key={item.timestamp}>
+                <div className="viewItemRight" >
                   <span className="textContentItem">{item.context}</span>
                 </div>
                 <p className="textTimeRight">
@@ -394,29 +402,7 @@ const ChatBox = ({ history, peerUser, loading, setLoading }) => {
     )
   }
 
-  function isLastMessageLeft(index) {
-    if (
-      (index + 1 < listMessage.length &&
-        listMessage[index + 1].idFrom === currentUser.id) ||
-      index === listMessage.length - 1
-    ) {
-      return true
-    } else {
-      return false
-    }
-  }
 
-  function isLastMessageRight(index) {
-    if (
-      (index + 1 < listMessage.length &&
-        listMessage[index + 1].idFrom !== currentUser.id) ||
-      index === listMessage.length - 1
-    ) {
-      return true
-    } else {
-      return false
-    }
-  }
 
 
 

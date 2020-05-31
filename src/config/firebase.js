@@ -22,11 +22,44 @@ class Firebase {
       app.analytics();
       this.auth = app.auth();
       this.firestore = app.firestore();
+      this.rtDB = app.database();
       this.storage = app.storage();
       this.notification = app.messaging();
       this.functions = app.functions();
+      
       // this.functions.useFunctionsEmulator('http://localhost:5001');
 
+   }
+
+   checkPresence = (userId) => {
+      // let user = this.getCurrentUser().uid;
+      let connectionRef = this.rtDB.ref(`status/${userId}/connections`);
+      var lastOnlineRef = this.rtDB.ref(`status/${userId}/lastOnline`);
+      let connectedRef = this.rtDB.ref('.info/connected');
+      connectedRef.on('value', (snap) => {
+         if (snap.val() === true) {
+            let con = connectionRef.push();
+
+            // update to firestore user is online
+            con.then(() => {
+               this.user(userId).update({
+                  isOnline : true
+               })
+            })
+            con.onDisconnect().remove();
+            con.set(true);
+            
+            let timestamp = Date.now();
+            lastOnlineRef.onDisconnect().set(timestamp).then(() => {
+               console.log('offine');
+               this.user(userId).update({
+                  isOnline : true
+                  
+               })
+               
+            });
+         }
+      })
    }
 
 
