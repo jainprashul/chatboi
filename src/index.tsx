@@ -4,6 +4,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import FirebaseContextProvider from './context/FirebaseContext';
 import AuthContextProvider from './context/AuthContext';
+import { defineCustomElements } from "@ionic/pwa-elements/loader";
 
 const LandingApp = () => (
     <FirebaseContextProvider>
@@ -13,6 +14,7 @@ const LandingApp = () => (
     </FirebaseContextProvider>
 )
 ReactDOM.render(<LandingApp />, document.getElementById('root'));
+defineCustomElements(window);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

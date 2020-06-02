@@ -1,5 +1,7 @@
 {
   "name": "chatboio",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "react"
 }

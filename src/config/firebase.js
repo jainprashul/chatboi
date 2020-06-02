@@ -41,25 +41,19 @@ class Firebase {
             let con = connectionRef.push();
 
             // update to firestore user is online
-            con.then(() => {
-               this.user(userId).update({
-                  isOnline : true
-               })
-            })
+            // con.then(() => {
+            //    this.user(userId).update({
+            //       isOnline : true
+            //    })
+            // })
             con.onDisconnect().remove();
             con.set(true);
             
             let timestamp = Date.now();
-            lastOnlineRef.onDisconnect().set(timestamp).then(() => {
-               console.log('offine');
-               this.user(userId).update({
-                  isOnline : true
-                  
-               })
-               
-            });
+            lastOnlineRef.onDisconnect().set(timestamp)
          }
       })
+
    }
 
 
