@@ -6,15 +6,22 @@ import { AppString, images } from '../config/const';
 import { createToast, useTabHide } from '../config/hooks';
 import './chatbox.css'
 import moment from 'moment'
+import { useChatBox } from '../config/useChatBox';
 
-let removeListener = null;
 // let listMessage = []
-let groupChatId = null;
-let currentPhotoFile = null;
 
 const ChatBox = ({ peerUser }) => {
 
   const firebase = useContext(FirebaseContext);
+
+  // const [showStickers, setShowStickers] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState('');
+  const messagesEnd = useRef(null)
+  const imgInput = useRef(null);
+
+  const { loading, getMsgHistory, removeListener, listMessage, onSendMessage, onChoosePhoto, openListSticker, showStickers } = useChatBox(peerUser, setMsg);
+
   let currentUser = {
     id: localStorage.getItem(AppString.ID),
     avatar: localStorage.getItem(AppString.PHOTO_URL),
@@ -23,12 +30,8 @@ const ChatBox = ({ peerUser }) => {
 
   useTabHide();
 
-  const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState('');
-  const [showStickers, setShowStickers] = useState(false);
-  const [listMessage, setListMessage] = useState([]);
-  const messagesEnd = useRef(null)
-  const imgInput = useRef(null);
+
+
 
 
 
@@ -56,110 +59,6 @@ const ChatBox = ({ peerUser }) => {
   });
 
 
-  function getMsgHistory() {
-    if (removeListener) {
-      removeListener();
-    }
-    
-    listMessage.length = 0
-    // let msgList = []
-    setLoading(true);
-    groupChatId = (hashString(currentUser.id) <= hashString(peerUser.id)) ? `${currentUser.id}-${peerUser.id}` : `${peerUser.id}-${currentUser.id}`;
-    console.log(groupChatId);
-
-    removeListener = firebase.message(groupChatId).onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        if (change.type === AppString.DOC_ADDED) {
-          // msgList.push(change.doc.data());
-          let data = change.doc.data();
-          console.log(data);
-          
-          listMessage.push(data);
-        }
-      })
-      // setListMessage(msgList);
-      // setMsg('')
-      console.log('listening');
-      setLoading(false);
-      // RenderListMessage();
-    }, err => createToast(err.toString())
-    )
-  };
-
-  function openListSticker() {
-    setShowStickers(!showStickers);
-  };
-
-  /** Send The message
-  * @type type 0 = text
-  * @type type 1 = images
-  * @type type 2 = stickers 
-  */
-  function onSendMessage(content, type) {
-    //close stickerbox
-    if (showStickers && type === 2) {
-      setShowStickers(false);
-    }
-    // if no content or msg
-    if (content.trim() === '') return;
-
-    const timestamp = (Date.now()).toString();
-
-    const msgItem = {
-      idFrom: currentUser.id,
-      idTo: peerUser.id,
-      From: currentUser.nickname,
-      To : peerUser.nickname,
-      timestamp,
-      context: content.trim(),
-      type
-    }
-    // console.log(groupChatId, timestamp);
-    firebase.message(groupChatId).doc(timestamp).set(msgItem).then(() => {
-      setMsg('')
-    }).catch(err => createToast(err.toString()));
-    // setMsg('');
-  };
-
-  function onChoosePhoto(e) {
-    if (e.target.files && e.target.files[0]) {
-      setLoading(true);
-      currentPhotoFile = (e.target.files[0]);
-      // Check this file is an image?
-      const prefixFiletype = e.target.files[0].type.toString()
-      if (prefixFiletype.indexOf(AppString.PREFIX_IMAGE) === 0) {
-        uploadPhoto();
-      } else {
-        setLoading(false)
-        createToast('This file is not an image');
-      }
-    }
-    else {
-      setLoading(false);
-    }
-  };
-
-  function uploadPhoto() {
-    if (currentPhotoFile) {
-      const timestamp = (Date.now()).toString();
-
-      const uploadTask = firebase.storage.ref().child(timestamp).put(currentPhotoFile);
-      uploadTask.on(AppString.UPLOAD_CHANGED, null, err => {
-        setLoading(false);
-        createToast(err.message)
-      }, () => {
-        uploadTask.snapshot.ref.getDownloadURL().then(url => {
-          setLoading(false);
-          onSendMessage(url, 1);
-        })
-      });
-    } else {
-      setLoading(false);
-      createToast('File is Null');
-    }
-  };
-
-
   const onKeyboardPress = event => {
     if (event.key === 'Enter') {
       onSendMessage(msg, 0)
@@ -175,9 +74,9 @@ const ChatBox = ({ peerUser }) => {
   return (
     <>
       <IonHeader>
-    <IonToolbar>
+        <IonToolbar>
           <IonButtons slot='start'>
-            <IonBackButton/>
+            <IonBackButton />
           </IonButtons>
           <IonTitle>
             <div className="headerChatBoard">
@@ -198,8 +97,6 @@ const ChatBox = ({ peerUser }) => {
       </IonHeader>
       <IonContent>
         <div className="viewChatBoard">
-
-
           {/* List message */}
           <div className="viewListContentChat">
             <RenderListMessage />
@@ -208,10 +105,9 @@ const ChatBox = ({ peerUser }) => {
               ref={messagesEnd}
             />
           </div>
-
           {/* Stickers */}
           {showStickers ? renderStickers() : null}
-          </div>
+        </div>
       </IonContent>
       {/* View bottom */}
       <IonFooter>
@@ -246,7 +142,7 @@ const ChatBox = ({ peerUser }) => {
 
   function RenderListMessage() {
     console.log('render mesges');
-    
+
     if (listMessage.length > 0) {
       let viewMessages = [];
       listMessage.forEach((item) => {
@@ -304,7 +200,7 @@ const ChatBox = ({ peerUser }) => {
                   <div className="viewItemLeft">
                     <span className="textContentItem">{item.context}</span>
                   </div>
-                  
+
                 </div>
                 <p className="textTimeLeft">
                   {moment(Number(item.timestamp)).fromNow()}
@@ -443,15 +339,6 @@ const ChatBox = ({ peerUser }) => {
 }
 
 
-
-function hashString(str) {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) {
-    hash += Math.pow(str.charCodeAt(i) * 31, str.length - i)
-    hash = hash & hash // Convert to 32bit integer
-  }
-  return hash
-}
 
 const getGifImage = value => {
   switch (value) {
