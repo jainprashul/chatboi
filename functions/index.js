@@ -50,6 +50,11 @@ exports.sendMsgNotification = functions.firestore.document(`messages/{chatId}/{c
     // console.log(tokens);
     const notify = fcm.send({
         topic: idTo,
+        notification: {
+            title: `${From} messaged you :`,
+            body: type ? "Image received" : context,
+            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/chatboio.appspot.com/o/love.png?alt=media',
+        },
         data: {
             title: `${From} messaged you :`,
             body: type ? "Image received" : context,

@@ -24,7 +24,7 @@ export function useUserList() {
 
     const isOnlineData = () => {
         firebase.rtDB.ref('status').on('value', (snapshot) => {
-            console.log(snapshot.val());
+            // console.log(snapshot.val());
             let usersStatus = snapshot.val();
             let status = Object.entries(usersStatus);
             let onlineusers = status.filter(([userid, val]) => (val.connections));
@@ -32,7 +32,7 @@ export function useUserList() {
             for (let s of onlineusers) {
                 onLineUserList.push(s[0]);
             }
-            console.log(onLineUserList);
+            // console.log(onLineUserList);
             setOnlineUsers(onLineUserList);
         })
     }
@@ -55,12 +55,27 @@ export function useUserList() {
         }
     }
 
+    async function getUser(uid) {
+        const res = await firebase.getUser(uid);
+        if (res.docs.length > 0) {
+            const userData = res.docs[0].data();
+            userData && sessionStorage.setItem('peerUser', JSON.stringify(userData))
+        }
+
+        const user = JSON.parse(sessionStorage.getItem('peerUser'));
+
+        return user
+        
+        
+    }
+
     return {
         loading,
         onlineUsers,
         userList,
         getListUser,
-        currentUser
+        currentUser,
+        getUser
     }
     
 }

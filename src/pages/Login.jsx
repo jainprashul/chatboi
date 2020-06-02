@@ -14,7 +14,7 @@ const Login = () => {
     const [installHide, setInstallHide] = useState(true);
     useIonViewWillEnter(() => {
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
+            // e.preventDefault();
             deferredPrompt = e;
             setInstallHide(false);
         });
