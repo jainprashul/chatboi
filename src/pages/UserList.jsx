@@ -16,7 +16,7 @@ const UserList = () => {
   }
 
   const ListUser = () => userList.map(user => (
-    <IonItem key={user.id} href={ROUTE.chat+ '?userid=' +user.id} onClick={() => {
+    <IonItem key={user.id} routerLink={ROUTE.chat+ '?userid=' +user.id} onClick={() => {
       sessionStorage.setItem('peerUser', JSON.stringify(user))
     }}>
       <IonAvatar slot='start'>

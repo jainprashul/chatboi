@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, useIonViewWillEnter, IonInput, IonFooter } from '@ionic/react';
+import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, useIonViewWillEnter, IonInput, IonFooter, IonHeader, IonProgressBar, IonContent, IonBackButton, IonTitle } from '@ionic/react';
 import { FirebaseContext } from '../context/FirebaseContext';
 import { image, pricetag, send, handRight } from 'ionicons/icons';
 import { AppString, images } from '../config/const';
-import { createToast } from '../config/hooks';
+import { createToast, useTabHide } from '../config/hooks';
 import './chatbox.css'
 import moment from 'moment'
 
@@ -12,7 +12,7 @@ let removeListener = null;
 let groupChatId = null;
 let currentPhotoFile = null;
 
-const ChatBox = ({ peerUser, setLoading }) => {
+const ChatBox = ({ peerUser }) => {
 
   const firebase = useContext(FirebaseContext);
   let currentUser = {
@@ -21,7 +21,9 @@ const ChatBox = ({ peerUser, setLoading }) => {
     nickname: localStorage.getItem(AppString.NICKNAME),
   }
 
-  // const [loading, setLoading] = useState(false);
+  useTabHide();
+
+  const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
   const [showStickers, setShowStickers] = useState(false);
   const [listMessage, setListMessage] = useState([]);
@@ -48,6 +50,9 @@ const ChatBox = ({ peerUser, setLoading }) => {
     if (removeListener) {
       removeListener();
     }
+    const tabbar = document.querySelector("ion-tab-bar");
+    tabbar.classList.toggle('ion-hide', false);
+    console.log('showed tab');
   });
 
 
@@ -66,7 +71,10 @@ const ChatBox = ({ peerUser, setLoading }) => {
       snapshot.docChanges().forEach(change => {
         if (change.type === AppString.DOC_ADDED) {
           // msgList.push(change.doc.data());
-          listMessage.push(change.doc.data());
+          let data = change.doc.data();
+          console.log(data);
+          
+          listMessage.push(data);
         }
       })
       // setListMessage(msgList);
@@ -110,6 +118,7 @@ const ChatBox = ({ peerUser, setLoading }) => {
     firebase.message(groupChatId).doc(timestamp).set(msgItem).then(() => {
       setMsg('')
     }).catch(err => createToast(err.toString()));
+    // setMsg('');
   };
 
   function onChoosePhoto(e) {
@@ -164,52 +173,75 @@ const ChatBox = ({ peerUser, setLoading }) => {
   };
 
   return (
-    <div>
-      <div className="viewChatBoard">
+    <>
+      <IonHeader>
+    <IonToolbar>
+          <IonButtons slot='start'>
+            <IonBackButton/>
+          </IonButtons>
+          <IonTitle>
+            <div className="headerChatBoard">
+              <img
+                className="viewAvatarItem"
+                src={peerUser.photoUrl}
+                alt="icon avatar"
+              />
+              <span className="textHeaderChatBoard">
+                {peerUser.nickname}
+              </span>
+            </div>
+
+          </IonTitle>
+        </IonToolbar>
+        <IonProgressBar hidden={!loading} type='indeterminate' ></IonProgressBar >
+
+      </IonHeader>
+      <IonContent>
+        <div className="viewChatBoard">
 
 
-        {/* List message */}
-        <div className="viewListContentChat">
-          <RenderListMessage/>
-          <div
-            style={{ float: 'left', clear: 'both' }}
-            ref={messagesEnd}
-          />
-        </div>
-
-        {/* Stickers */}
-        {showStickers ? renderStickers() : null}
-
-        <IonFooter>
-          <IonToolbar className='bottom'>
-            <IonButtons slot='start'>
-              <IonButton onClick={() => imgInput.current.click()} >
-                <IonIcon icon={image} slot='icon-only'></IonIcon>
-              </IonButton>
-              <IonButton onClick={() => openListSticker()} >
-                <IonIcon icon={pricetag} slot='icon-only'></IonIcon>
-              </IonButton>
-            </IonButtons>
-            <IonInput placeholder='Type your Message...' value={msg} onIonChange={e => setMsg(e.target.value)} onKeyPress={onKeyboardPress}></IonInput>
-            <IonButtons slot='end'>
-              <IonButton onClick={() => { onSendMessage(msg, 0);}} >
-                <IonIcon icon={send} slot='icon-only'></IonIcon>
-              </IonButton>
-            </IonButtons>
-            <input
-              ref={imgInput}
-              accept="image/*"
-              className="viewInputGallery"
-              type="file"
-              onChange={onChoosePhoto}
+          {/* List message */}
+          <div className="viewListContentChat">
+            <RenderListMessage />
+            <div
+              style={{ float: 'left', clear: 'both' }}
+              ref={messagesEnd}
             />
-          </IonToolbar>
-          
-       </IonFooter>
-        {/* View bottom */}
-     </div>
+          </div>
 
-    </div>
+          {/* Stickers */}
+          {showStickers ? renderStickers() : null}
+          </div>
+      </IonContent>
+      {/* View bottom */}
+      <IonFooter>
+        <IonToolbar className='bottom'>
+          <IonButtons slot='start'>
+            <IonButton onClick={() => imgInput.current.click()} >
+              <IonIcon icon={image} slot='icon-only'></IonIcon>
+            </IonButton>
+            <IonButton onClick={() => openListSticker()} >
+              <IonIcon icon={pricetag} slot='icon-only'></IonIcon>
+            </IonButton>
+          </IonButtons>
+          <IonInput placeholder='Type your Message...' value={msg} onIonChange={e => setMsg(e.target.value)} onKeyPress={onKeyboardPress}></IonInput>
+          <IonButtons slot='end'>
+            <IonButton onClick={() => { onSendMessage(msg, 0); }} >
+              <IonIcon icon={send} slot='icon-only'></IonIcon>
+            </IonButton>
+          </IonButtons>
+          <input
+            ref={imgInput}
+            accept="image/*"
+            className="viewInputGallery"
+            type="file"
+            onChange={onChoosePhoto}
+          />
+        </IonToolbar>
+
+      </IonFooter>
+
+    </>
   )
 
   function RenderListMessage() {

@@ -120,6 +120,7 @@ export function useTabHide() {
             const tabbar = document.querySelector("ion-tab-bar");
             tabbar.classList.toggle('ion-hide', true);
             return () => {
+                const tabbar = document.querySelector("ion-tab-bar");
                 tabbar.classList.toggle('ion-hide', false);
                 console.log('showed tab');
 
@@ -128,14 +129,14 @@ export function useTabHide() {
     }, [])
 }
 
-export function createToast(msg, color = 'success') {
+export function createToast(msg, color = 'success', position='bottom', duration=800) {
     toastController.create({
         buttons: [{
             text: 'OK'
         }],
         color: color,
-        duration: 800,
-        position: "bottom",
+        duration: duration,
+        position: position,
         message: msg,
     }).then(r => r.present()).catch(err => console.log(err));
 }

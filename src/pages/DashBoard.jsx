@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonButton } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonButton, IonBackButton, IonButtons, useIonViewWillEnter } from '@ionic/react';
 import { FirebaseContext } from '../context/FirebaseContext';
 import WelcomeBox from '../components/WelcomeBox';
 import withAuthorization from '../context/withAuthorization';
@@ -7,19 +7,25 @@ import ChatBox from '../components/ChatBox';
 import { useUserList } from '../config/getUsers';
 
 let deferredPrompt;
-const Dashboard = ({location}) => {
+const Dashboard = ({location, history}) => {
   // const firebase = useContext(FirebaseContext);
   let x = location.search;
   let peerUserid = x.substr(8);
-  // console.log(x , peerUserid);
 
   const { getUser } = useUserList();
 
   const [installHide, setInstallHide] = useState(true);
-  const [loading, setLoading] = useState(false);
   const [peerUser, setPeerUser] = useState(JSON.parse(sessionStorage.getItem('peerUser')));
 
   // let peerUser = JSON.parse(sessionStorage.getItem('peerUser'));
+
+  useIonViewWillEnter(() => {
+    getUser(peerUserid).then(user => {
+      setPeerUser(user);
+    })
+    console.log('view will enter');
+    
+  })
   useEffect(() => {
 
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -31,7 +37,6 @@ const Dashboard = ({location}) => {
     window.addEventListener('appinstalled', (event) => {
       console.log('👍', 'appinstalled', event);
     });
-    getUser(peerUserid)
     setPeerUser(JSON.parse(sessionStorage.getItem('peerUser')));
     
     // firebase.checkPresence(localStorage.getItem('id'))
@@ -41,40 +46,18 @@ const Dashboard = ({location}) => {
   }, [])
   // console.log(peerUser);
 
+  const InstallBtn = () => (<IonButton hidden={installHide} color='dark' expand='full' onClick={() => {
+    const p = deferredPrompt;
+    if (!p) { return }
+    p.prompt();
+    p.userChoice.then(() => setInstallHide(true));
 
+  }} >Install App</IonButton>)
 
 
   return (
     <IonPage>
-      <IonHeader>
-        {!peerUser && <IonToolbar>
-          <IonTitle className='ion-text-center ion-text-capitalize'>ChatBox</IonTitle>
-        </IonToolbar>}
-        <IonProgressBar hidden={!loading} type='indeterminate' ></IonProgressBar >
-
-        {peerUser && <div className="headerChatBoard">
-          <img
-            className="viewAvatarItem"
-            src={peerUser.photoUrl}
-            alt="icon avatar"
-          />
-          <span className="textHeaderChatBoard">
-            {peerUser.nickname}
-          </span>
-        </div>}
-
-      </IonHeader>
-      <IonContent>
-        <IonButton hidden={installHide} color='dark' expand='full' onClick={() => {
-          const p = deferredPrompt;
-          if (!p) { return }
-          p.prompt();
-          p.userChoice.then(() => setInstallHide(true));
-
-        }} >Install App</IonButton>
-        {!peerUser ? <WelcomeBox /> : <ChatBox peerUser={peerUser} loading={loading} setLoading={setLoading} />}
-
-      </IonContent>
+      {!peerUser ? <WelcomeBox Installbtn={InstallBtn} /> : <ChatBox peerUser={peerUser} Installbtn={InstallBtn} />}
     </IonPage>
   );
 };

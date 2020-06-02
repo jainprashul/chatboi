@@ -38,6 +38,7 @@ import './theme/variables.css';
 import { ROUTE } from './config/const';
 import Login from './pages/Login';
 import { FirebaseContext } from './context/FirebaseContext';
+import { createToast } from './config/hooks';
 
 const App = () => {
   const firebase = useContext(FirebaseContext);
@@ -54,7 +55,11 @@ const App = () => {
 
     firebase.notification.onMessage(payload => {
       console.log('onmessage', payload);
-    })
+      let title = (payload.data.title).replace(/messaged you/g, '');
+      let body = payload.data.body
+      let msg = title + ' ' + body;
+      createToast(msg, 'warning', 'top')
+    });
   }, [])
 
   // firebase.notification.onMessage(payload => {

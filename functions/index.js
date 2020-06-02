@@ -50,11 +50,11 @@ exports.sendMsgNotification = functions.firestore.document(`messages/{chatId}/{c
     // console.log(tokens);
     const notify = fcm.send({
         topic: idTo,
-        notification: {
-            title: `${From} messaged you :`,
-            body: type ? "Image received" : context,
-            imageUrl: 'https://firebasestorage.googleapis.com/v0/b/chatboio.appspot.com/o/love.png?alt=media',
-        },
+        // notification: {
+        //     title: `${From} messaged you :`,
+        //     body: type ? "Image received" : context,
+        //     imageUrl: 'https://firebasestorage.googleapis.com/v0/b/chatboio.appspot.com/o/love.png?alt=media',
+        // },
         data: {
             title: `${From} messaged you :`,
             body: type ? "Image received" : context,
@@ -64,21 +64,9 @@ exports.sendMsgNotification = functions.firestore.document(`messages/{chatId}/{c
             fcmOptions: {
                 link: `https://chatboi.now.sh/chat?userId=${idFrom}`
             },
-
         }
     })
-    // const notify = fcm.sendToTopic(idTo, {
-    //     notification: {
-    //         title: `${From} messaged you :`,
-    //         body: type ? "Image received" : context,
-    //         icon: 'https://image.flaticon.com/icons/svg/2950/2950273.svg',
-    //     },
-    //     webpush: {
-    //         fcm_options: {
-    //             link : `https://chatboi.now.sh/chat?userId=${idFrom}`
-    //         }
-    //     }
-    // })
+    
     console.log((await notify).toString());
     return notify;
 });
