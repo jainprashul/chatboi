@@ -6,6 +6,7 @@ export function useUserList() {
     const firebase = useContext(FirebaseContext);
     const [onlineUsers, setOnlineUsers] = useState([])
     const [userList, setUserList] = useState([])
+    const [user, setUser] = useState({});
     const [loading, setLoading] = useState(false)
 
 
@@ -63,11 +64,18 @@ export function useUserList() {
         }
 
         const user = JSON.parse(sessionStorage.getItem('peerUser'));
-
         return user
-        
-        
     }
+
+    // function getUserData(uid) {
+    //     getUser(uid).then(userD => {
+    //         setUser(userD)
+    //     })
+
+        
+    //     console.log(user);
+    //     return user;
+    // }
 
     return {
         loading,

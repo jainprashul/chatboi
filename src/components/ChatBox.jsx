@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
-import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, useIonViewWillEnter, IonInput, IonFooter, IonHeader, IonProgressBar, IonContent, IonBackButton, IonTitle } from '@ionic/react';
+import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, useIonViewWillEnter, IonInput, IonFooter, IonHeader, IonProgressBar, IonContent, IonBackButton, IonTitle, useIonViewDidEnter } from '@ionic/react';
 import { FirebaseContext } from '../context/FirebaseContext';
 import { image, pricetag, send, handRight } from 'ionicons/icons';
 import { AppString, images } from '../config/const';
@@ -20,7 +20,7 @@ const ChatBox = ({ peerUser }) => {
   const messagesEnd = useRef(null)
   const imgInput = useRef(null);
 
-  const { loading, getMsgHistory, removeListener, listMessage, onSendMessage, onChoosePhoto, openListSticker, showStickers } = useChatBox(peerUser, setMsg);
+  const { loading, removeListener, listMessage, onSendMessage, onChoosePhoto, openListSticker, showStickers, getGifImage } = useChatBox(peerUser, setMsg);
 
   let currentUser = {
     id: localStorage.getItem(AppString.ID),
@@ -30,15 +30,15 @@ const ChatBox = ({ peerUser }) => {
 
   useTabHide();
 
-
+  RenderMessages();
 
 
 
 
   // console.log( groupChatId, currentPhotoFile);
 
-  useIonViewWillEnter(() => {
-    getMsgHistory();
+  useIonViewDidEnter(() => {
+    // getMsgHistory();
     console.log("Entered chat box", peerUser.id);
   });
 
@@ -71,74 +71,9 @@ const ChatBox = ({ peerUser }) => {
     }
   };
 
-  return (
-    <>
-      <IonHeader>
-        <IonToolbar>
-          <IonButtons slot='start'>
-            <IonBackButton />
-          </IonButtons>
-          <IonTitle>
-            <div className="headerChatBoard">
-              <img
-                className="viewAvatarItem"
-                src={peerUser.photoUrl}
-                alt="icon avatar"
-              />
-              <span className="textHeaderChatBoard">
-                {peerUser.nickname}
-              </span>
-            </div>
-
-          </IonTitle>
-        </IonToolbar>
-        <IonProgressBar hidden={!loading} type='indeterminate' ></IonProgressBar >
-
-      </IonHeader>
-      <IonContent>
-        <div className="viewChatBoard">
-          {/* List message */}
-          <div className="viewListContentChat">
-            <RenderListMessage />
-            <div
-              style={{ float: 'left', clear: 'both' }}
-              ref={messagesEnd}
-            />
-          </div>
-          {/* Stickers */}
-          {showStickers ? renderStickers() : null}
-        </div>
-      </IonContent>
-      {/* View bottom */}
-      <IonFooter>
-        <IonToolbar className='bottom'>
-          <IonButtons slot='start'>
-            <IonButton onClick={() => imgInput.current.click()} >
-              <IonIcon icon={image} slot='icon-only'></IonIcon>
-            </IonButton>
-            <IonButton onClick={() => openListSticker()} >
-              <IonIcon icon={pricetag} slot='icon-only'></IonIcon>
-            </IonButton>
-          </IonButtons>
-          <IonInput placeholder='Type your Message...' value={msg} onIonChange={e => setMsg(e.target.value)} onKeyPress={onKeyboardPress}></IonInput>
-          <IonButtons slot='end'>
-            <IonButton onClick={() => { onSendMessage(msg, 0); }} >
-              <IonIcon icon={send} slot='icon-only'></IonIcon>
-            </IonButton>
-          </IonButtons>
-          <input
-            ref={imgInput}
-            accept="image/*"
-            className="viewInputGallery"
-            type="file"
-            onChange={onChoosePhoto}
-          />
-        </IonToolbar>
-
-      </IonFooter>
-
-    </>
-  )
+  function RenderMessages () {
+    console.log(listMessage);
+  }
 
   function RenderListMessage() {
     console.log('render mesges');
@@ -330,40 +265,80 @@ const ChatBox = ({ peerUser }) => {
     )
   }
 
+  return (
+    <>
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot='start'>
+            <IonBackButton />
+          </IonButtons>
+          <IonTitle>
+            <div className="headerChatBoard">
+              <img
+                className="viewAvatarItem"
+                src={peerUser.photoUrl}
+                alt="icon avatar"
+              />
+              <span className="textHeaderChatBoard">
+                {peerUser.nickname}
+              </span>
+            </div>
 
+          </IonTitle>
+        </IonToolbar>
+        <IonProgressBar hidden={!loading} type='indeterminate' ></IonProgressBar >
 
+      </IonHeader>
+      <IonContent>
+        <div className="viewChatBoard">
+          {/* List message */}
+          <div className="viewListContentChat">
+            <RenderListMessage />
+            <div
+              style={{ float: 'left', clear: 'both' }}
+              ref={messagesEnd}
+            />
+          </div>
+          {/* Stickers */}
+          {showStickers ? renderStickers() : null}
+        </div>
+      </IonContent>
+      {/* View bottom */}
+      <IonFooter>
+        <IonToolbar className='bottom'>
+          <IonButtons slot='start'>
+            <IonButton onClick={() => imgInput.current.click()} >
+              <IonIcon icon={image} slot='icon-only'></IonIcon>
+            </IonButton>
+            <IonButton onClick={() => openListSticker()} >
+              <IonIcon icon={pricetag} slot='icon-only'></IonIcon>
+            </IonButton>
+          </IonButtons>
+          <IonInput placeholder='Type your Message...' value={msg} onIonChange={e => setMsg(e.target.value)} onKeyPress={onKeyboardPress}></IonInput>
+          <IonButtons slot='end'>
+            <IonButton onClick={() => { onSendMessage(msg, 0); }} >
+              <IonIcon icon={send} slot='icon-only'></IonIcon>
+            </IonButton>
+          </IonButtons>
+          <input
+            ref={imgInput}
+            accept="image/*"
+            className="viewInputGallery"
+            type="file"
+            onChange={onChoosePhoto}
+          />
+        </IonToolbar>
 
+      </IonFooter>
 
-  //done
+    </>
+  )
 
 }
 
 
 
-const getGifImage = value => {
-  switch (value) {
-    case 'mimi1':
-      return images.mimi1
-    case 'mimi2':
-      return images.mimi2
-    case 'mimi3':
-      return images.mimi3
-    case 'mimi4':
-      return images.mimi4
-    case 'mimi5':
-      return images.mimi5
-    case 'mimi6':
-      return images.mimi6
-    case 'mimi7':
-      return images.mimi7
-    case 'mimi8':
-      return images.mimi8
-    case 'mimi9':
-      return images.mimi9
-    default:
-      return null
-  }
-}
+
 
 
 export default ChatBox;

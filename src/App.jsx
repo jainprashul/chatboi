@@ -58,7 +58,7 @@ const App = () => {
       let title = (payload.data.title).replace(/messaged you/g, '');
       let body = payload.data.body
       let msg = title + ' ' + body;
-      createToast(msg, 'warning', 'top')
+      createToast(msg, 'warning', 'top', 1800)
     });
   }, [])
 

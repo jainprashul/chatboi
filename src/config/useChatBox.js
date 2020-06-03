@@ -1,6 +1,6 @@
 import { FirebaseContext } from "../context/FirebaseContext";
-import { useContext, useState } from "react";
-import { AppString } from "./const";
+import { useContext, useState, useEffect } from "react";
+import { AppString , images} from "./const";
 import { createToast } from "./hooks";
 
 let removeListener = null;
@@ -19,9 +19,13 @@ export function useChatBox(peerUser, setMsg) {
     const [showStickers, setShowStickers] = useState(false);
 
 
+    useEffect(()=>{
+        getMsgHistory()
+    },[])
 
-
-    function getMsgHistory() {
+    async function getMsgHistory() {
+        console.log('peerUser: ', (peerUser));  
+        
         if (removeListener) {
             removeListener();
         }
@@ -37,7 +41,7 @@ export function useChatBox(peerUser, setMsg) {
                 if (change.type === AppString.DOC_ADDED) {
                     // msgList.push(change.doc.data());
                     let data = change.doc.data();
-                    console.log(data);
+                    // console.log(data);
 
                     msgList.push(data);
                 }
@@ -123,16 +127,42 @@ export function useChatBox(peerUser, setMsg) {
             setLoading(false);
         }
     };
+
+    const getGifImage = value => {
+        switch (value) {
+            case 'mimi1':
+                return images.mimi1
+            case 'mimi2':
+                return images.mimi2
+            case 'mimi3':
+                return images.mimi3
+            case 'mimi4':
+                return images.mimi4
+            case 'mimi5':
+                return images.mimi5
+            case 'mimi6':
+                return images.mimi6
+            case 'mimi7':
+                return images.mimi7
+            case 'mimi8':
+                return images.mimi8
+            case 'mimi9':
+                return images.mimi9
+            default:
+                return null
+        }
+    }
     
     return {
+        loading,
         getMsgHistory,
         removeListener,
         listMessage,
         openListSticker,
         showStickers,
         onSendMessage,
-        onChoosePhoto
-
+        onChoosePhoto,
+        getGifImage
     }
 }
 

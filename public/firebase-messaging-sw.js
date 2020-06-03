@@ -31,8 +31,10 @@ messaging.setBackgroundMessageHandler(function(payload) {
 self.addEventListener('notificationclick', function (event) {
   const clickedNotification = event.notification;
   clickedNotification.close()
-
+  let customUrl = url.replace('https://chatboi.now.sh', '')
+  console.log('notify url : '+ customUrl);
+  
   // Do something as the result of the notification click
-  const promiseChain = clients.openWindow(url);
+  const promiseChain = clients.openWindow(customUrl);
   event.waitUntil(promiseChain);
 });
