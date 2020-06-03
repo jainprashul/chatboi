@@ -7,14 +7,13 @@ let removeListener = null;
 // let listMessage = []
 let currentPhotoFile = null;
 let groupChatId = null;
-export function useChatBox(peerUser, setMsg) {
+export function useChatBox(peerUser, setMsg, setListMessage) {
     let currentUser = {
         id: localStorage.getItem(AppString.ID),
         avatar: localStorage.getItem(AppString.PHOTO_URL),
         nickname: localStorage.getItem(AppString.NICKNAME),
     }
     const firebase = useContext(FirebaseContext);
-    const [listMessage, setListMessage] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showStickers, setShowStickers] = useState(false);
 
@@ -30,7 +29,7 @@ export function useChatBox(peerUser, setMsg) {
             removeListener();
         }
 
-        listMessage.length = 0
+        // listMessage.length = 0
         let msgList = []
         setLoading(true);
         groupChatId = (hashString(currentUser.id) <= hashString(peerUser.id)) ? `${currentUser.id}-${peerUser.id}` : `${peerUser.id}-${currentUser.id}`;
@@ -46,9 +45,11 @@ export function useChatBox(peerUser, setMsg) {
                     msgList.push(data);
                 }
             })
-            setListMessage(msgList);
-            // setMsg('')
-            console.log('listening');
+            setListMessage(msgList)
+            setMsg(' ')
+            setMsg('')
+            // console.log('listener', listMessage);
+            
             setLoading(false);
             // RenderListMessage();
         }, err => createToast(err.toString())
@@ -157,7 +158,6 @@ export function useChatBox(peerUser, setMsg) {
         loading,
         getMsgHistory,
         removeListener,
-        listMessage,
         openListSticker,
         showStickers,
         onSendMessage,

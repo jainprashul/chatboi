@@ -15,12 +15,13 @@ const ChatBox = ({ peerUser }) => {
   const firebase = useContext(FirebaseContext);
 
   // const [showStickers, setShowStickers] = useState(false);
+  const [listMessage, setListMessage] = useState([]);
   // const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
   const messagesEnd = useRef(null)
   const imgInput = useRef(null);
 
-  const { loading, removeListener, listMessage, onSendMessage, onChoosePhoto, openListSticker, showStickers, getGifImage } = useChatBox(peerUser, setMsg);
+  const { loading, removeListener, onSendMessage, onChoosePhoto, openListSticker, showStickers, getGifImage } = useChatBox(peerUser, setMsg, setListMessage);
 
   let currentUser = {
     id: localStorage.getItem(AppString.ID),
@@ -29,11 +30,6 @@ const ChatBox = ({ peerUser }) => {
   }
 
   useTabHide();
-
-  RenderMessages();
-
-
-
 
   // console.log( groupChatId, currentPhotoFile);
 
@@ -71,9 +67,126 @@ const ChatBox = ({ peerUser }) => {
     }
   };
 
-  function RenderMessages () {
-    console.log(listMessage);
-  }
+  const RenderMessages = () => (listMessage.length) ? 
+    listMessage.map((item) => {
+      if (item.idFrom === currentUser.id) {
+        // Item right (my message)
+        if (item.type === 0) {
+          return (
+            <div className="viewItemRight2" key={item.timestamp}>
+              <div className="viewItemRight" >
+                <span className="textContentItem">{item.context}</span>
+              </div>
+              <p className="textTimeRight">
+                {moment(Number(item.timestamp)).fromNow()}
+              </p>
+            </div>
+          )
+        } else if (item.type === 1) {
+          return(
+            <div className="viewItemRight2" key={item.timestamp}>
+              <img
+                className="imgItemRight"
+                src={item.context}
+                alt="context message"
+              />
+              <p className="textTimeRight">
+                {moment(Number(item.timestamp)).fromNow()}
+              </p>
+            </div>
+          )
+        } else {
+          return(
+            <div className="viewItemRight2" key={item.timestamp}>
+              <img
+                className="imgItemRight"
+                src={getGifImage(item.context)}
+                alt="context message"
+              />
+              <p className="textTimeRight">
+                {moment(Number(item.timestamp)).fromNow()}
+              </p>
+            </div>
+          )
+        }
+      } else {
+        // Item left (peer message)
+        if (item.type === 0) {
+          return(
+            <div className="viewWrapItemLeft" key={item.timestamp}>
+              <div className="viewWrapItemLeft3">
+                <img
+                  src={peerUser.photoUrl}
+                  alt="avatar"
+                  className="peerAvatarLeft"
+                />
+                <div className="viewItemLeft">
+                  <span className="textContentItem">{item.context}</span>
+                </div>
+
+              </div>
+              <p className="textTimeLeft">
+                {moment(Number(item.timestamp)).fromNow()}
+              </p>
+            </div>
+          )
+        } else if (item.type === 1) {
+          return(
+            <div className="viewWrapItemLeft2" key={item.timestamp}>
+              <div className="viewWrapItemLeft3">
+                <img
+                  src={peerUser.photoUrl}
+                  alt="avatar"
+                  className="peerAvatarLeft"
+                />
+                <div className="viewItemLeft2">
+                  <img
+                    className="imgItemLeft"
+                    src={item.context}
+                    alt="content message"
+                  />
+                </div>
+              </div>
+              <p className="textTimeLeft">
+                {moment(Number(item.timestamp)).fromNow()}
+              </p>
+            </div>
+          )
+        } else {
+          return(
+            <div className="viewWrapItemLeft2" key={item.timestamp}>
+              <div className="viewWrapItemLeft3">
+                <img
+                  src={peerUser.photoUrl}
+                  alt="avatar"
+                  className="peerAvatarLeft"
+                />
+                <div className="viewItemLeft3" key={item.timestamp}>
+                  <img
+                    className="imgItemLeft"
+                    src={getGifImage(item.context)}
+                    alt="content message"
+                  />
+                </div>
+              </div>
+              <p className="textTimeLeft">
+                {moment(Number(item.timestamp)).fromNow()}
+              </p>
+            </div>
+          )
+        }
+      }
+    })
+  : (
+    <div className = "viewWrapSayHi">
+          <span className = "textSayHi">Say hi to new friend</span >
+    <img
+      className="imgWaveHand"
+      src={handRight}
+      alt="wave hand"
+    />
+    </div >
+  );
 
   function RenderListMessage() {
     console.log('render mesges');
@@ -293,7 +406,8 @@ const ChatBox = ({ peerUser }) => {
         <div className="viewChatBoard">
           {/* List message */}
           <div className="viewListContentChat">
-            <RenderListMessage />
+            {/* <RenderListMessage /> */}
+            <RenderMessages/>
             <div
               style={{ float: 'left', clear: 'both' }}
               ref={messagesEnd}
