@@ -32,9 +32,27 @@ self.addEventListener('notificationclick', function (event) {
   const clickedNotification = event.notification;
   clickedNotification.close()
   let customUrl = url.replace('https://chatboi.now.sh', '')
-  console.log('notify url : '+ customUrl);
+  console.log('notify url : ' + customUrl);
   
-  // Do something as the result of the notification click
-  const promiseChain = clients.openWindow(customUrl);
-  event.waitUntil(promiseChain);
+  event.waitUntil(
+    clients.matchAll({
+      type: "window"
+    })
+      .then(function (clientList) {
+        for (var i = 0; i < clientList.length; i++) {
+          var client = clientList[i];
+          console.log(client);
+          
+          if (client.url === customUrl && 'focus' in client)
+            return client.focus();
+        }
+        if (clients.openWindow) {
+          return clients.openWindow(url);
+        }
+      })
+  );
+  
+  // // Do something as the result of the notification click
+  // const promiseChain = clients.openWindow(customUrl);
+  // event.waitUntil(promiseChain);
 });
