@@ -43,12 +43,15 @@ const Login = () => {
     async function saveDeviceToken() {
         const uid = firebase.getCurrentUser().uid;
         const token = await firebase.getPermission();
-        // save it to firebase user file
-        const tokenRef = firebase.user(uid).collection('tokens').doc(token);
-        await tokenRef.set({
-            token,
-            createdAt: Date(),
-        })
+        console.log(token);
+        if (token) {
+            // save it to firebase user file
+            const tokenRef = firebase.user(uid).collection('tokens').doc(token);
+            await tokenRef.set({
+                token,
+                createdAt: Date(),
+            })
+        }
     }
 
     function signIn(doSignInWith) {
@@ -56,7 +59,6 @@ const Login = () => {
         doSignInWith().then(async res => {
             let user = res.user;
             if (user) {
-                await saveDeviceToken();
                 const result = await firebase.getUser(user.uid);
                 console.log(result);
                 if (result.docs.length === 0) {
@@ -78,6 +80,7 @@ const Login = () => {
 
                 }
                 createToast("Login Sucess..")
+                await saveDeviceToken();
                 setLoading(false);
                 setError(null);
                 router.replace('/');
@@ -85,7 +88,7 @@ const Login = () => {
 
         }).catch(err => {
             console.log(err);
-            setLoading(false);
+            setLoading(false); 
             setError(err.message)
         })
     }
