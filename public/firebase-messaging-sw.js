@@ -43,7 +43,7 @@ self.addEventListener('notificationclick', function (event) {
           var client = clientList[i];
           console.log(client);
           
-          if (client.url === customUrl && 'focus' in client)
+          if (client.url && 'focus' in client)
             return client.focus();
         }
         if (clients.openWindow) {

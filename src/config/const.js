@@ -5,6 +5,8 @@ export const ROUTE = {
     users : '/users'
 }
 
+export const user = require('../images/user.jpg');
+
 export const AppString = {
     ID: 'id',
     PHOTO_URL: 'photoUrl',

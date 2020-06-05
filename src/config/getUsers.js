@@ -7,7 +7,7 @@ export function useUserList() {
     const [onlineUsers, setOnlineUsers] = useState([])
     const [userList, setUserList] = useState([])
     const [user, setUser] = useState({});
-    const [searchList, setSearchList] = useState(userList);
+    const [searchList, setSearchList] = useState([]);
     const [friendsList, setFriendsList] = useState([]);
     const [loading, setLoading] = useState(false)
 
@@ -23,6 +23,7 @@ export function useUserList() {
         firebase.checkPresence(currentUser.id);
         getListUser().then(users => {
             getFriendsList(users);
+            setSearchList(users)
         });
         isOnlineData()
         
@@ -76,12 +77,14 @@ export function useUserList() {
                 return user.nickname.toLowerCase().indexOf(q) > -1;
             }))
             setSearchList(list)
+            setTimeout(() => {
+                setLoading(false)
+            }, 800);
         } else {
             setSearchList([]);
-        }
-        setTimeout(() => {
             setLoading(false)
-        }, 800);
+        }
+        
         
     }
 
