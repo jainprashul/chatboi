@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, useIonViewDidEnter, IonButtons, IonButton, IonSkeletonText, IonSearchbar } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar } from '@ionic/react';
 import { ROUTE } from '../config/const';
-import { chevronDownCircleOutline, egg, trash, close, addCircle, add } from 'ionicons/icons';
+import { chevronDownCircleOutline, egg, close, addCircle, add } from 'ionicons/icons';
 import withAuthorization from '../context/withAuthorization';
 import { useUserList } from '../config/getUsers';
 import SkeletonList from '../components/SkeletonList';
 
 const UserList = () => {
 
-  const { loading, onlineUsers, getListUser, userList, addFriend, getFriendsList , friendsList, searchList, searchUsers} = useUserList();
+  const { loading, onlineUsers, getListUser, addFriend, getFriendsList , friendsList, searchList, searchUsers} = useUserList();
   const [selectedUser, setSelectedUser] = useState(null);
   const [modelOpen, setModelOpen] = useState(false);
   

@@ -6,7 +6,7 @@ export function useUserList() {
     const firebase = useContext(FirebaseContext);
     const [onlineUsers, setOnlineUsers] = useState([])
     const [userList, setUserList] = useState([])
-    const [user, setUser] = useState({});
+    // const [user, setUser] = useState({});
     const [searchList, setSearchList] = useState([]);
     const [friendsList, setFriendsList] = useState([]);
     const [loading, setLoading] = useState(false)
