@@ -7,6 +7,8 @@ export function useUserList() {
     const [onlineUsers, setOnlineUsers] = useState([])
     const [userList, setUserList] = useState([])
     const [user, setUser] = useState({});
+    const [searchList, setSearchList] = useState(userList);
+    const [friendsList, setFriendsList] = useState([]);
     const [loading, setLoading] = useState(false)
 
 
@@ -19,8 +21,12 @@ export function useUserList() {
     useEffect(() => {
         setLoading(true)
         firebase.checkPresence(currentUser.id);
-        getListUser()
+        getListUser().then(users => {
+            getFriendsList(users);
+        });
         isOnlineData()
+        
+        
     }, [])
 
     const isOnlineData = () => {
@@ -38,6 +44,47 @@ export function useUserList() {
         })
     }
 
+    const addFriend = (userUID) => {
+        firebase.user(currentUser.id).collection('friends').doc(userUID).set({
+            uid : userUID
+        }).then(res => {
+            console.log('user added', res);
+            
+        }).catch((err)=> console.log(err)
+        )
+        // firebase.user(currentUser.id).update({
+        //     friends: firebase.firestore.FieldValue.arrayUnion(userUID),
+        //     isOnline: false
+        // }).then(res => console.log(res)
+        // ).catch(err=> console.log(err));
+    }
+
+    const getFriendsList = async (users = userList) => {
+        let res  = await firebase.userFriends(currentUser.id).get();
+        let flist = res.docs.map(doc => doc.id);
+        console.log(flist);
+        // console.log(userList);
+        // return userList.filter(user => friends.includes(user.id));
+        setFriendsList(users.filter(user => flist.includes(user.id)));
+    }
+
+    async function searchUsers(query) {
+        setLoading(true);
+        if (query) {
+            let q = query.toLowerCase();
+            let list = userList.filter((user => {
+                return user.nickname.toLowerCase().indexOf(q) > -1;
+            }))
+            setSearchList(list)
+        } else {
+            setSearchList([]);
+        }
+        setTimeout(() => {
+            setLoading(false)
+        }, 800);
+        
+    }
+
     async function getListUser() {
         let usrList = [];
         const res = await firebase.getAllUsers();
@@ -53,6 +100,8 @@ export function useUserList() {
             // console.log(usrList);
             setUserList(usrList);
             setLoading(false);
+
+            return usrList
         }
     }
 
@@ -81,9 +130,14 @@ export function useUserList() {
         loading,
         onlineUsers,
         userList,
+        friendsList,
         getListUser,
         currentUser,
-        getUser
+        getUser,
+        addFriend,
+        getFriendsList,
+        searchList,
+        searchUsers
     }
     
 }

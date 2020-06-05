@@ -111,6 +111,10 @@ class Firebase {
 
    user = (uid) => this.firestore.collection(AppString.USERS).doc(uid);
 
+   userFriends = (uid) => this.firestore.collection(AppString.USERS).doc(uid).collection('friends')
+
+
+
    message = (chatid) => this.firestore.collection(AppString.MESSAGES).doc(chatid).collection(chatid);
 
 }
