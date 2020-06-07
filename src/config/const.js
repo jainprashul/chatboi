@@ -6,7 +6,6 @@ export const ROUTE = {
 }
 
 export const user = require('../images/user.jpg');
-export const appapk = require('../images/chatboi.apk')
 
 export const AppString = {
     ID: 'id',
