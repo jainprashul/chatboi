@@ -19,7 +19,7 @@ const WelcomeBox = ({Installbtn}) => {
                         <IonButton onClick={() => {
                             navigator.share({
                                 title: 'ChatBoi',
-                                text: 'ChatBoi by xpJain ! \n Download via Link : \n https://chatboi.now.sh/share/chatboi.apk',
+                                text: 'ChatBoi by xpJain ! \n Download via Link : \n https://chatboi.now.sh/share/chatboi.apk \n \n Website: \n',
                                 url: 'https://chatboi.now.sh',
                             })
                         }}>
