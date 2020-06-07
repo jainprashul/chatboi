@@ -1,5 +1,5 @@
 import React from 'react'
-import { AppString } from '../config/const'
+import { AppString, appapk } from '../config/const'
 import './welcome.css';
 import { IonTitle, IonToolbar, IonHeader, IonContent, IonButtons, IonIcon, IonButton } from '@ionic/react';
 import { shareSocial } from 'ionicons/icons';
@@ -19,8 +19,9 @@ const WelcomeBox = ({Installbtn}) => {
                         <IonButton onClick={() => {
                             navigator.share({
                                 title: 'ChatBoi',
-                                text: 'Share ChatBoi !',
+                                text: 'ChatBoi by xpJain !',
                                 url: 'https://chatboi.now.sh',
+                                files: [appapk]
                             })
                         }}>
                             <IonIcon icon={shareSocial}></IonIcon>
