@@ -1,7 +1,8 @@
 import React from 'react'
 import { AppString } from '../config/const'
 import './welcome.css';
-import { IonTitle, IonToolbar, IonHeader, IonContent } from '@ionic/react';
+import { IonTitle, IonToolbar, IonHeader, IonContent, IonButtons, IonIcon, IonButton } from '@ionic/react';
+import { shareSocial } from 'ionicons/icons';
 
 const WelcomeBox = ({Installbtn}) => {
     let currentUser = {
@@ -14,6 +15,17 @@ const WelcomeBox = ({Installbtn}) => {
             <IonHeader>
                 <IonToolbar>
                     <IonTitle className='ion-text-center ion-text-capitalize'>ChatBox</IonTitle>
+                    <IonButtons slot='end'>
+                        <IonButton onClick={() => {
+                            navigator.share({
+                                title: 'ChatBoi',
+                                text: 'Share ChatBoi !',
+                                url: 'https://chatboi.now.sh',
+                            })
+                        }}>
+                            <IonIcon icon={shareSocial}></IonIcon>
+                        </IonButton>
+                    </IonButtons>
                 </IonToolbar>
             </IonHeader>
             <IonContent>

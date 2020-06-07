@@ -6,7 +6,7 @@ import ChatBox from '../components/ChatBox';
 import { useUserList } from '../config/getUsers';
 
 let deferredPrompt;
-const Dashboard = ({location}) => {
+const Dashboard = ({location}) => { 
   // const firebase = useContext(FirebaseContext);
   let x = location.search;
   let peerUserid = x.substr(8);
@@ -18,6 +18,7 @@ const Dashboard = ({location}) => {
     const user = getUser(peerUserid).then(user => {
       setPeerUser(user)
     })
+   
     // return user
   });
 

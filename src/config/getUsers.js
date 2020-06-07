@@ -23,7 +23,7 @@ export function useUserList() {
         firebase.checkPresence(currentUser.id);
         getListUser().then(users => {
             getFriendsList(users);
-            setSearchList(users)
+            // setSearchList(users)
         });
         isOnlineData()
         
