@@ -5,6 +5,15 @@
     flex-direction: column;
     width: 100%;
     position: relative;
+    
+    /* Chrome 10-25, Safari 5.1-6 */
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+.chatb{
+    --background: linear-gradient(to right, #FDB99B, #CF8BF3, #A770EF);
+
 }
 
 .headerChatBoard {
@@ -14,6 +23,7 @@
     align-items: center;
     justify-content: center;
     flex-direction: row;
+    
 }
 
 .textHeaderChatBoard {
@@ -30,6 +40,7 @@
     overflow-y: scroll;
     padding-top: 10px;
     padding-bottom: 20px;
+    
 }
 
 .viewListContentChat::-webkit-scrollbar-track {
@@ -178,7 +189,7 @@ input::placeholder {
 .viewItemLeft {
     width: 300px;
     height: auto;
-    background-color: #203152;
+    background-color: rebeccapurple;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     border-bottom-left-radius: 0px;
@@ -193,7 +204,7 @@ input::placeholder {
 .viewItemLeft2 {
     width: 300px;
     height: auto;
-    background-color: #203152;
+    background-color: rebeccapurple;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     border-bottom-left-radius: 0px;
@@ -281,7 +292,7 @@ input::placeholder {
     height: 100px;
     overflow-x: scroll;
     align-items: center;
-    justify-content: space-around;
+    /* justify-content: space-around; */
 }
 
 .imgSticker {
@@ -512,3 +523,26 @@ input::placeholder {
     max-height: 90vh;
 }
 
+.chattoolbar {
+    background: #4e54c8;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #8f94fb, #4e54c8);
+    /* Chrome 10-25, Safari 5.1-6 */
+    --background: linear-gradient(to right, #FDB99B, #CF8BF3, #A770EF);
+    
+}
+
+.viewItemFullSticker {
+    width: 100vw;
+    height: 100hw;
+    /* background-color: #e8e8e8; */
+    align-self: flex-end;
+    margin-right: 20px;
+    margin-top: 10px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 0px;
+    color: #203152;
+    text-align: left;
+}

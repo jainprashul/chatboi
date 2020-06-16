@@ -20,6 +20,7 @@ export const AppString = {
 }
 
 export const images = {
+    heart : require('../images/heart.gif'),
     mimi1 : require('../images/mimi1.gif'),
     mimi2 : require('../images/mimi2.gif'),
     mimi3 : require('../images/mimi3.gif'),

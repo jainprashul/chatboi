@@ -64,6 +64,7 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
   * @type type 0 = text
   * @type type 1 = images
   * @type type 2 = stickers 
+  * @type type 3 = fullstickers 
   */
     function onSendMessage(content, type) {
         //close stickerbox
@@ -131,6 +132,8 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
 
     const getGifImage = value => {
         switch (value) {
+            case 'heart':
+                return images.heart
             case 'mimi1':
                 return images.mimi1
             case 'mimi2':

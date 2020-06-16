@@ -173,6 +173,7 @@ const Profile = () => {
 
         <br />
         <br />
+        <br/><br/><br/>
 
         <IonItem>
           <IonToggle checked={notification} disabled={notification} onIonChange={(e) => {

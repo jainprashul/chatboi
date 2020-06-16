@@ -1,9 +1,8 @@
-import React, { useState, useContext, useEffect, useRef } from 'react';
-import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, useIonViewWillEnter, IonInput, IonFooter, IonHeader, IonProgressBar, IonContent, IonBackButton, IonTitle, useIonViewDidEnter } from '@ionic/react';
-import { FirebaseContext } from '../context/FirebaseContext';
+import React, { useState, useEffect, useRef } from 'react';
+import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, IonInput, IonFooter, IonHeader, IonProgressBar, IonContent, IonBackButton, IonTitle, useIonViewDidEnter } from '@ionic/react';
 import { image, pricetag, send, handRight } from 'ionicons/icons';
 import { AppString, images } from '../config/const';
-import { createToast, useTabHide } from '../config/hooks';
+import { useTabHide } from '../config/hooks';
 import './chatbox.css'
 import moment from 'moment'
 import { useChatBox } from '../config/useChatBox';
@@ -12,7 +11,6 @@ import { useChatBox } from '../config/useChatBox';
 
 const ChatBox = ({ peerUser }) => {
 
-  const firebase = useContext(FirebaseContext);
 
   // const [showStickers, setShowStickers] = useState(false);
   const [listMessage, setListMessage] = useState([]);
@@ -95,7 +93,8 @@ const ChatBox = ({ peerUser }) => {
               </p>
             </div>
           )
-        } else {
+        }
+        else {
           return(
             <div className="viewItemRight2" key={item.timestamp}>
               <img
@@ -188,138 +187,17 @@ const ChatBox = ({ peerUser }) => {
     </div >
   );
 
-  function RenderListMessage() {
-    console.log('render mesges');
-
-    if (listMessage.length > 0) {
-      let viewMessages = [];
-      listMessage.forEach((item) => {
-        if (item.idFrom === currentUser.id) {
-          // Item right (my message)
-          if (item.type === 0) {
-            viewMessages.push(
-              <div className="viewItemRight2" key={item.timestamp}>
-                <div className="viewItemRight" >
-                  <span className="textContentItem">{item.context}</span>
-                </div>
-                <p className="textTimeRight">
-                  {moment(Number(item.timestamp)).fromNow()}
-                </p>
-              </div>
-            )
-          } else if (item.type === 1) {
-            viewMessages.push(
-              <div className="viewItemRight2" key={item.timestamp}>
-                <img
-                  className="imgItemRight"
-                  src={item.context}
-                  alt="context message"
-                />
-                <p className="textTimeRight">
-                  {moment(Number(item.timestamp)).fromNow()}
-                </p>
-              </div>
-            )
-          } else {
-            viewMessages.push(
-              <div className="viewItemRight2" key={item.timestamp}>
-                <img
-                  className="imgItemRight"
-                  src={getGifImage(item.context)}
-                  alt="context message"
-                />
-                <p className="textTimeRight">
-                  {moment(Number(item.timestamp)).fromNow()}
-                </p>
-              </div>
-            )
-          }
-        } else {
-          // Item left (peer message)
-          if (item.type === 0) {
-            viewMessages.push(
-              <div className="viewWrapItemLeft" key={item.timestamp}>
-                <div className="viewWrapItemLeft3">
-                  <img
-                    src={peerUser.photoUrl}
-                    alt="avatar"
-                    className="peerAvatarLeft"
-                  />
-                  <div className="viewItemLeft">
-                    <span className="textContentItem">{item.context}</span>
-                  </div>
-
-                </div>
-                <p className="textTimeLeft">
-                  {moment(Number(item.timestamp)).fromNow()}
-                </p>
-              </div>
-            )
-          } else if (item.type === 1) {
-            viewMessages.push(
-              <div className="viewWrapItemLeft2" key={item.timestamp}>
-                <div className="viewWrapItemLeft3">
-                  <img
-                    src={peerUser.photoUrl}
-                    alt="avatar"
-                    className="peerAvatarLeft"
-                  />
-                  <div className="viewItemLeft2">
-                    <img
-                      className="imgItemLeft"
-                      src={item.context}
-                      alt="content message"
-                    />
-                  </div>
-                </div>
-                <p className="textTimeLeft">
-                  {moment(Number(item.timestamp)).fromNow()}
-                </p>
-              </div>
-            )
-          } else {
-            viewMessages.push(
-              <div className="viewWrapItemLeft2" key={item.timestamp}>
-                <div className="viewWrapItemLeft3">
-                  <img
-                    src={peerUser.photoUrl}
-                    alt="avatar"
-                    className="peerAvatarLeft"
-                  />
-                  <div className="viewItemLeft3" key={item.timestamp}>
-                    <img
-                      className="imgItemLeft"
-                      src={getGifImage(item.context)}
-                      alt="content message"
-                    />
-                  </div>
-                </div>
-                <p className="textTimeLeft">
-                  {moment(Number(item.timestamp)).fromNow()}
-                </p>
-              </div>
-            )
-          }
-        }
-      });
-      return viewMessages;
-    } else {
-      return (
-        <div className="viewWrapSayHi">
-          <span className="textSayHi">Say hi to new friend</span>
-          <img
-            className="imgWaveHand"
-            src={handRight}
-            alt="wave hand"
-          />
-        </div>
-      );
-    }
-  };
+;
 
   function renderStickers() {
     return (
       <div className="viewStickers">
+        <img
+          className="imgSticker"
+          src={images.heart}
+          alt="sticker"
+          onClick={() => onSendMessage('heart', 2)}
+        />
         <img
           className="imgSticker"
           src={images.mimi1}
@@ -381,7 +259,7 @@ const ChatBox = ({ peerUser }) => {
   return (
     <>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar className='chattoolbar'>
           <IonButtons slot='start'>
             <IonBackButton />
           </IonButtons>
@@ -402,7 +280,7 @@ const ChatBox = ({ peerUser }) => {
         <IonProgressBar hidden={!loading} type='indeterminate' ></IonProgressBar >
 
       </IonHeader>
-      <IonContent>
+      <IonContent className='chatb'>
         <div className="viewChatBoard">
           {/* List message */}
           <div className="viewListContentChat">
