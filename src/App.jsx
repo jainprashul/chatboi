@@ -8,11 +8,10 @@ import {
   IonTabBar,
   IonTabButton,
   IonTabs,
-  useIonViewWillEnter,
   useIonViewDidEnter
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { ellipse, square, triangle, people, personCircle, chatbox } from 'ionicons/icons';
+import { people, personCircle, chatbox } from 'ionicons/icons';
 import Dashboard from './pages/DashBoard';
 import UserList from './pages/UserList';
 import Profile from './pages/Profile';
@@ -45,11 +44,11 @@ const App = () => {
 
   useEffect(() => {
     console.log('from app use effe');
-    firebase.getPermission().then(token => {
-      console.log(token);
-    }).catch(err => {
-      console.log('err', err);
-    });
+    // firebase.getPermission().then(token => {
+    //   console.log(token);
+    // }).catch(err => {
+    //   console.log('err', err);
+    // });
 
     
 

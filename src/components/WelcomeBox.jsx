@@ -1,10 +1,10 @@
 import React from 'react'
-import { AppString, appapk } from '../config/const'
+import { AppString } from '../config/const'
 import './welcome.css';
 import { IonTitle, IonToolbar, IonHeader, IonContent, IonButtons, IonIcon, IonButton } from '@ionic/react';
 import { shareSocial } from 'ionicons/icons';
 
-const WelcomeBox = ({Installbtn}) => {
+const WelcomeBox = () => {
     let currentUser = {
         id: localStorage.getItem(AppString.ID),
         avatar: localStorage.getItem(AppString.PHOTO_URL),

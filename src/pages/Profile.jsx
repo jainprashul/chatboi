@@ -1,19 +1,19 @@
 import React, { useState, useContext } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonItem, IonLabel, IonInput, IonLoading, useIonViewDidEnter } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonItem, IonLabel, IonInput, IonLoading, useIonViewDidEnter, IonToggle, IonFooter } from '@ionic/react';
 import { alertController } from '@ionic/core';
 import withAuthorization from '../context/withAuthorization';
-import { trailSignOutline, logOut, camera } from 'ionicons/icons';
-import { AppString, images, ROUTE } from '../config/const';
-import { createToast } from '../config/hooks';
-import { FirebaseContext } from '../context/FirebaseContext';
+import { logOut, camera } from 'ionicons/icons';
+import { AppString } from '../config/const';
+import { createToast, useLocalStorage } from '../config/hooks';
+import { FirebaseContext, saveDeviceToken } from '../context/FirebaseContext';
 import './Profile.css';
 
 let newAvatar = null;
-let newPhotoUrl = '';
 let refInput;
-const Profile = ({history}) => {
+const Profile = () => {
   const firebase = useContext(FirebaseContext);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useLocalStorage('notification', false);
 
   const [currentUser, setCurrentUser] = useState({
     id: localStorage.getItem(AppString.ID),
@@ -34,6 +34,10 @@ const Profile = ({history}) => {
       aboutMe: localStorage.getItem(AppString.ABOUT_ME),
     });
   })
+
+  // useEffect(() => {
+  //   // saveDeviceToken();
+  // }, [notification])
 
   function onChangeAvatar(event) {
     if (event.target.files && event.target.files[0]) {
@@ -90,7 +94,7 @@ const Profile = ({history}) => {
     firebase.firestore.collection(AppString.USERS)
       .doc(currentUser.id)
       .update(newInfo)
-      .then(data => {
+      .then(() => {
         localStorage.setItem(AppString.NICKNAME, nickname)
         localStorage.setItem(AppString.ABOUT_ME, aboutMe)
         if (isPhotoUrl) {
@@ -102,31 +106,6 @@ const Profile = ({history}) => {
     
   }
 
-  function deleteUser() {
-    alertController.create({
-      header: 'Delete User Profile !',
-      subHeader: "Are you sure?",
-      backdropDismiss: false,
-      buttons: [{
-        text: 'Yes',
-        role: 'ok',
-        cssClass: 'signout',
-        handler: () => {
-          firebase.deleteUser();
-          console.log('user deleted');
-          
-          firebase.doSignOut();
-          // history.replace(ROUTE.signin);
-        }
-      },
-      {
-        text: 'No',
-        role: 'cancel',
-        cssClass: 'signout',
-      }
-      ]
-    }).then(res => res.present());
-  }
 
   function signOut() {
 
@@ -192,9 +171,27 @@ const Profile = ({history}) => {
         <IonButton onClick={uploadAvatar}>Update</IonButton>
         {/* <IonButton color='danger' expand='block' onClick={deleteUser}>Delete User</IonButton> */}
 
+        <br />
+        <br />
+
+        <IonItem>
+          <IonToggle checked={notification} disabled={notification} onIonChange={(e) => {
+            setNotification(e.detail.checked);
+            if (e.detail.checked) {
+              saveDeviceToken();
+            }
+          }} />
+          <IonLabel>Enable Messaging Notification</IonLabel>
+        </IonItem>
+        
+
+
 
         <IonLoading isOpen={loading}></IonLoading>
       </IonContent>
+      <IonFooter>
+        
+      </IonFooter>
     </IonPage>
   );
 };

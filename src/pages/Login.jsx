@@ -40,19 +40,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    async function saveDeviceToken() {
-        const uid = firebase.getCurrentUser().uid;
-        const token = await firebase.getPermission();
-        console.log(token);
-        if (token) {
-            // save it to firebase user file
-            const tokenRef = firebase.user(uid).collection('tokens').doc(token);
-            await tokenRef.set({
-                token,
-                createdAt: Date(),
-            })
-        }
-    }
+    
 
     function signIn(doSignInWith) {
         setLoading(true);
@@ -80,7 +68,7 @@ const Login = () => {
 
                 }
                 createToast("Login Sucess..")
-                await saveDeviceToken();
+                // await saveDeviceToken();
                 setLoading(false);
                 setError(null);
                 router.replace('/');

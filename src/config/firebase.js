@@ -59,9 +59,9 @@ class Firebase {
 
    /** NOtification APi */
    getPermission = () =>
-      this.notification.requestPermission().then(() => {
+      this.notification.getToken().then((token) => {
          console.log('have permission');
-         let token = this.notification.getToken();
+         // let token = this.notification.getToken();
 
 
          return token

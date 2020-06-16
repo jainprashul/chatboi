@@ -26,8 +26,8 @@ export function useUserList() {
             // setSearchList(users)
         });
         isOnlineData()
-        
-        
+
+
     }, [])
 
     const isOnlineData = () => {
@@ -47,11 +47,11 @@ export function useUserList() {
 
     const addFriend = (userUID) => {
         firebase.user(currentUser.id).collection('friends').doc(userUID).set({
-            uid : userUID
+            uid: userUID
         }).then(res => {
             console.log('user added', res);
-            
-        }).catch((err)=> console.log(err)
+
+        }).catch((err) => console.log(err)
         )
         // firebase.user(currentUser.id).update({
         //     friends: firebase.firestore.FieldValue.arrayUnion(userUID),
@@ -61,12 +61,14 @@ export function useUserList() {
     }
 
     const getFriendsList = async (users = userList) => {
-        let res  = await firebase.userFriends(currentUser.id).get();
-        let flist = res.docs.map(doc => doc.id);
-        console.log(flist);
-        // console.log(userList);
-        // return userList.filter(user => friends.includes(user.id));
-        setFriendsList(users.filter(user => flist.includes(user.id)));
+        if (currentUser.id) {
+            let res = await firebase.userFriends(currentUser.id).get();
+            let flist = res.docs.map(doc => doc.id);
+            console.log(flist);
+            // console.log(userList);
+            // return userList.filter(user => friends.includes(user.id));
+            setFriendsList(users.filter(user => flist.includes(user.id)));
+        }
     }
 
     async function searchUsers(query) {
@@ -84,8 +86,8 @@ export function useUserList() {
             setSearchList([]);
             setLoading(false)
         }
-        
-        
+
+
     }
 
     async function getListUser() {
@@ -124,7 +126,7 @@ export function useUserList() {
     //         setUser(userD)
     //     })
 
-        
+
     //     console.log(user);
     //     return user;
     // }
@@ -142,5 +144,5 @@ export function useUserList() {
         searchList,
         searchUsers
     }
-    
+
 }
