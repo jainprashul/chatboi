@@ -19,6 +19,8 @@ export const AppString = {
     PREFIX_IMAGE: 'image/'
 }
 
+export const logo = require('../images/logo.png')
+
 export const images = {
     heart : require('../images/heart.gif'),
     mimi1 : require('../images/mimi1.gif'),

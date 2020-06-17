@@ -4,6 +4,7 @@ import WelcomeBox from '../components/WelcomeBox';
 import withAuthorization from '../context/withAuthorization';
 import ChatBox from '../components/ChatBox';
 import { useUserList } from '../config/getUsers';
+import LoadingScreen from '../components/LoadingScreen';
 
 let deferredPrompt;
 const Dashboard = ({location}) => { 
@@ -64,7 +65,7 @@ const Dashboard = ({location}) => {
 
   return (
     <IonPage>
-      {!(peerUserid && peerUser) ? <WelcomeBox Installbtn={InstallBtn} /> : <ChatBox peerUser={peerUser} Installbtn={InstallBtn} />}
+      {!(peerUserid && peerUser) ? <LoadingScreen Installbtn={InstallBtn} /> : <ChatBox peerUser={peerUser} Installbtn={InstallBtn} />}
     </IonPage>
   );
 };

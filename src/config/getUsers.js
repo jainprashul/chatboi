@@ -90,6 +90,9 @@ export function useUserList() {
 
     }
 
+    /**
+     * Get all User data List 
+     */
     async function getListUser() {
         let usrList = [];
         const res = await firebase.getAllUsers();
@@ -109,6 +112,7 @@ export function useUserList() {
             return usrList
         }
     }
+
 
     async function getUser(uid) {
         const res = await firebase.getUser(uid);
@@ -138,6 +142,10 @@ export function useUserList() {
         friendsList,
         getListUser,
         currentUser,
+        /**
+         * Get userData , store & return it in the database 
+         * @param {*} uid
+         */
         getUser,
         addFriend,
         getFriendsList,

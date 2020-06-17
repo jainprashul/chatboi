@@ -11,7 +11,7 @@ import {
   useIonViewDidEnter
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { people, personCircle, chatbox } from 'ionicons/icons';
+import { people, personCircle, chatbox, chatboxEllipses } from 'ionicons/icons';
 import Dashboard from './pages/DashBoard';
 import UserList from './pages/UserList';
 import Profile from './pages/Profile';
@@ -80,15 +80,15 @@ const App = () => {
             <Route path={ROUTE.chat} component={Dashboard} exact={true} />
             <Route path={ROUTE.profile} component={Profile} exact={true} />
             <Route path={ROUTE.users} component={UserList} exact={true} />
-            <Route path="/" render={() => <Redirect to={ROUTE.chat} />} exact={true} />
+            <Route path="/" render={() => <Redirect to={ROUTE.users} />} exact={true} />
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
-            <IonTabButton tab="tab1" href={ROUTE.users}>
-              <IonIcon icon={people} />
-              <IonLabel>Friends</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="tab2" href={ROUTE.chat}>
+            {/* <IonTabButton tab="tab1" href={ROUTE.users}>
               <IonIcon icon={chatbox} />
+              <IonLabel>Friends</IonLabel>
+            </IonTabButton> */}
+            <IonTabButton tab="tab2" href={ROUTE.users}>
+              <IonIcon icon={chatboxEllipses} />
               <IonLabel>Chats</IonLabel>
             </IonTabButton>
             <IonTabButton tab="tab3" href={ROUTE.profile}>

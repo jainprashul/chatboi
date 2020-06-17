@@ -1,18 +1,30 @@
 import React, { useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar } from '@ionic/react';
-import { ROUTE } from '../config/const';
-import { chevronDownCircleOutline, egg, close, addCircle, add } from 'ionicons/icons';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar, useIonViewWillEnter, useIonViewDidEnter, IonImg } from '@ionic/react';
+import { ROUTE, logo } from '../config/const';
+import { chevronDownCircleOutline, egg, close, addCircle, add, shareSocial } from 'ionicons/icons';
 import withAuthorization from '../context/withAuthorization';
 import { useUserList } from '../config/getUsers';
 import SkeletonList from '../components/SkeletonList';
 
+let deferredPrompt;
 const UserList = () => {
-
+  const [installHide, setInstallHide] = useState(true);
   const { loading, onlineUsers, getListUser, addFriend, getFriendsList , friendsList, searchList, searchUsers} = useUserList();
   const [selectedUser, setSelectedUser] = useState(null);
   const [modelOpen, setModelOpen] = useState(false);
   
-  
+  useIonViewDidEnter(() => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // e.preventDefault();
+      deferredPrompt = e;
+      setInstallHide(false);
+    });
+
+    window.addEventListener('appinstalled', (event) => {
+      console.log('👍', 'appinstalled', event);
+    });
+  })
+
 
   function doRefresh(e) {
     getListUser().then(users => {
@@ -22,6 +34,14 @@ const UserList = () => {
       }
     });
   }
+
+  const InstallBtn = () => (<IonButton hidden={installHide} color='dark' expand='full' onClick={() => {
+    const p = deferredPrompt;
+    if (!p) { return }
+    p.prompt();
+    p.userChoice.then(() => setInstallHide(true));
+
+  }} >Install App</IonButton>)
 
   
 
@@ -59,8 +79,18 @@ const UserList = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle className='ion-text-center ion-text-capitalize'>Users</IonTitle>
-
+          <IonTitle className='ion-text-center ion-text-capitalize'>Chat Boi</IonTitle>
+          <IonButtons slot='end'>
+            <IonButton onClick={() => {
+              navigator.share({
+                title: 'ChatBoi',
+                text: 'ChatBoi by xpJain ! \n Download via Link : \n https://chatboi.now.sh/share/chatboi.apk \n \n Website: \n',
+                url: 'https://chatboi.now.sh',
+              })
+            }}>
+              <IonIcon size={24} icon={shareSocial}></IonIcon>
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
         <IonProgressBar hidden={!loading} type='indeterminate'></IonProgressBar>
 
@@ -74,6 +104,7 @@ const UserList = () => {
             refreshingText="Refreshing...">
           </IonRefresherContent>
         </IonRefresher>
+        <InstallBtn/>
         <IonList>
           <IonListHeader>
             <IonLabel>Chat List</IonLabel>

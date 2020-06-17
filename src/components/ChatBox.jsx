@@ -3,9 +3,12 @@ import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, IonInpu
 import { image, pricetag, send, handRight } from 'ionicons/icons';
 import { AppString, images } from '../config/const';
 import { useTabHide } from '../config/hooks';
+import {PhotoViewer} from '@ionic-native/photo-viewer'
 import './chatbox.css'
 import moment from 'moment'
 import { useChatBox } from '../config/useChatBox';
+import { modalController } from '@ionic/core';
+import ImagePreview from './ImagePreview';
 
 // let listMessage = []
 
@@ -14,6 +17,8 @@ const ChatBox = ({ peerUser }) => {
 
   // const [showStickers, setShowStickers] = useState(false);
   const [listMessage, setListMessage] = useState([]);
+  const [modelOpen, setmodelOpen] = useState(false);
+  const [imgPrev, setImgPrev] = useState(null);
   // const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
   const messagesEnd = useRef(null)
@@ -52,6 +57,12 @@ const ChatBox = ({ peerUser }) => {
     console.log('showed tab');
   });
 
+  function openPreview(image) {
+    setmodelOpen(true);
+    setImgPrev(image);
+    console.log('modelOpen');
+  }
+
 
   const onKeyboardPress = event => {
     if (event.key === 'Enter') {
@@ -87,6 +98,9 @@ const ChatBox = ({ peerUser }) => {
                 className="imgItemRight"
                 src={item.context}
                 alt="context message"
+                onClick={() => {                  
+                  openPreview(item.context);
+                }}
               />
               <p className="textTimeRight">
                 {moment(Number(item.timestamp)).fromNow()}
@@ -142,6 +156,9 @@ const ChatBox = ({ peerUser }) => {
                   <img
                     className="imgItemLeft"
                     src={item.context}
+                    onClick={() => {
+                      openPreview(item.context);
+                    }}
                     alt="content message"
                   />
                 </div>
@@ -294,6 +311,8 @@ const ChatBox = ({ peerUser }) => {
           {/* Stickers */}
           {showStickers ? renderStickers() : null}
         </div>
+       <ImagePreview img={imgPrev} modelOpen={modelOpen} setModelOpen={setmodelOpen} />
+
       </IonContent>
       {/* View bottom */}
       <IonFooter>
