@@ -3,11 +3,9 @@ import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, IonInpu
 import { image, pricetag, send, handRight } from 'ionicons/icons';
 import { AppString, images } from '../config/const';
 import { useTabHide } from '../config/hooks';
-import {PhotoViewer} from '@ionic-native/photo-viewer'
 import './chatbox.css'
 import moment from 'moment'
 import { useChatBox } from '../config/useChatBox';
-import { modalController } from '@ionic/core';
 import ImagePreview from './ImagePreview';
 
 // let listMessage = []

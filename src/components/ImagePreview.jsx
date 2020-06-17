@@ -1,7 +1,6 @@
 import React from 'react'
 import { IonContent, IonItem, IonButton, IonIcon, IonSlides, IonSlide, IonImg, IonModal } from '@ionic/react'
 import { close } from 'ionicons/icons'
-import { modalController } from '@ionic/core';
 import './imagePreview.css'
 
 const ImagePreview = ({ img, modelOpen, setModelOpen }) => {

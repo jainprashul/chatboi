@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar, useIonViewWillEnter, useIonViewDidEnter, IonImg } from '@ionic/react';
-import { ROUTE, logo } from '../config/const';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar, useIonViewDidEnter } from '@ionic/react';
+import { ROUTE } from '../config/const';
 import { chevronDownCircleOutline, egg, close, addCircle, add, shareSocial } from 'ionicons/icons';
 import withAuthorization from '../context/withAuthorization';
 import { useUserList } from '../config/getUsers';
