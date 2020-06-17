@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useState, useEffect } from "react";
 import { FirebaseContext } from "../context/FirebaseContext";
 import { AppString } from "./const";
