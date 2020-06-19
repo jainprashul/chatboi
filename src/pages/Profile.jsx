@@ -145,7 +145,7 @@ const Profile = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className='ion-text-center ion-padding' >
-        <img className="avatar" alt="Avatar" src={photoUrl} />
+        <img className="useravatar" alt="Avatar" src={photoUrl} />
         <div onClick={()=>refInput.click()}><IonIcon icon={camera}></IonIcon></div>
         <div hidden={true} className="ion-hide viewWrapInputFile">
           <input

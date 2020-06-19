@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { IonPage, IonButton, useIonViewWillEnter } from '@ionic/react';
-import WelcomeBox from '../components/WelcomeBox';
 import withAuthorization from '../context/withAuthorization';
 import ChatBox from '../components/ChatBox';
 import { useUserList } from '../config/getUsers';

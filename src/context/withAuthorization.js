@@ -9,7 +9,7 @@ const withAuthorization = Component => props => {
     useEffect(() => {
         let listener = firebase.auth.onAuthStateChanged(user => {
             if (!(user)) {
-                router.history.replace('/signin')
+                router.history.replace('/screen')
             }
         })
         return () => {

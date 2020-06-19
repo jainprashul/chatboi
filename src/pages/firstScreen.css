@@ -1,0 +1,21 @@
+.avatar {
+
+    left: 10rem;
+    width: 15rem;
+    height: 15rem;
+    /* border-radius: 50% !important; */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    object-fit: cover;
+}
+
+.welcome {
+    text-indent: 2px;
+    letter-spacing: 2px;
+}
+
+.appname {
+    font-size: 3rem;
+    font-family: cursive;
+    font-style: bold;
+}
