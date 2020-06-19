@@ -28,6 +28,9 @@ class Firebase {
       this.functions = app.functions();
       
       // this.functions.useFunctionsEmulator('http://localhost:5001');
+      this.firestore.enablePersistence().then(() => {
+         console.log('ENABLED PERISTANCE');
+      }).catch((err) => { console.log(err) });
 
    }
 

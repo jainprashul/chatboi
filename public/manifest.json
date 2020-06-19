@@ -2,7 +2,7 @@
   "name": "Chat Boi - Messaging \u0026 More",
   "short_name": "Chat Boi",
   "theme_color": "#41006f",
-  "background_color": "#1e1e1e",
+  "background_color": "#41006f",
   "display": "standalone",
   "Scope": "/",
   "start_url": "/",

@@ -113,7 +113,7 @@ const UserList = () => {
           
         </IonList>
 
-        <IonFab vertical='bottom' horizontal='end' >
+        <IonFab  vertical='bottom' horizontal='end' slot='fixed' >
           <IonFabButton fill='clear' onClick={() => { setModelOpen(true) }}>
             <IonIcon icon={add} />
           </IonFabButton>

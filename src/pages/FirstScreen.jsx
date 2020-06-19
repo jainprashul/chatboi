@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/accessible-emoji */
 import React from 'react'
 import { IonPage, IonContent,IonButton } from '@ionic/react'
 import { logo, ROUTE } from '../config/const'
@@ -10,14 +11,13 @@ const FirstScreen = () => {
         <IonPage>
             <IonContent fullscreen className='ion-padding ion-text-center'>
                 <br/><br/>
-                <br/><br/>
-                
+                <br/><br/>    
                 <h2 className='welcome'>Welcome to</h2>
                 <h1 className='appname'>ChatBoi</h1>
                 <br/>
                 <img alt='' src={logo} className="avatar" />
-                <p>Now fun is just a simple click</p>
-                <IonButton routerLink={ROUTE.signin}>Get started!</IonButton>
+                <p>Now Fun Is Simple N Secure <span role='img'>❤️</span></p>
+                <IonButton routerLink={ROUTE.signin}>Get started</IonButton>
             </IonContent>
         </IonPage>
     )

@@ -67,7 +67,7 @@ const App = () => {
   // })
   
   useIonViewDidEnter(() => {
-    console.log('from app');
+    // console.log('from app');
     
     
   })
