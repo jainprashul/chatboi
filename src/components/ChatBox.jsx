@@ -1,21 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, IonInput, IonFooter, IonHeader, IonProgressBar, IonContent, IonBackButton, IonTitle, useIonViewDidEnter } from '@ionic/react';
-import { image, pricetag, send, handRight } from 'ionicons/icons';
-import { AppString, images } from '../config/const';
+import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, IonInput, IonFooter, IonHeader, IonProgressBar, IonContent, IonBackButton, IonTitle, useIonViewDidEnter, IonList, IonItem, IonPopover } from '@ionic/react';
+import { image, pricetag, send, handRight, ellipsisVertical } from 'ionicons/icons';
+import { } from '@ionic/core';
+import { AppString, images, themes, ROUTE } from '../config/const';
 import { useTabHide } from '../config/hooks';
 import './chatbox.css'
+import'./themes.css'
 import moment from 'moment'
 import { useChatBox } from '../config/useChatBox';
 import ImagePreview from './ImagePreview';
 
 // let listMessage = []
+let theme = localStorage.getItem('ctheme')
+let selectedTheme = theme ? parseInt(theme) : 0;
 
-const ChatBox = ({ peerUser }) => {
-
-
+const ChatBox = ({ peerUser, history }) => {
   // const [showStickers, setShowStickers] = useState(false);
   const [listMessage, setListMessage] = useState([]);
   const [modelOpen, setmodelOpen] = useState(false);
+  const [showPopover, setShowPopover] = useState({
+    open: false,
+    event: undefined
+  })
   const [imgPrev, setImgPrev] = useState(null);
   // const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState('');
@@ -35,7 +41,9 @@ const ChatBox = ({ peerUser }) => {
   // console.log( groupChatId, currentPhotoFile);
 
   useIonViewDidEnter(() => {
-    // getMsgHistory();
+    let theme = localStorage.getItem('ctheme')
+    selectedTheme = theme ? parseInt(theme) : 0;
+
     console.log("Entered chat box", peerUser.id);
   });
 
@@ -73,6 +81,7 @@ const ChatBox = ({ peerUser }) => {
       messagesEnd.current.scrollIntoView({})
     }
   };
+
 
   const RenderMessages = () => (listMessage.length) ? 
     listMessage.map((item) => {
@@ -273,8 +282,8 @@ const ChatBox = ({ peerUser }) => {
 
   return (
     <>
-      <IonHeader>
-        <IonToolbar className='chattoolbar'>
+      <IonHeader >
+        <IonToolbar className={`chattoolbar ${themes[selectedTheme]}-header`}>
           <IonButtons slot='start'>
             <IonBackButton />
           </IonButtons>
@@ -291,11 +300,22 @@ const ChatBox = ({ peerUser }) => {
             </div>
 
           </IonTitle>
+          <IonButtons slot='end'>
+            <IonButton onClick={(e) => {
+              setShowPopover({
+                open: true,
+                event: e.nativeEvent
+              })
+            }}>
+              <IonIcon icon={ellipsisVertical} slot='icon-only'></IonIcon>
+            </IonButton>
+          </IonButtons>
         </IonToolbar>
+        
         <IonProgressBar hidden={!loading} type='indeterminate' ></IonProgressBar >
 
       </IonHeader>
-      <IonContent className='chatb'>
+      <IonContent className={themes[selectedTheme]}>
         <div className="viewChatBoard">
           {/* List message */}
           <div className="viewListContentChat">
@@ -310,7 +330,13 @@ const ChatBox = ({ peerUser }) => {
           {showStickers ? renderStickers() : null}
         </div>
        <ImagePreview img={imgPrev} modelOpen={modelOpen} setModelOpen={setmodelOpen} />
-
+        <IonPopover isOpen={showPopover.open}
+          event={showPopover.event}
+          onDidDismiss={e => setShowPopover({ open: false, event: undefined })}>
+          <IonList >
+            <IonItem lines='none' routerLink={ROUTE.theme}>Themes</IonItem>
+          </IonList>
+        </IonPopover>
       </IonContent>
       {/* View bottom */}
       <IonFooter>

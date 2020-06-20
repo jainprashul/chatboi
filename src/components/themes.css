@@ -1,0 +1,99 @@
+.default {
+    background: #eeeeee;
+
+}
+.SexyBlue{
+    background: #2193b0;
+    /* fallback for old browsers */
+    background: linear-gradient(to bottom, #6dd5ed, #2193b0);
+    /* Chrome 10-25, Safari 5.1-6 */
+    --background: linear-gradient(to bottom, #6dd5ed, #2193b0);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+.SexyBlue-header{
+    --background: #6dd5ed;
+    /* fallback for old browsers */
+    background: linear-gradient(to bottom, #6dd5ed, #2193b0);
+
+
+}
+
+.Flickr {
+    background: #ff0084;
+    color: white;
+
+    /* fallback for old browsers */
+    background: linear-gradient(to bottom, #33001b, #ff0084);
+    /* Chrome 10-25, Safari 5.1-6 */
+    --background: linear-gradient(to bottom, #33001b, #ff0084);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+.Flickr-header {
+    --background: #33001b;
+    color: white;
+    /* fallback for old browsers */
+    background: linear-gradient(to bottom, #33001b, #ff0084);
+
+
+}
+
+.CheeryBlossom {
+    background: #FBD3E9;
+    /* fallback for old browsers */
+    background: linear-gradient(to top, #BB377D, #FBD3E9);
+    --background: linear-gradient(to top, #BB377D, #FBD3E9);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+.CheeryBlossom-header {
+    --background: #FBD3E9;
+    /* fallback for old browsers */
+    background: linear-gradient(to top, #BB377D, #FBD3E9);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
+.PureLust {
+background: #333333;
+    color: white;
+
+/* fallback for old browsers */
+background: linear-gradient(to top, #dd1818, #333333);
+/* Chrome 10-25, Safari 5.1-6 */
+--background: linear-gradient(to top, #dd1818, #333333);
+/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+.PureLust-header {
+--background: #333333;
+color: white;
+/* fallback for old browsers */
+background: linear-gradient(to top, #dd1818, #333333);
+/* Chrome 10-25, Safari 5.1-6 */
+
+}
+
+.UnderTheLake{
+    background: #093028;
+    color: white;
+
+    /* fallback for old browsers */
+    background: linear-gradient(to bottom, #237A57, #093028);
+    /* Chrome 10-25, Safari 5.1-6 */
+    --background: linear-gradient(to top, #237A57, #093028);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+.UnderTheLake-header{
+    --background: #093028;
+    color: white;
+    /* fallback for old browsers */
+    background: linear-gradient(to bottom, #237A57, #093028);
+
+}
+
+.previewTheme{
+    height: 15rem;
+    width: 12rem;
+}

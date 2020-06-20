@@ -39,6 +39,7 @@ import Login from './pages/Login';
 import { FirebaseContext } from './context/FirebaseContext';
 import { createToast } from './config/hooks';
 import FirstScreen from './pages/FirstScreen';
+import Themes from './components/Themes';
 
 const App = () => {
   const firebase = useContext(FirebaseContext);
@@ -77,7 +78,8 @@ const App = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-            <Route path={'/screen'} component={FirstScreen} exact={true} />
+            <Route path={ROUTE.theme} component={Themes} exact={true} />
+            <Route path={ROUTE.startScreen} component={FirstScreen} exact={true} />
             <Route path={ROUTE.signin} component={Login} exact={true} />
             <Route path={ROUTE.chat} component={Dashboard} exact={true} />
             <Route path={ROUTE.profile} component={Profile} exact={true} />

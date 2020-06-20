@@ -6,7 +6,7 @@ import { useUserList } from '../config/getUsers';
 import LoadingScreen from '../components/LoadingScreen';
 
 let deferredPrompt;
-const Dashboard = ({location}) => { 
+const Dashboard = ({location, history}) => { 
   // const firebase = useContext(FirebaseContext);
   let x = location.search;
   let peerUserid = x.substr(8);
@@ -64,7 +64,7 @@ const Dashboard = ({location}) => {
 
   return (
     <IonPage>
-      {!(peerUserid && peerUser) ? <LoadingScreen Installbtn={InstallBtn} /> : <ChatBox peerUser={peerUser} Installbtn={InstallBtn} />}
+      {!(peerUserid && peerUser) ? <LoadingScreen Installbtn={InstallBtn} /> : <ChatBox peerUser={peerUser} history={history} Installbtn={InstallBtn} />}
     </IonPage>
   );
 };

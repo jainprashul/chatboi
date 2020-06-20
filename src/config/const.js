@@ -2,7 +2,9 @@ export const ROUTE = {
     signin: '/signin',
     chat: '/chat',
     profile: '/profile',
-    users : '/users'
+    users: '/users',
+    startScreen: '/screen',
+    theme: '/chat/theme'
 }
 
 export const user = require('../images/user.jpg');
@@ -33,4 +35,9 @@ export const images = {
     mimi8 : require('../images/mimi8.gif'),
     mimi9 : require('../images/mimi9.gif'),
 }
+
+export const themes = [
+    'default','SexyBlue', 'CheeryBlossom', 'PureLust', 'UnderTheLake'
+]
+
 

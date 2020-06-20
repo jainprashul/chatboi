@@ -6,17 +6,6 @@
     width: 100%;
     position: relative;
     
-    /* Chrome 10-25, Safari 5.1-6 */
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-}
-
-.chatb{
-    /* --background: linear-gradient(to top, #dd1818, #333333); */
-    /* --background: linear-gradient(to bottom, #333333, #dd1818); */
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-
 }
 
 .headerChatBoard {
@@ -192,7 +181,7 @@ input::placeholder {
 .viewItemLeft {
     width: 300px;
     height: auto;
-    background-color: rebeccapurple;
+    background-color: rgba(255, 255, 255, 0.5);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     border-bottom-left-radius: 0px;
@@ -201,7 +190,7 @@ input::placeholder {
     padding-right: 10px;
     padding-top: 5px;
     padding-bottom: 5px;
-    color: white;
+    color:black;
 }
 
 .viewItemLeft2 {
@@ -333,15 +322,7 @@ input::placeholder {
     display: flex;
 }
 
-.header {
-    font-weight: bold;
-    font-size: 20px;
-    color: #203152;
-    background-color: #f5a623;
-    padding: 20px;
-    box-shadow: 0 4px 4px #808888;
-    flex-direction: row;
-}
+
 
 .body {
     display: flex;
@@ -379,74 +360,7 @@ input::placeholder {
     cursor: pointer;
 }
 
-/* Dialog confirm */
 
-.viewCoverScreen {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.viewWrapTextDialogConfirmLogout {
-    width: 300px;
-    height: 50px;
-    background-color: #f5a623;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center
-}
-
-.titleDialogConfirmLogout {
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-}
-
-.viewWrapButtonDialogConfirmLogout {
-    flex-direction: row;
-    height: 100px;
-    width: 300px;
-    min-width: 300px;
-    background-color: white;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-}
-
-.btnYes {
-    width: 100px;
-    height: 40px;
-    font-weight: bold;
-    margin-right: 20px;
-    background-color: #203152;
-    border: 0px;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.btnNo {
-    width: 100px;
-    height: 40px;
-    font-weight: bold;
-    margin-left: 20px;
-    padding: 5px;
-    background-color: #dd4b39;
-    border: 0px;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-}
 
 /* List user */
 
@@ -526,12 +440,6 @@ input::placeholder {
     max-height: 90vh;
 }
 
-.chattoolbar {
-    /* fallback for old browsers */
-    /* Chrome 10-25, Safari 5.1-6 */
-    /* --background: linear-gradient(to right, #FDB99B, #CF8BF3, #A770EF); */
-    
-}
 
 .viewItemFullSticker {
     width: 100vw;
