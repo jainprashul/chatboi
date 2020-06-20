@@ -26,7 +26,7 @@ const ImagePreview = ({ img, modelOpen, setModelOpen }) => {
                 </IonItem>
                 <IonSlides options={slideropts} >
                     <IonSlide>
-                        <div className="swiper-zoom-container" >
+                        <div className="swiper-container" >
                             <IonImg src={img} />
                         </div>
                     </IonSlide>
