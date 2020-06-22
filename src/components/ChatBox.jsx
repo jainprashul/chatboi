@@ -3,12 +3,13 @@ import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, IonInpu
 import { image, pricetag, send, handRight, ellipsisVertical } from 'ionicons/icons';
 import { } from '@ionic/core';
 import { AppString, images, themes, ROUTE } from '../config/const';
-import { useTabHide } from '../config/hooks';
+import { useTabHide, createToast } from '../config/hooks';
 import './chatbox.css'
 import'./themes.css'
 import moment from 'moment'
 import { useChatBox } from '../config/useChatBox';
 import ImagePreview from './ImagePreview';
+import { useUserList } from '../config/getUsers';
 
 // let listMessage = []
 let theme = localStorage.getItem('ctheme')
@@ -16,8 +17,11 @@ let selectedTheme = theme ? parseInt(theme) : 0;
 
 const ChatBox = ({ peerUser, history }) => {
   // const [showStickers, setShowStickers] = useState(false);
+
+  const {removeFriend} = useUserList()
   const [listMessage, setListMessage] = useState([]);
   const [modelOpen, setmodelOpen] = useState(false);
+  // const [state, setstate] = useState(initialState)
   const [showPopover, setShowPopover] = useState({
     open: false,
     event: undefined
@@ -282,7 +286,7 @@ const ChatBox = ({ peerUser, history }) => {
 
   return (
     <>
-      <IonHeader >
+      <IonHeader className={` ${themes[selectedTheme]}-header`} >
         <IonToolbar className={`chattoolbar ${themes[selectedTheme]}-header`}>
           <IonButtons slot='start'>
             <IonBackButton />
@@ -313,9 +317,15 @@ const ChatBox = ({ peerUser, history }) => {
         </IonToolbar>
         
         <IonProgressBar hidden={!loading} type='indeterminate' ></IonProgressBar >
+        <div className="userAddBlock" hidden>
+          <IonButton >Add</IonButton> <IonButton>Block</IonButton>
+
+          </div>
 
       </IonHeader>
       <IonContent className={themes[selectedTheme]}>
+        
+          
         <div className="viewChatBoard">
           {/* List message */}
           <div className="viewListContentChat">
@@ -335,6 +345,11 @@ const ChatBox = ({ peerUser, history }) => {
           onDidDismiss={e => setShowPopover({ open: false, event: undefined })}>
           <IonList >
             <IonItem lines='none' routerLink={ROUTE.theme}>Themes</IonItem>
+            <IonItem lines='none' onClick={() => {
+              removeFriend(peerUser.id);
+              setShowPopover(false)
+              createToast('User Delete', 'danger');
+            }}>Delete </IonItem>
           </IonList>
         </IonPopover>
       </IonContent>

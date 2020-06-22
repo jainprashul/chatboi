@@ -455,3 +455,11 @@ input::placeholder {
     color: #203152;
     text-align: left;
 }
+
+.userAddBlock {
+    display: flex;
+    justify-content: center;
+}
+.userAddBlock ion-button{
+    flex:  1;
+}

@@ -19,7 +19,7 @@ export function useUserList() {
         nickname: localStorage.getItem(AppString.NICKNAME),
     }
 
-    useEffect(() => {
+    const userListOnInit = () => {
         setLoading(true)
         firebase.checkPresence(currentUser.id);
         getListUser().then(users => {
@@ -27,9 +27,7 @@ export function useUserList() {
             // setSearchList(users)
         });
         isOnlineData()
-
-
-    }, [])
+    }
 
     const isOnlineData = () => {
         firebase.rtDB.ref('status').on('value', (snapshot) => {
@@ -47,11 +45,17 @@ export function useUserList() {
     }
 
     const addFriend = (userUID) => {
+        const timestamp = (Date.now())
         firebase.user(currentUser.id).collection('friends').doc(userUID).set({
-            uid: userUID
+            uid: userUID,
+            lastMsgTime: timestamp
+
         }).then(res => {
             console.log('user added', res);
-
+            firebase.user(userUID).collection('friends').doc(currentUser.id).set({
+                uid: currentUser.id,
+                lastMsgTime: timestamp
+            })
         }).catch((err) => console.log(err)
         )
         // firebase.user(currentUser.id).update({
@@ -61,16 +65,43 @@ export function useUserList() {
         // ).catch(err=> console.log(err));
     }
 
+    const removeFriend = (userUID) => {
+        firebase.user(currentUser.id).collection('friends').doc(userUID).delete().then(res => {
+            console.log('user removed', res);
+        }).catch((err) => console.log(err)
+        )
+    }
+
     const getFriendsList = async (users = userList) => {
         if (currentUser.id) {
             let res = await firebase.userFriends(currentUser.id).get();
-            let flist = res.docs.map(doc => doc.id);
-            console.log(flist);
+            let flist = res.docs.map(async (doc) => {
+                let data = await doc.data()
+                return data
+            });
+
+            Promise.all(flist).then(f => {
+                let uidList = f.map(f => f.uid)
+                console.log(uidList);
+                setFriendsList(users.filter(user => {
+                    let fr = f.find(o => o.uid === user.id);
+                    if(fr)  user.lastMsgTime = fr.lastMsgTime;
+                    // console.log(user , fr);
+                    
+                    return uidList.includes(user.id)
+                }).sort((a, b) => b.lastMsgTime - a.lastMsgTime)
+                );
+            })
+            console.log(friendsList);
+            
+            // console.log(flist);
             // console.log(userList);
             // return userList.filter(user => friends.includes(user.id));
-            setFriendsList(users.filter(user => flist.includes(user.id)));
+            
         }
     }
+
+    
 
     async function searchUsers(query) {
         setLoading(true);
@@ -149,9 +180,11 @@ export function useUserList() {
          */
         getUser,
         addFriend,
+        removeFriend,
         getFriendsList,
         searchList,
-        searchUsers
+        searchUsers,
+        userListOnInit
     }
 
 }

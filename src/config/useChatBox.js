@@ -90,6 +90,10 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
             setMsg('')
         }).catch(err => createToast(err.toString()));
         // setMsg('');
+
+        firebase.user(currentUser.id).collection('friends').doc(peerUser.id).update({
+            lastMsgTime: parseInt(timestamp)
+        })
     };
 
     function uploadPhoto() {

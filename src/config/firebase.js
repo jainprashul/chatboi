@@ -120,7 +120,7 @@ class Firebase {
 
    user = (uid) => this.firestore.collection(AppString.USERS).doc(uid);
 
-   userFriends = (uid) => this.firestore.collection(AppString.USERS).doc(uid).collection('friends')
+   userFriends = (uid) => this.firestore.collection(AppString.USERS).doc(uid).collection('friends').orderBy('lastMsgTime', 'desc')
 
 
 

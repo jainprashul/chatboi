@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar, useIonViewDidEnter } from '@ionic/react';
 import { ROUTE, logo } from '../config/const';
 import { chevronDownCircleOutline, egg, close, addCircle, add, shareSocial } from 'ionicons/icons';
@@ -9,7 +9,7 @@ import SkeletonList from '../components/SkeletonList';
 let deferredPrompt;
 const UserList = () => {
   const [installHide, setInstallHide] = useState(true);
-  const { loading, onlineUsers, getListUser, addFriend, getFriendsList , friendsList, searchList, searchUsers} = useUserList();
+  const { loading, userListOnInit, onlineUsers, getListUser, addFriend, getFriendsList , friendsList, searchList, searchUsers} = useUserList();
   const [selectedUser, setSelectedUser] = useState(null);
   const [modelOpen, setModelOpen] = useState(false);
   
@@ -23,14 +23,19 @@ const UserList = () => {
     window.addEventListener('appinstalled', (event) => {
       console.log('👍', 'appinstalled', event);
     });
-  })
+    userListOnInit()
+
+  });
+  useEffect(() => {
+  }, [])
 
 
   function doRefresh(e) {
     getListUser().then(users => {
       getFriendsList(users);
       if(e) {
-      e.detail.complete();
+        e.detail.complete();
+        console.log(friendsList);
       }
     });
   }
@@ -97,6 +102,7 @@ const UserList = () => {
           </IonButtons>
         </IonToolbar>
         <IonProgressBar hidden={!loading} type='indeterminate'></IonProgressBar>
+        
 
       </IonHeader>
       <IonContent className='ion-padding'>
