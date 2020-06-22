@@ -81,7 +81,7 @@ const UserList = () => {
         <IonToolbar>
           <IonTitle className=' ion-text-capitalize'>
             
-            <img src={logo} style={{ height: '2rem', left: '0' }} alt="" srcset="" /> <span style={{ fontSize: '1.5rem', marginLeft: '6rem' }}>Chat Boi</span>
+            <img src={logo} style={{ height: '2rem', left: '0' }} alt="" /> <span style={{ fontSize: '1.5rem', marginLeft: '6rem' }}>Chat Boi</span>
             
           </IonTitle>
           <IonButtons slot='end'>

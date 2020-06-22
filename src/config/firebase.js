@@ -1,6 +1,11 @@
 import app from 'firebase/app'
 import 'firebase/auth'
-import firebase from 'firebase'
+import 'firebase/database'
+import 'firebase/firestore'
+import 'firebase/storage'
+import 'firebase/messaging'
+import 'firebase/analytics'
+// import firebase from 'firebase'
 import { AppString } from './const';
 
 export var firebaseConfig = {
@@ -18,14 +23,15 @@ class Firebase {
    constructor() {
 
       // Initialize Firebase
-      !firebase.apps.length ? app.initializeApp(firebaseConfig) : firebase.app();
-      app.analytics();
+      // !firebase.apps.length ? app.initializeApp(firebaseConfig) : firebase.app();
+      app.initializeApp(firebaseConfig)
+      app.analytics()
       this.auth = app.auth();
       this.firestore = app.firestore();
       this.rtDB = app.database();
       this.storage = app.storage();
       this.notification = app.messaging();
-      this.functions = app.functions();
+      // this.functions = app.functions();
       
       // this.functions.useFunctionsEmulator('http://localhost:5001');
       this.firestore.enablePersistence().then(() => {
@@ -87,12 +93,12 @@ class Firebase {
    doSignIn = (email, password) =>
       this.auth.signInWithEmailAndPassword(email, password);
    doSignInWithGoogle = async () => {
-      let provider = new firebase.auth.GoogleAuthProvider();
+      let provider = app.auth.GoogleAuthProvider()
       return this.auth.signInWithPopup(provider);
    }
 
    doSignInWithFacebook = async () => {
-      let provider = new firebase.auth.FacebookAuthProvider();
+      let provider = app.auth.FacebookAuthProvider();
       return this.auth.signInWithPopup(provider);
    }
 
