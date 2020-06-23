@@ -94,6 +94,9 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
         firebase.user(currentUser.id).collection('friends').doc(peerUser.id).update({
             lastMsgTime: parseInt(timestamp)
         })
+        firebase.user(peerUser.id).collection('friends').doc(currentUser.id).update({
+            lastMsgTime: parseInt(timestamp)
+        })
     };
 
     function uploadPhoto() {
