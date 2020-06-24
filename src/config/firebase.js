@@ -1,11 +1,11 @@
-import app from 'firebase/app'
+import * as app from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
 import 'firebase/firestore'
 import 'firebase/storage'
 import 'firebase/messaging'
 import 'firebase/analytics'
-import firebase from 'firebase'
+// import firebase from 'firebase'
 import { AppString } from './const';
 
 export var firebaseConfig = {
@@ -21,7 +21,6 @@ export var firebaseConfig = {
 
 class Firebase {
    constructor() {
-
       // Initialize Firebase
       // !firebase.apps.length ? app.initializeApp(firebaseConfig) : firebase.app();
       app.initializeApp(firebaseConfig)
@@ -109,7 +108,7 @@ class Firebase {
 
    doPasswordUpdate = newPassword => this.auth.currentUser.updatePassword(newPassword);
 
-   /* USer Api */
+/* USer Api */
 
    /** get current user profile */
    getCurrentUser = () => this.auth.currentUser;
@@ -120,7 +119,7 @@ class Firebase {
 
    user = (uid) => this.firestore.collection(AppString.USERS).doc(uid);
 
-   userFriends = (uid) => this.firestore.collection(AppString.USERS).doc(uid).collection('friends').orderBy('lastMsgTime', 'desc')
+   userFriends = (uid) => this.firestore.collection(AppString.USERS).doc(uid).collection('friends').orderBy('lastMsgTime', 'desc');
 
 
 

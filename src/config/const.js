@@ -18,6 +18,8 @@ export const AppString = {
     USERS: 'users',
     UPLOAD_CHANGED: 'state_changed',
     DOC_ADDED: 'added',
+    DOC_MODIFIED: 'modified',
+    DOC_REMOVED: 'removed',
     PREFIX_IMAGE: 'image/'
 }
 

@@ -23,10 +23,10 @@ const UserList = () => {
     window.addEventListener('appinstalled', (event) => {
       console.log('👍', 'appinstalled', event);
     });
-    userListOnInit()
 
   });
   useEffect(() => {
+    userListOnInit()
   }, [])
 
 

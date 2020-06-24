@@ -3,6 +3,7 @@ import { useContext, useState, useEffect } from "react";
 import { FirebaseContext } from "../context/FirebaseContext";
 import { AppString } from "./const";
 
+let friendsListUnlistener = null;
 export function useUserList() {
     const firebase = useContext(FirebaseContext);
     const [onlineUsers, setOnlineUsers] = useState([])
@@ -20,6 +21,9 @@ export function useUserList() {
     }
 
     const userListOnInit = () => {
+        if (friendsListUnlistener) {
+            friendsListUnlistener()
+        }
         setLoading(true)
         firebase.checkPresence(currentUser.id);
         getListUser().then(users => {
@@ -74,24 +78,54 @@ export function useUserList() {
 
     const getFriendsList = async (users = userList) => {
         if (currentUser.id) {
-            let res = await firebase.userFriends(currentUser.id).get();
-            let flist = res.docs.map(async (doc) => {
-                let data = await doc.data()
-                return data
-            });
+            let flist = []
+            // let res = await firebase.userFriends(currentUser.id).get();
+            // let flist = res.docs.map(async (doc) => {
+            //     let data = await doc.data()
+            //     return data
+            // });
 
-            Promise.all(flist).then(f => {
-                let uidList = f.map(f => f.uid)
+            friendsListUnlistener = firebase.userFriends(currentUser.id).onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                    let data = change.doc.data()
+                    let type = change.doc.type
+                    console.log(data, type , change);
+                    if (change.type === AppString.DOC_ADDED) {
+                        flist.push(data);
+                    } else if (change.type === AppString.DOC_MODIFIED) {
+                        const i = flist.findIndex((f) => f.uid === data.uid);
+                        flist[i] = data;
+                    } else if (change.type === AppString.DOC_REMOVED) {
+                        const i = flist.findIndex((f) => f.uid === data.uid);
+                        flist.splice(i, 1)
+                    }
+                })
+                let uidList = flist.map(f => f.uid)
                 console.log(uidList);
                 setFriendsList(users.filter(user => {
-                    let fr = f.find(o => o.uid === user.id);
-                    if(fr)  user.lastMsgTime = fr.lastMsgTime;
+                    let fr = flist.find(o => o.uid === user.id);
+                    if (fr) user.lastMsgTime = fr.lastMsgTime;
                     // console.log(user , fr);
-                    
+
                     return uidList.includes(user.id)
                 }).sort((a, b) => b.lastMsgTime - a.lastMsgTime)
                 );
-            })
+            });
+
+            
+
+            // Promise.all(flist).then(f => {
+            //     let uidList = f.map(f => f.uid)
+            //     console.log(uidList);
+            //     setFriendsList(users.filter(user => {
+            //         let fr = f.find(o => o.uid === user.id);
+            //         if(fr)  user.lastMsgTime = fr.lastMsgTime;
+            //         // console.log(user , fr);
+                    
+            //         return uidList.includes(user.id)
+            //     }).sort((a, b) => b.lastMsgTime - a.lastMsgTime)
+            //     );
+            // })
             console.log(friendsList);
             
             // console.log(flist);
