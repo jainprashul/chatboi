@@ -4,7 +4,7 @@ import { alertController } from '@ionic/core';
 import withAuthorization from '../context/withAuthorization';
 import { logOut, camera } from 'ionicons/icons';
 import { AppString } from '../config/const';
-import { createToast, useLocalStorage } from '../config/hooks';
+import { createToast, useLocalStorage, compressImage } from '../config/hooks';
 import { FirebaseContext, saveDeviceToken } from '../context/FirebaseContext';
 import './Profile.css';
 
@@ -42,14 +42,18 @@ const Profile = () => {
   function onChangeAvatar(event) {
     if (event.target.files && event.target.files[0]) {
       // Check this file is an image?
-      const prefixFiletype = event.target.files[0].type.toString()
-      if (prefixFiletype.indexOf(AppString.PREFIX_IMAGE) !== 0) {
-        createToast('File not Image.', 'danger');
-        return
-      }
-      newAvatar = event.target.files[0]
-      console.log(URL.createObjectURL(event.target.files[0]));
-      setPhotoUrl(URL.createObjectURL(event.target.files[0]));
+      compressImage(event.target.files).then(({ photo, info }) => {
+        
+        const prefixFiletype = photo.type
+        if (prefixFiletype.indexOf(AppString.PREFIX_IMAGE) !== 0) {
+          createToast('File not Image.', 'danger');
+          return
+        }
+        newAvatar = photo.data
+        console.log(URL.createObjectURL(photo.data));
+        setPhotoUrl(URL.createObjectURL(photo.data));
+      })
+      
     } else {
       createToast('Something wrong with input file', 'danger');
     }
@@ -59,9 +63,9 @@ const Profile = () => {
     setLoading(true);
     if (newAvatar) {
       const uploadTask = firebase.storage
-        .ref()
+        .ref(AppString.USER_PROFILE_IMAGE)
         .child(currentUser.id)
-        .put(newAvatar)
+        .put(newAvatar);
       uploadTask.on(
         AppString.UPLOAD_CHANGED,
         null,

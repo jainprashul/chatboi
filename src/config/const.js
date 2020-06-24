@@ -20,7 +20,9 @@ export const AppString = {
     DOC_ADDED: 'added',
     DOC_MODIFIED: 'modified',
     DOC_REMOVED: 'removed',
-    PREFIX_IMAGE: 'image/'
+    PREFIX_IMAGE: 'image/',
+    CHATBOX_SHARED: '/chatboxShared',
+    USER_PROFILE_IMAGE: '/profile'
 }
 
 export const logo = require('../images/logo.png')

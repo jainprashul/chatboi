@@ -88,8 +88,7 @@ export function useUserList() {
             friendsListUnlistener = firebase.userFriends(currentUser.id).onSnapshot(snapshot => {
                 snapshot.docChanges().forEach(change => {
                     let data = change.doc.data()
-                    let type = change.doc.type
-                    console.log(data, type , change);
+                    // console.log(data, type , change);
                     if (change.type === AppString.DOC_ADDED) {
                         flist.push(data);
                     } else if (change.type === AppString.DOC_MODIFIED) {
@@ -101,7 +100,7 @@ export function useUserList() {
                     }
                 })
                 let uidList = flist.map(f => f.uid)
-                console.log(uidList);
+                // console.log(uidList);
                 setFriendsList(users.filter(user => {
                     let fr = flist.find(o => o.uid === user.id);
                     if (fr) user.lastMsgTime = fr.lastMsgTime;
@@ -126,7 +125,7 @@ export function useUserList() {
             //     }).sort((a, b) => b.lastMsgTime - a.lastMsgTime)
             //     );
             // })
-            console.log(friendsList);
+            // console.log(friendsList);
             
             // console.log(flist);
             // console.log(userList);

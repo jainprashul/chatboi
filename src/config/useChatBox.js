@@ -1,7 +1,7 @@
 import { FirebaseContext } from "../context/FirebaseContext";
 import { useContext, useState, useEffect } from "react";
 import { AppString , images} from "./const";
-import { createToast } from "./hooks";
+import { createToast, compressImage } from "./hooks";
 
 let removeListener = null;
 // let listMessage = []
@@ -103,7 +103,7 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
         if (currentPhotoFile) {
             const timestamp = (Date.now()).toString();
 
-            const uploadTask = firebase.storage.ref().child(timestamp).put(currentPhotoFile);
+            const uploadTask = firebase.storage.ref(`${AppString.CHATBOX_SHARED}/${groupChatId}`).child(timestamp).put(currentPhotoFile);
             uploadTask.on(AppString.UPLOAD_CHANGED, null, err => {
                 setLoading(false);
                 createToast(err.message)
@@ -122,15 +122,18 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
     function onChoosePhoto(e) {
         if (e.target.files && e.target.files[0]) {
             setLoading(true);
-            currentPhotoFile = (e.target.files[0]);
-            // Check this file is an image?
-            const prefixFiletype = e.target.files[0].type.toString()
-            if (prefixFiletype.indexOf(AppString.PREFIX_IMAGE) === 0) {
-                uploadPhoto();
-            } else {
-                setLoading(false)
-                createToast('This file is not an image');
-            }
+            compressImage(e.target.files).then(({ photo, info }) => {
+                currentPhotoFile = photo.data
+                // currentPhotoFile = (e.target.files[0]);
+                // Check this file is an image?
+                const prefixFiletype = photo.type
+                if (prefixFiletype.indexOf(AppString.PREFIX_IMAGE) === 0) {
+                    uploadPhoto();
+                } else {
+                    setLoading(false)
+                    createToast('This file is not an image');
+                }
+            })          
         }
         else {
             setLoading(false);

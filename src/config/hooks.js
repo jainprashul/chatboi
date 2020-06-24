@@ -1,6 +1,7 @@
 import { useParams, useLocation, useHistory, useRouteMatch } from 'react-router-dom';
 import { useMemo, useState, useEffect } from 'react';
 import { toastController } from '@ionic/core';
+import * as compress from 'client-compress'
 
 // Hook
 export function useLocalStorage(key, initialValue) {
@@ -141,3 +142,20 @@ export function createToast(msg, color = 'success', position='bottom', duration=
     }).then(r => r.present()).catch(err => console.log(err));
 }
 
+const options = {
+    targetSizes: 0.4,
+    quality: 0.75,
+    maxWidth: 1024,
+    maxHeight: 1024,
+}
+
+const Compress = new compress()
+
+export async function compressImage(images) {
+    const files = [...images]
+    let conversions = await Compress.compress(files)
+    console.log(conversions[0]);
+    // return conversion
+    const { photo, info } = conversions[0]
+    return { photo, info };
+}
