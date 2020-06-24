@@ -5,7 +5,7 @@ import 'firebase/firestore'
 import 'firebase/storage'
 import 'firebase/messaging'
 import 'firebase/analytics'
-// import firebase from 'firebase'
+import firebase from 'firebase'
 import { AppString } from './const';
 
 export var firebaseConfig = {
