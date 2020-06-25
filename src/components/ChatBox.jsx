@@ -107,6 +107,7 @@ const ChatBox = ({ peerUser, history }) => {
             <div className="viewItemRight2" key={item.timestamp}>
               <img
                 className="imgItemRight"
+                loading='auto'
                 src={item.context}
                 alt="context message"
                 onClick={() => {                  
@@ -166,7 +167,9 @@ const ChatBox = ({ peerUser, history }) => {
                 <div className="viewItemLeft2">
                   <img
                     className="imgItemLeft"
-                    src={item.context}
+                    loading='auto'
+                    src={image}
+                    srcSet={item.context}
                     onClick={() => {
                       openPreview(item.context);
                     }}

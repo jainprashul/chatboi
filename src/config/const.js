@@ -4,7 +4,8 @@ export const ROUTE = {
     profile: '/profile',
     users: '/users',
     startScreen: '/screen',
-    theme: '/chat/theme'
+    theme: '/chat/theme',
+    feed: '/feed'
 }
 
 export const user = require('../images/user.jpg');

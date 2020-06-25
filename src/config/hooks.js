@@ -130,6 +130,31 @@ export function useTabHide() {
     }, [])
 }
 
+const useInfiniteScroll = (callback) => {
+    const [isFetching, setIsFetching] = useState(false);
+
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    useEffect(() => {
+        if (!isFetching) return;
+        callback(() => {
+            console.log('called back');
+        });
+    }, [isFetching]);
+
+    function handleScroll() {
+        if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || isFetching) return;
+        setIsFetching(true);
+    }
+
+    return [isFetching, setIsFetching];
+};
+
+export default useInfiniteScroll;
+
 export function createToast(msg, color = 'success', position='bottom', duration=800) {
     toastController.create({
         buttons: [{

@@ -11,7 +11,7 @@ import {
   useIonViewDidEnter
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { people, personCircle, chatbox, chatboxEllipses } from 'ionicons/icons';
+import { people, personCircle, chatbox, chatboxEllipses, newspaper } from 'ionicons/icons';
 import Dashboard from './pages/DashBoard';
 import UserList from './pages/UserList';
 import Profile from './pages/Profile';
@@ -40,6 +40,7 @@ import { FirebaseContext } from './context/FirebaseContext';
 import { createToast } from './config/hooks';
 import FirstScreen from './pages/FirstScreen';
 import Themes from './components/Themes';
+import Feed from './pages/Feed';
 
 const App = () => {
   const firebase = useContext(FirebaseContext);
@@ -78,6 +79,7 @@ const App = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
+            <Route path={ROUTE.feed} component={Feed} exact={true} />
             <Route path={ROUTE.theme} component={Themes} exact={true} />
             <Route path={ROUTE.startScreen} component={FirstScreen} exact={true} />
             <Route path={ROUTE.signin} component={Login} exact={true} />
@@ -87,13 +89,13 @@ const App = () => {
             <Route path="/" render={() => <Redirect to={ROUTE.users} />} exact={true} />
           </IonRouterOutlet>
           <IonTabBar slot="bottom">
-            {/* <IonTabButton tab="tab1" href={ROUTE.users}>
-              <IonIcon icon={chatbox} />
-              <IonLabel>Friends</IonLabel>
-            </IonTabButton> */}
-            <IonTabButton tab="tab2" href={ROUTE.users}>
+            <IonTabButton tab="tab1" href={ROUTE.users}>
               <IonIcon icon={chatboxEllipses} />
               <IonLabel>Chats</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="tab2" href={ROUTE.feed}>
+              <IonIcon icon={newspaper} />
+              <IonLabel>Feed</IonLabel>
             </IonTabButton>
             <IonTabButton tab="tab3" href={ROUTE.profile}>
               <IonIcon icon={personCircle} />
