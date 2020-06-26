@@ -3,45 +3,52 @@ import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll
 import moment from 'moment';
 import { instaFeed, instaFeedBYHashTag } from '../config/feedData';
 import { chevronDownCircleOutline } from 'ionicons/icons';
+import { createToast } from '../config/hooks';
 let endpoint = '';
-let page = 0;
+let tag = ''
+
+// eslint-disable-next-line no-extend-native
+Array.prototype.random = function () {
+    return this[Math.floor((Math.random() * this.length))];
+}
+
 const Feed = () => {
-
-
 
     const [DataList, setDataList] = useState([])
     const [loadin, setLoadin] = useState(true)
 
     useEffect(() => {
         fetchData('')
+        
     }, [])
-
+    console.log(DataList);
+    
     async function fetchData(e) {
-
-        // page++;
-        // fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=${apiKey}&pageSize=15&page=${page}`).then(res => res.json())
-        //     .then(json => {
-        //         console.log(json);
-        //         data = json.articles
-        //         setDataList(prevData => ([...prevData, ...data]))
-        //         if (e) {
-        //             e.target.complete();
-        //             if (DataList.length >= json.totalResults) {
-        //                 e.target.disabled = true;
-        //             }
-        //         }
-        //     })
-        const { data, nextEndpoint } = await instaFeedBYHashTag('poems', endpoint)
-        setDataList(prevData => ([...prevData, ...data]))
-        setLoadin(false)
-        endpoint = nextEndpoint;
+        console.log(e);
+        
+        const hashtags = ['poems', 'love', 'travel', 'feeltheburn', 'latesttech', 'animescreenshot' ,'urban', 'bollywood', 'gaming', 'nature']
+        tag = hashtags.random()
+        console.log(tag);
+        
+        try {
+            const { data, nextEndpoint } = await instaFeedBYHashTag(tag, endpoint)
+            if (e.type === 'ionRefresh') setDataList([...data]) 
+            else setDataList(prevData => ([...prevData, ...data]))
+            setLoadin(false)
+            endpoint = nextEndpoint;
+        } catch (error) {
+            console.log(error);
+            createToast('Error loading', 'warning', 'bottom')
+            
+        }
         if (e) {
-            e.detail.complete();
+            e.detail && e.detail.complete();
 
-            e.target.complete();
+             e.target.complete();
         }
         // return data;
     }
+
 
     // instaFeed('thegoodquote');
 
@@ -57,7 +64,7 @@ const Feed = () => {
                 <img loading='auto' alt='' src={feed.imgUrl} />
 
                 <IonCardContent>
-                    {/* <p>{moment(feed.publishedAt).fromNow()}</p> */}
+                    <p>{moment(feed.timestamp).fromNow()}</p>
                     {feed.caption}
                 </IonCardContent>
             </IonCard>
