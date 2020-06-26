@@ -79,7 +79,7 @@ const App = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
-            {/* <Route path={ROUTE.feed} component={Feed} exact={true} /> */}
+            <Route path={ROUTE.feed} component={Feed} exact={true} />
             <Route path={ROUTE.theme} component={Themes} exact={true} />
             <Route path={ROUTE.startScreen} component={FirstScreen} exact={true} />
             <Route path={ROUTE.signin} component={Login} exact={true} />
@@ -93,10 +93,10 @@ const App = () => {
               <IonIcon icon={chatboxEllipses} />
               <IonLabel>Chats</IonLabel>
             </IonTabButton>
-            {/* <IonTabButton tab="tab2" href={ROUTE.feed}>
+            <IonTabButton tab="tab2" href={ROUTE.feed}>
               <IonIcon icon={newspaper} />
               <IonLabel>Feed</IonLabel>
-            </IonTabButton> */}
+            </IonTabButton>
             <IonTabButton tab="tab3" href={ROUTE.profile}>
               <IonIcon icon={personCircle} />
               <IonLabel>Profile</IonLabel>

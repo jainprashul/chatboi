@@ -168,7 +168,7 @@ export function createToast(msg, color = 'success', position='bottom', duration=
 }
 
 const options = {
-    targetSizes: 0.4,
+    targetSizes: 0.12,
     quality: 0.75,
     maxWidth: 1024,
     maxHeight: 1024,
