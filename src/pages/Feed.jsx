@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonImg, IonItem, IonIcon, IonLabel, IonSlides, IonSlide } from '@ionic/react'
+import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonImg, IonItem, IonIcon, IonLabel, IonSlides, IonSlide, IonProgressBar, IonRefresher, IonRefresherContent } from '@ionic/react'
 import moment from 'moment';
 import { instaFeed, instaFeedBYHashTag } from '../config/feedData';
+import { chevronDownCircleOutline } from 'ionicons/icons';
 let endpoint = '';
 let page = 0;
 const Feed = () => {
@@ -9,6 +10,7 @@ const Feed = () => {
 
 
     const [DataList, setDataList] = useState([])
+    const [loadin, setLoadin] = useState(true)
 
     useEffect(() => {
         fetchData('')
@@ -29,12 +31,15 @@ const Feed = () => {
         //             }
         //         }
         //     })
-        const { data, nextEndpoint } = await instaFeedBYHashTag('nature', endpoint)
+        const { data, nextEndpoint } = await instaFeedBYHashTag('poems', endpoint)
         setDataList(prevData => ([...prevData, ...data]))
+        setLoadin(false)
         endpoint = nextEndpoint;
-        // if (e) {
-        //     e.target.complete();
-        // }
+        if (e) {
+            e.detail.complete();
+
+            e.target.complete();
+        }
         // return data;
     }
 
@@ -66,8 +71,19 @@ const Feed = () => {
                 <IonToolbar >
                     <IonTitle>Feed</IonTitle>
                 </IonToolbar>
+                <IonProgressBar hidden={!loadin} type='indeterminate'></IonProgressBar>
+
             </IonHeader>
             <IonContent>
+                <IonRefresher slot="fixed" onIonRefresh={fetchData}>
+                    <IonRefresherContent
+                        pullingIcon={chevronDownCircleOutline}
+                        pullingText="Pull to refresh"
+                        refreshingSpinner="circles"
+                        refreshingText="Refreshing...">
+                    </IonRefresherContent>
+                </IonRefresher>
+                
                 {/* <IonSlides options={{ direction: 'vertical' }} onIonSlideReachEnd={fetchData} > */}
 
                     
