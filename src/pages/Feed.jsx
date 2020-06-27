@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel } from '@ionic/react'
+import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel, IonSearchbar, IonButtons, IonButton, IonIcon } from '@ionic/react'
 import { Player, BigPlayButton } from 'video-react';
 import './feed.css'
 import "video-react/dist/video-react.css"; 
 import { instaFeedBYHashTag } from '../config/feedData';
-import { chevronDownCircleOutline } from 'ionicons/icons';
+import { chevronDownCircleOutline, searchCircle } from 'ionicons/icons';
 import { createToast } from '../config/hooks';
 let endpoint = '';
 let tag = ''
@@ -15,8 +15,9 @@ Array.prototype.random = function () {
 
 const Feed = () => {
     const [DataList, setDataList] = useState([])
+    const [searchShow, setSearchShow] = useState(false)
     const [loadin, setLoadin] = useState(true)
-    const hashtags = ['poems', 'travel', 'feeltheburn', 'latesttech', 'animescreenshot', 'urban', 'bollywood', 'pubg', 'kapilsharma', 'tarakmehtakaultachashma']
+    const hashtags = ['poems', 'art', 'travel', 'feeltheburn', 'latesttech', 'wwe', 'animescreenshot', 'urban', 'vfg', 'bollywood', 'pubg', 'babes' 'kapilsharma', 'tarakmehtakaultachashma']
     useEffect(() => {
         fetchData({type: 'first'})
         
@@ -44,6 +45,7 @@ const Feed = () => {
             endpoint = nextEndpoint;
         } catch (error) {
             console.log(error);
+            setLoadin(false)
             createToast('Error loading', 'warning', 'bottom')
             
         }
@@ -94,6 +96,20 @@ const Feed = () => {
             <IonHeader>
                 <IonToolbar >
                     <IonTitle>Feed</IonTitle>
+                    <IonButtons slot='end'>
+                        <IonButton hidden={searchShow} color='dark' expand='full'onClick={() =>{setSearchShow(true)}}>
+                            <IonIcon icon={searchCircle}/>
+                        </IonButton>
+                        <IonSearchbar hidden={!searchShow} animated onIonChange={e => {
+                            let q = (e.detail.value).toLowerCase().trim();
+                            if (q) {
+                                console.log(q)
+                                setLoadin(true)
+                                fetchData({ type: 'tagselect' }, q)
+                            }
+                            
+                        }} showCancelButton={"focus"} onIonCancel={e => setSearchShow(false)} debounce={1000}></IonSearchbar>
+                    </IonButtons>
                 </IonToolbar>
                 <IonProgressBar hidden={!loadin} type='indeterminate'></IonProgressBar>
 
@@ -112,6 +128,7 @@ const Feed = () => {
                 <div className='tags'>{
                     hashtags.map((tag, i) => (
                         <div className="tag"><IonChip key={i} onClick={() => {
+                            setLoadin(true)
                             fetchData({ type: 'tagselect' }, tag)
                             
                         }}> <IonLabel>{tag}</IonLabel>  </IonChip></div>
