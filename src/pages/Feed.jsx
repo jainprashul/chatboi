@@ -17,7 +17,7 @@ const Feed = () => {
     const [DataList, setDataList] = useState([])
     const [searchShow, setSearchShow] = useState(false)
     const [loadin, setLoadin] = useState(true)
-    const hashtags = ['poems', 'art', 'travel', 'feeltheburn', 'latesttech', 'wwe', 'animescreenshot', 'urban', 'vfg', 'bollywood', 'pubg', 'babes' 'kapilsharma', 'tarakmehtakaultachashma']
+    const hashtags = ['poems', 'art', 'travel', 'feeltheburn', 'latesttech', 'wwe', 'animescreenshot', 'urban', 'vfg', 'bollywood', 'pubg', 'babes', 'kapilsharma', 'tarakmehtakaultachashma']
     useEffect(() => {
         fetchData({type: 'first'})
         
