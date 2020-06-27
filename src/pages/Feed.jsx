@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonImg, IonItem, IonIcon, IonLabel, IonSlides, IonSlide, IonProgressBar, IonRefresher, IonRefresherContent } from '@ionic/react'
-import moment from 'moment';
+import React, { useEffect, useState } from 'react'
+import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonImg, IonProgressBar, IonRefresher, IonRefresherContent } from '@ionic/react'
 import { Player, BigPlayButton } from 'video-react';
 
 import "video-react/dist/video-react.css"; 
@@ -19,7 +18,7 @@ const Feed = () => {
     const [loadin, setLoadin] = useState(true)
 
     useEffect(() => {
-        fetchData('')
+        fetchData({type: 'first'})
         
     }, [])
     // console.log(DataList);
@@ -28,12 +27,15 @@ const Feed = () => {
     async function fetchData(e) {
         console.log(e);
         
-        const hashtags = ['poems', 'love', 'travel', 'feeltheburn', 'latesttech', 'animescreenshot' ,'urban', 'bollywood', 'gaming', 'nature']
-        tag = hashtags.random()
+        const hashtags = ['poems', 'travel', 'feeltheburn', 'latesttech', 'animescreenshot' ,'urban', 'bollywood', 'pubg', 'kapilsharma', 'tarakmehtakaultachashma']
+        if (!(e.type === 'ionInfinite')) {
+            tag = hashtags.random()
+        }
         console.log(tag);
+
         
         try {
-            const { data, nextEndpoint } = await instaFeedBYHashTag('pubg', endpoint)
+            const { data, nextEndpoint } = await instaFeedBYHashTag(tag, endpoint)
             if (e.type === 'ionRefresh') setDataList([...data]) 
             else setDataList(prevData => ([...prevData, ...data]))
             setLoadin(false)
@@ -43,7 +45,7 @@ const Feed = () => {
             createToast('Error loading', 'warning', 'bottom')
             
         }
-        if (e) {
+        if (!(e.type === 'first')) {
             e.detail && e.detail.complete();
 
              e.target.complete();
@@ -73,7 +75,7 @@ const Feed = () => {
                 </Player>
                
             ): (
-                <IonImg loading = 'auto' alt = '' src = {feed.imgUrl} />
+                <img loading = 'auto' alt = 'Content' src = {feed.imgUrl} />
                 )}
 
                 <IonCardContent>
