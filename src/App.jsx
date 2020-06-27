@@ -11,7 +11,7 @@ import {
   useIonViewDidEnter
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { people, personCircle, chatbox, chatboxEllipses, newspaper } from 'ionicons/icons';
+import { personCircle, chatboxEllipses, newspaper } from 'ionicons/icons';
 import Dashboard from './pages/DashBoard';
 import UserList from './pages/UserList';
 import Profile from './pages/Profile';

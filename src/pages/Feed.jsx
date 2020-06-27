@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonImg, IonProgressBar, IonRefresher, IonRefresherContent } from '@ionic/react'
+import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel } from '@ionic/react'
 import { Player, BigPlayButton } from 'video-react';
-
+import './feed.css'
 import "video-react/dist/video-react.css"; 
 import { instaFeedBYHashTag } from '../config/feedData';
 import { chevronDownCircleOutline } from 'ionicons/icons';
@@ -16,7 +16,7 @@ Array.prototype.random = function () {
 const Feed = () => {
     const [DataList, setDataList] = useState([])
     const [loadin, setLoadin] = useState(true)
-
+    const hashtags = ['poems', 'travel', 'feeltheburn', 'latesttech', 'animescreenshot', 'urban', 'bollywood', 'pubg', 'kapilsharma', 'tarakmehtakaultachashma']
     useEffect(() => {
         fetchData({type: 'first'})
         
@@ -24,19 +24,21 @@ const Feed = () => {
     // console.log(DataList);
     
     
-    async function fetchData(e) {
+    async function fetchData(e, tagval) {
         console.log(e);
         
-        const hashtags = ['poems', 'travel', 'feeltheburn', 'latesttech', 'animescreenshot' ,'urban', 'bollywood', 'pubg', 'kapilsharma', 'tarakmehtakaultachashma']
+        
         if (!(e.type === 'ionInfinite')) {
             tag = hashtags.random()
         }
+
+        if (e.type === 'tagselect') tag = tagval
         console.log(tag);
 
         
         try {
             const { data, nextEndpoint } = await instaFeedBYHashTag(tag, endpoint)
-            if (e.type === 'ionRefresh') setDataList([...data]) 
+            if (e.type === 'ionRefresh' || (e.type === 'tagselect')) setDataList([...data]) 
             else setDataList(prevData => ([...prevData, ...data]))
             setLoadin(false)
             endpoint = nextEndpoint;
@@ -48,7 +50,7 @@ const Feed = () => {
         if (!(e.type === 'first')) {
             e.detail && e.detail.complete();
 
-             e.target.complete();
+            e.target && e.target.complete();
         }
         // return data;
     }
@@ -96,6 +98,8 @@ const Feed = () => {
                 <IonProgressBar hidden={!loadin} type='indeterminate'></IonProgressBar>
 
             </IonHeader>
+
+            
             <IonContent>
                 <IonRefresher slot="fixed" onIonRefresh={fetchData}>
                     <IonRefresherContent
@@ -105,6 +109,14 @@ const Feed = () => {
                         refreshingText="Refreshing...">
                     </IonRefresherContent>
                 </IonRefresher>
+                <div className='tags'>{
+                    hashtags.map((tag, i) => (
+                        <div className="tag"><IonChip key={i} onClick={() => {
+                            fetchData({ type: 'tagselect' }, tag)
+                            
+                        }}> <IonLabel>{tag}</IonLabel>  </IonChip></div>
+                    ))
+                }</div>
                 
                 {/* <IonSlides options={{ direction: 'vertical' }} onIonSlideReachEnd={fetchData} > */}
 
