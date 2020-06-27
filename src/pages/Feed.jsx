@@ -17,10 +17,9 @@ const Feed = () => {
     const [DataList, setDataList] = useState([])
     const [searchShow, setSearchShow] = useState(false)
     const [loadin, setLoadin] = useState(true)
-    const hashtags = ['poems', 'art', 'travel', 'feeltheburn', 'latesttech', 'wwe', 'animescreenshot', 'urban', 'vfg', 'bollywood', 'pubg', 'babes', 'kapilsharma', 'tarakmehtakaultachashma']
+    const hashtags = ['poems','desimeme' , 'art', 'travel', 'dankmeme', 'feeltheburn', 'latesttech', 'wwe', 'animescreenshot', 'urban', 'vfx', 'bollywood', 'pubg', 'babes', 'kapilsharma', 'tarakmehtakaultachashma']
     useEffect(() => {
         fetchData({type: 'first'})
-        
     }, [])
     // console.log(DataList);
     
@@ -36,13 +35,24 @@ const Feed = () => {
         if (e.type === 'tagselect') tag = tagval
         console.log(tag);
 
-        
         try {
             const { data, nextEndpoint } = await instaFeedBYHashTag(tag, endpoint)
+            // const data = await tiktokFeed()
             if (e.type === 'ionRefresh' || (e.type === 'tagselect')) setDataList([...data]) 
             else setDataList(prevData => ([...prevData, ...data]))
             setLoadin(false)
             endpoint = nextEndpoint;
+
+            //plsy 
+            var medias = Array.prototype.slice.apply(document.querySelectorAll('audio,video'));            
+            medias.forEach(function (media) {
+                media.addEventListener('play', function (event) {
+                    medias.forEach(function (media) {
+                        if (event.target != media) media.pause();
+                    });
+                });
+            });
+
         } catch (error) {
             console.log(error);
             setLoadin(false)
@@ -127,7 +137,7 @@ const Feed = () => {
                 </IonRefresher>
                 <div className='tags'>{
                     hashtags.map((tag, i) => (
-                        <div className="tag"><IonChip key={i} onClick={() => {
+                        <div className="tag" key={i}><IonChip  onClick={() => {
                             setLoadin(true)
                             fetchData({ type: 'tagselect' }, tag)
                             

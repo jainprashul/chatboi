@@ -19,7 +19,6 @@ function mapDataList(arr) {
             owner: path(node, ownerPath),
             timestamp: path(node, timePath),
             isVideo,
-            shortcode,
         };
 
         if (isVideo) {
@@ -33,7 +32,7 @@ function mapDataList(arr) {
                     owner: path(node, ownerPath),
                     timestamp: path(node, timePath),
                     isVideo,
-                    shortcode, dash_info, videoUrl
+                    dash_info, videoUrl
                 };
                 // console.log(obj1);
                 
@@ -93,6 +92,11 @@ function getVideoUrl(shortcode) {
         return {dash_info, videoUrl}
     })
     return response
+}
+
+
+export function tiktokFeed() {
+    return fetch('/api/tiktokFeed').then(q => q.json()).then(json => json)
 }
 
 /**

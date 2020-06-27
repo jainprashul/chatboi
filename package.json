@@ -29,6 +29,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "sharp": "^0.25.4",
+    "tiktok-scraper": "^1.2.5",
     "typescript": "3.8.3",
     "video-react": "^0.14.1"
   },
