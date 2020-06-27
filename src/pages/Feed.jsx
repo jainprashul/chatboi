@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonImg, IonItem, IonIcon, IonLabel, IonSlides, IonSlide, IonProgressBar, IonRefresher, IonRefresherContent } from '@ionic/react'
 import moment from 'moment';
-import { instaFeed, instaFeedBYHashTag } from '../config/feedData';
+import { Player, BigPlayButton } from 'video-react';
+
+import "video-react/dist/video-react.css"; 
+import { instaFeedBYHashTag } from '../config/feedData';
 import { chevronDownCircleOutline } from 'ionicons/icons';
 import { createToast } from '../config/hooks';
 let endpoint = '';
 let tag = ''
-
 // eslint-disable-next-line no-extend-native
 Array.prototype.random = function () {
     return this[Math.floor((Math.random() * this.length))];
 }
 
 const Feed = () => {
-
     const [DataList, setDataList] = useState([])
     const [loadin, setLoadin] = useState(true)
 
@@ -21,7 +22,8 @@ const Feed = () => {
         fetchData('')
         
     }, [])
-    console.log(DataList);
+    // console.log(DataList);
+    
     
     async function fetchData(e) {
         console.log(e);
@@ -61,11 +63,22 @@ const Feed = () => {
                     <IonCardSubtitle>{feed.owner}</IonCardSubtitle>
                     {/* <IonCardTitle>{feed.title}</IonCardTitle> */}
                 </IonCardHeader>
-                <img loading='auto' alt='' src={feed.imgUrl} />
+            {feed.isVideo ? (
+                <Player
+                    playsInline
+                    poster={feed.imgUrl}
+                    src={feed.videoUrl}
+                >
+                    <BigPlayButton position="center" />
+                </Player>
+               
+            ): (
+                <IonImg loading = 'auto' alt = '' src = {feed.imgUrl} />
+                )}
 
                 <IonCardContent>
-                    <p>{moment(feed.timestamp).fromNow()}</p>
-                    {feed.caption}
+                    {/* <p>{moment(feed.timestamp).fromNow()}</p> */}
+                <p>{feed.caption}</p>
                 </IonCardContent>
             </IonCard>
 
@@ -93,7 +106,7 @@ const Feed = () => {
                 
                 {/* <IonSlides options={{ direction: 'vertical' }} onIonSlideReachEnd={fetchData} > */}
 
-                    
+                
                         <List />
                 {/* </IonSlides> */}
 
