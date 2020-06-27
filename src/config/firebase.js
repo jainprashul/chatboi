@@ -92,12 +92,12 @@ class Firebase {
    doSignIn = (email, password) =>
       this.auth.signInWithEmailAndPassword(email, password);
    doSignInWithGoogle = async () => {
-      let provider = app.auth.GoogleAuthProvider()
+      let provider = new app.auth.GoogleAuthProvider()
       return this.auth.signInWithPopup(provider);
    }
 
    doSignInWithFacebook = async () => {
-      let provider = app.auth.FacebookAuthProvider();
+      let provider = new app.auth.FacebookAuthProvider();
       return this.auth.signInWithPopup(provider);
    }
 

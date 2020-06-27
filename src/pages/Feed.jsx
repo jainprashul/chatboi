@@ -31,7 +31,7 @@ const Feed = () => {
         console.log(tag);
         
         try {
-            const { data, nextEndpoint } = await instaFeedBYHashTag(tag, endpoint)
+            const { data, nextEndpoint } = await instaFeedBYHashTag('pubg', endpoint)
             if (e.type === 'ionRefresh') setDataList([...data]) 
             else setDataList(prevData => ([...prevData, ...data]))
             setLoadin(false)
@@ -97,7 +97,7 @@ const Feed = () => {
                         <List />
                 {/* </IonSlides> */}
 
-                <IonInfiniteScroll threshold='22%' onIonInfinite={fetchData}>
+                <IonInfiniteScroll threshold='1000px' onIonInfinite={fetchData}>
                     <IonInfiniteScrollContent
                         loadingSpinner='crescent'
                         loadingText='Loading ...' ></IonInfiniteScrollContent>
