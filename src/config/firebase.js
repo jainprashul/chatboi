@@ -29,7 +29,13 @@ class Firebase {
       this.firestore = app.firestore();
       this.rtDB = app.database();
       this.storage = app.storage();
-      this.notification = app.messaging();
+      this.notification = null;
+      if (app.messaging.isSupported()) {
+         this.notification = app.messaging();
+      }
+      
+      // console.log(this.notification);
+      
       // this.functions = app.functions();
       
       // this.functions.useFunctionsEmulator('http://localhost:5001');
@@ -66,19 +72,20 @@ class Firebase {
 
 
    /** NOtification APi */
-   getPermission = () =>
-      this.notification.getToken().then((token) => {
-         console.log('have permission');
-         // let token = this.notification.getToken();
+   getPermission = () => {
+      if (this.notification != null) {
+         const permission=  this.notification.getToken().then((token) => {
+            console.log('have permission');
+            // let token = this.notification.getToken();
+            return token
+         }).catch((err) => {
+            console.log(err);
+         })
 
-
-         return token
-
-      }).catch((err) => {
-         console.log(err);
-      })
-
-
+         return permission;
+      }      
+   }
+      
 
    /** Delete User */
    deleteUser = () =>

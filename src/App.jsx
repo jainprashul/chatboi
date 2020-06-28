@@ -46,33 +46,18 @@ const App = () => {
   const firebase = useContext(FirebaseContext);
 
   useEffect(() => {
-    console.log('from app use effe');
-    // firebase.getPermission().then(token => {
-    //   console.log(token);
-    // }).catch(err => {
-    //   console.log('err', err);
-    // });
-
-    
-
-    firebase.notification.onMessage(payload => {
-      console.log('onmessage', payload);
-      let title = (payload.data.title).replace(/messaged you/g, '');
-      let body = payload.data.body
-      let msg = title + ' ' + body;
-      createToast(msg, 'warning', 'top', 1800)
-    });
+    // console.log('from app use effe');
+    if (firebase.notification != null) {
+      firebase.notification.onMessage(payload => {
+        console.log('onmessage', payload);
+        let title = (payload.data.title).replace(/messaged you/g, '');
+        let body = payload.data.body
+        let msg = title + ' ' + body;
+        createToast(msg, 'warning', 'top', 1800)
+      });
+    }
   }, [])
 
-  // firebase.notification.onMessage(payload => {
-  //   console.log('onmessage', payload);
-  // })
-  
-  useIonViewDidEnter(() => {
-    // console.log('from app');
-    
-    
-  })
 
   return (
     <IonApp>

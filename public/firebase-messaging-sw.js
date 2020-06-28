@@ -13,20 +13,22 @@ firebase.initializeApp({
 });
 // Retrieve an instance of Firebase Messaging so that it can handle background
 // messages.
-const messaging = firebase.messaging();
-let url = '';
-messaging.setBackgroundMessageHandler(function(payload) {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  // Customize notification here
-  const notificationTitle = payload.data.title;
-  const notificationOptions = {
-    body: payload.data.body,
-    icon: payload.data.icon
-  };
-  url = payload.fcmOptions.link
-  return self.registration.showNotification(notificationTitle,
-    notificationOptions);
-});
+if (firebase.messaging.isSupported()) {
+  const messaging = firebase.messaging();
+  let url = '';
+  messaging.setBackgroundMessageHandler(function (payload) {
+    console.log('[firebase-messaging-sw.js] Received background message ', payload);
+    // Customize notification here
+    const notificationTitle = payload.data.title;
+    const notificationOptions = {
+      body: payload.data.body,
+      icon: payload.data.icon
+    };
+    url = payload.fcmOptions.link
+    return self.registration.showNotification(notificationTitle,
+      notificationOptions);
+  });
+}
 
 self.addEventListener('notificationclick', function (event) {
   const clickedNotification = event.notification;

@@ -3,7 +3,7 @@ import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, IonInpu
 import { image, pricetag, send, handRight, ellipsisVertical } from 'ionicons/icons';
 import { } from '@ionic/core';
 import { AppString, images, themes, ROUTE } from '../config/const';
-import { useTabHide, createToast } from '../config/hooks';
+import { useTabHide, createToast, isUrl } from '../config/hooks';
 import './chatbox.css'
 import'./themes.css'
 import moment from 'moment'
@@ -95,7 +95,7 @@ const ChatBox = ({ peerUser, history }) => {
           return (
             <div className="viewItemRight2" key={item.timestamp}>
               <div className="viewItemRight" >
-                <span className="textContentItem">{item.context}</span>
+                <span className="textContentItem">{isUrl(item.context) ? (<a target="_blank" rel="noopener noreferrer" href={item.context}>{item.context}</a>) : (item.context)}</span>
               </div>
               <p className="textTimeRight">
                 {moment(Number(item.timestamp)).fromNow()}
@@ -146,7 +146,8 @@ const ChatBox = ({ peerUser, history }) => {
                   className="peerAvatarLeft"
                 />
                 <div className="viewItemLeft">
-                  <span className="textContentItem">{item.context}</span>
+                  <span className="textContentItem">{isUrl(item.context) ? (<a target="_blank" rel="noopener noreferrer" href={item.context}>{item.context}</a>) : (item.context)}</span>
+
                 </div>
 
               </div>

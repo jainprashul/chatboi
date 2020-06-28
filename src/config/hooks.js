@@ -184,3 +184,8 @@ export async function compressImage(images) {
     const { photo, info } = conversions[0]
     return { photo, info };
 }
+
+export const isUrl = string => {
+    try { return Boolean(new URL(string)); }
+    catch (e) { return false; }
+}
