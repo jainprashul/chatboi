@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar, useIonViewDidEnter } from '@ionic/react';
-import { ROUTE, logo } from '../config/const';
+import { ROUTE, logo, AppString } from '../config/const';
 import { chevronDownCircleOutline, egg, close, addCircle, add, shareSocial, personCircleOutline, peopleCircleOutline } from 'ionicons/icons';
 import withAuthorization from '../context/withAuthorization';
 import { useUserList } from '../config/getUsers';
@@ -86,10 +86,10 @@ const UserList = () => {
         <IonToolbar>
           <IonTitle className=' ion-text-capitalize'>
             
-            <img src={logo} style={{ height: '2rem', left: '0' }} alt="" /> <span style={{ fontSize: '1.5rem', marginLeft: '6rem' }}>Chat Boi</span>
+            <img src={logo} style={{ height: '2rem', left: '0' }} alt="" /> <span style={{ fontSize: '1.5rem', marginLeft: '6rem' }}>{AppString.APP_NAME}</span>
             
           </IonTitle>
-          <IonButtons slot='end'>
+          <IonButtons hidden slot='end'>
             <IonButton onClick={() => {
               navigator.share({
                 title: 'ChatBoi',

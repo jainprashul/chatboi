@@ -5,7 +5,8 @@ export const ROUTE = {
     users: '/users',
     startScreen: '/screen',
     theme: '/chat/theme',
-    feed: '/feed'
+    feed: '/feed',
+    settings: '/settings',
 }
 
 export const user = require('../images/user.jpg');
@@ -23,7 +24,8 @@ export const AppString = {
     DOC_REMOVED: 'removed',
     PREFIX_IMAGE: 'image/',
     CHATBOX_SHARED: '/chatboxShared',
-    USER_PROFILE_IMAGE: '/profile'
+    USER_PROFILE_IMAGE: '/profile',
+    APP_NAME : 'Chat Boi'
 }
 
 export const logo = require('../images/logo.png')

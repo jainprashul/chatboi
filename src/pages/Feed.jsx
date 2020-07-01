@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel, IonSearchbar, IonButtons, IonButton, IonIcon } from '@ionic/react'
 import { Player, BigPlayButton } from 'video-react';
 import './feed.css'
-import "video-react/dist/video-react.css"; 
+import "video-react/dist/video-react.css";
 import { instaFeedBYHashTag } from '../config/feedData';
-import { chevronDownCircleOutline, searchCircle } from 'ionicons/icons';
+import { chevronDownCircleOutline, searchCircle, openOutline } from 'ionicons/icons';
 import { createToast } from '../config/hooks';
 let endpoint = '';
 let tag = ''
@@ -17,17 +17,14 @@ const Feed = () => {
     const [DataList, setDataList] = useState([])
     const [searchShow, setSearchShow] = useState(false)
     const [loadin, setLoadin] = useState(true)
-    const hashtags = ['poems','desimeme' , 'art', 'travel', 'dankmeme', 'feeltheburn', 'latesttech', 'wwe', 'animescreenshot', 'urban', 'vfx', 'bollywood', 'pubg', 'babes', 'kapilsharma', 'tarakmehtakaultachashma']
+    const hashtags = ['poems', 'desimeme', 'art', 'travel', 'dankmeme', 'feeltheburn', 'latesttech', 'wwe', 'animeme', 'bollywood', 'pubg', 'babes', 'kapilsharma', 'tarakmehtakaultachashma']
     useEffect(() => {
-        fetchData({type: 'first'})
+        fetchData({ type: 'first' })
     }, [])
     // console.log(DataList);
-    
-    
+
+
     async function fetchData(e, tagval) {
-        console.log(e);
-        
-        
         if (!(e.type === 'ionInfinite')) {
             tag = hashtags.random()
         }
@@ -38,13 +35,13 @@ const Feed = () => {
         try {
             const { data, nextEndpoint } = await instaFeedBYHashTag(tag, endpoint)
             // const data = await tiktokFeed()
-            if (e.type === 'ionRefresh' || (e.type === 'tagselect')) setDataList([...data]) 
+            if (e.type === 'ionRefresh' || (e.type === 'tagselect')) setDataList([...data])
             else setDataList(prevData => ([...prevData, ...data]))
             setLoadin(false)
             endpoint = nextEndpoint;
 
             //plsy 
-            var medias = Array.prototype.slice.apply(document.querySelectorAll('audio,video'));            
+            var medias = Array.prototype.slice.apply(document.querySelectorAll('audio,video'));
             medias.forEach(function (media) {
                 media.addEventListener('play', function (event) {
                     medias.forEach(function (media) {
@@ -57,7 +54,7 @@ const Feed = () => {
             console.log(error);
             setLoadin(false)
             createToast('Error loading', 'warning', 'bottom')
-            
+
         }
         if (!(e.type === 'first')) {
             e.detail && e.detail.complete();
@@ -74,11 +71,11 @@ const Feed = () => {
 
     const List = () => DataList.map((feed, i) => (
 
-            <IonCard key={i}>
-                <IonCardHeader >
-                    <IonCardSubtitle>{feed.owner}</IonCardSubtitle>
-                    {/* <IonCardTitle>{feed.title}</IonCardTitle> */}
-                </IonCardHeader>
+        <IonCard key={i}>
+            <IonCardHeader >
+                <IonCardSubtitle>{feed.owner}</IonCardSubtitle>
+                {/* <IonCardTitle>{feed.title}</IonCardTitle> */}
+            </IonCardHeader>
             {feed.isVideo ? (
                 <Player
                     playsInline
@@ -87,16 +84,21 @@ const Feed = () => {
                 >
                     <BigPlayButton position="center" />
                 </Player>
-               
-            ): (
-                <img loading = 'auto' alt = 'Content' src = {feed.imgUrl} />
+
+            ) : (
+                    <img loading='auto' alt='Content' src={feed.imgUrl} />
                 )}
 
-                <IonCardContent>
-                    {/* <p>{moment(feed.timestamp).fromNow()}</p> */}
+            <IonCardContent>
+                {/* <p>
+                    <IonButton color='light' slot='end' onClick={()=> {}}>
+                        <IonIcon icon={openOutline} />
+                    </IonButton>
+                </p> */}
+                {/* <p>{moment(feed.timestamp).fromNow()}</p> */}
                 <p>{feed.caption}</p>
-                </IonCardContent>
-            </IonCard>
+            </IonCardContent>
+        </IonCard>
 
     ))
 
@@ -107,8 +109,8 @@ const Feed = () => {
                 <IonToolbar >
                     <IonTitle>Feed</IonTitle>
                     <IonButtons slot='end'>
-                        <IonButton hidden={searchShow} color='dark' expand='full'onClick={() =>{setSearchShow(true)}}>
-                            <IonIcon icon={searchCircle}/>
+                        <IonButton hidden={searchShow} color='dark' expand='full' onClick={() => { setSearchShow(true) }}>
+                            <IonIcon icon={searchCircle} />
                         </IonButton>
                         <IonSearchbar hidden={!searchShow} animated onIonChange={e => {
                             let q = (e.detail.value).toLowerCase().trim();
@@ -117,7 +119,7 @@ const Feed = () => {
                                 setLoadin(true)
                                 fetchData({ type: 'tagselect' }, q)
                             }
-                            
+
                         }} showCancelButton={"focus"} onIonCancel={e => setSearchShow(false)} debounce={1000}></IonSearchbar>
                     </IonButtons>
                 </IonToolbar>
@@ -125,7 +127,7 @@ const Feed = () => {
 
             </IonHeader>
 
-            
+
             <IonContent>
                 <IonRefresher slot="fixed" onIonRefresh={fetchData}>
                     <IonRefresherContent
@@ -137,18 +139,18 @@ const Feed = () => {
                 </IonRefresher>
                 <div className='tags'>{
                     hashtags.map((tag, i) => (
-                        <div className="tag" key={i}><IonChip  onClick={() => {
+                        <div className="tag" key={i}><IonChip onClick={() => {
                             setLoadin(true)
                             fetchData({ type: 'tagselect' }, tag)
-                            
+
                         }}> <IonLabel>{tag}</IonLabel>  </IonChip></div>
                     ))
                 }</div>
-                
+
                 {/* <IonSlides options={{ direction: 'vertical' }} onIonSlideReachEnd={fetchData} > */}
 
-                
-                        <List />
+
+                <List />
                 {/* </IonSlides> */}
 
                 <IonInfiniteScroll threshold='1000px' onIonInfinite={fetchData}>

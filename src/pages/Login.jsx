@@ -51,7 +51,7 @@ const Login = () => {
             let user = res.user;
             if (user) {                
                 const result = await firebase.getUser(user.uid);
-                console.log(result);
+                // console.log(result);
                 if (result.docs.length === 0) {
                     setNewUserData(user).then(() => {
                         // save to local
@@ -101,7 +101,7 @@ const Login = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
-                    <IonTitle>Chat BOI</IonTitle>
+                    <IonTitle>{AppString.APP_NAME}</IonTitle>
                 </IonToolbar>
                 <IonProgressBar hidden={!loading} type='indeterminate'></IonProgressBar>
 

@@ -2,8 +2,8 @@ import React, { useState, useContext } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonItem, IonLabel, IonInput, IonLoading, useIonViewDidEnter, IonToggle, IonFooter } from '@ionic/react';
 import { alertController } from '@ionic/core';
 import withAuthorization from '../context/withAuthorization';
-import { logOut, camera, personCircleOutline } from 'ionicons/icons';
-import { AppString } from '../config/const';
+import { logOut, camera, personCircleOutline, settings } from 'ionicons/icons';
+import { AppString, ROUTE } from '../config/const';
 import { createToast, useLocalStorage, compressImage } from '../config/hooks';
 import { FirebaseContext, saveDeviceToken } from '../context/FirebaseContext';
 import './Profile.css';
@@ -111,30 +111,6 @@ const Profile = () => {
   }
 
 
-  function signOut() {
-
-    alertController.create({
-      header: 'Sign Out !',
-      subHeader: "Are you sure?",
-      backdropDismiss: false,
-      buttons: [{
-        text: 'Yes',
-        role: 'ok',
-        cssClass: 'signout',
-        handler: () => {
-          firebase.doSignOut();
-          // history.replace(ROUTE.signin);
-        }
-      },
-      {
-        text: 'No',
-        role: 'cancel',
-        cssClass: 'signout',
-      }
-      ]
-    }).then(res => res.present());
-  }
-
 
   return (
     <IonPage>
@@ -142,8 +118,8 @@ const Profile = () => {
         <IonToolbar>
           <IonTitle className='ion-text-center ion-text-capitalize'>PROFILE</IonTitle>
           <IonButtons slot='end'>
-            <IonButton onClick={signOut}>
-              <IonIcon slot='icon-only' icon={logOut} />
+            <IonButton routerLink={ROUTE.settings}>
+              <IonIcon slot='icon-only' icon={settings} />
             </IonButton>
           </IonButtons>
         </IonToolbar>
