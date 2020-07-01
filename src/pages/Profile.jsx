@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonButtons, IonButton, IonIcon, IonItem, IonLabel, IonInput, IonLoading, useIonViewDidEnter, IonToggle, IonFooter } from '@ionic/react';
 import { alertController } from '@ionic/core';
 import withAuthorization from '../context/withAuthorization';
-import { logOut, camera } from 'ionicons/icons';
+import { logOut, camera, personCircleOutline } from 'ionicons/icons';
 import { AppString } from '../config/const';
 import { createToast, useLocalStorage, compressImage } from '../config/hooks';
 import { FirebaseContext, saveDeviceToken } from '../context/FirebaseContext';
@@ -149,7 +149,7 @@ const Profile = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className='ion-text-center ion-padding' >
-        <img className="useravatar" alt="Avatar" src={photoUrl} />
+        <img className="useravatar" alt="Avatar" src={photoUrl ? photoUrl : personCircleOutline} />
         <div onClick={()=>refInput.click()}><IonIcon icon={camera}></IonIcon></div>
         <div hidden={true} className="ion-hide viewWrapInputFile">
           <input

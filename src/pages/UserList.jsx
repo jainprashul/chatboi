@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar, useIonViewDidEnter } from '@ionic/react';
 import { ROUTE, logo } from '../config/const';
-import { chevronDownCircleOutline, egg, close, addCircle, add, shareSocial } from 'ionicons/icons';
+import { chevronDownCircleOutline, egg, close, addCircle, add, shareSocial, personCircleOutline, peopleCircleOutline } from 'ionicons/icons';
 import withAuthorization from '../context/withAuthorization';
 import { useUserList } from '../config/getUsers';
 import SkeletonList from '../components/SkeletonList';
@@ -69,7 +69,7 @@ const UserList = () => {
       setSelectedUser(user.id)
     }}>
       <IonAvatar slot='start'>
-        <img src={user.photoUrl} alt="avatar" />
+        <img src={user.photoUrl} alt="avatar" onError={`this.src=${peopleCircleOutline}`}/>
       </IonAvatar>
       <IonLabel>
         {user.nickname}

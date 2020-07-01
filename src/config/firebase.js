@@ -24,7 +24,8 @@ class Firebase {
       // Initialize Firebase
       // !firebase.apps.length ? app.initializeApp(firebaseConfig) : firebase.app();
       app.initializeApp(firebaseConfig)
-      app.analytics()
+      app.analytics();
+      this.app = app;
       this.auth = app.auth();
       this.firestore = app.firestore();
       this.rtDB = app.database();
@@ -106,6 +107,13 @@ class Firebase {
    doSignInWithFacebook = async () => {
       let provider = new app.auth.FacebookAuthProvider();
       return this.auth.signInWithPopup(provider);
+   }
+
+   doSignInWithPhoneNumber = async (phone, appVerifier) => {
+      return app.auth().signInWithPhoneNumber(phone, appVerifier)
+         .then((confirmResult) => {
+            return confirmResult;
+         })
    }
 
    doSignOut = () =>
