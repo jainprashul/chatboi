@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonBackButton, IonIcon } from '@ionic/react'
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonBackButton, IonIcon, IonFooter } from '@ionic/react'
 import { alertController } from '@ionic/core';
 import { FirebaseContext } from '../context/FirebaseContext';
 import { logOut, share, shareSocial } from 'ionicons/icons';
@@ -47,7 +47,7 @@ const Settings = () => {
                     <IonButton color="success" expand='block' shape='round' onClick={e => {
                         navigator.share({
                             title: 'ChatBoi',
-                            text: 'Support Local for Vocal \n Atmanirbhar Bharat initiative \n ChatBoi by xpJain ! \n Download via Link : \n https://chatboi.now.sh/share/chatboi.apk \n \n Website: \n',
+                            text: 'Support Local for Vocal \n Atmanirbhar Bharat initiative \n Download via Link : \n https://chatboi.now.sh/share/chatboi.apk \n \n Website: \n',
                             url: 'https://chatboi.now.sh',
                         })
                     }}>
@@ -61,6 +61,13 @@ const Settings = () => {
                         Log Out</IonButton>
                 </div>
             </IonContent>
+
+            <IonFooter className="ion-text-center">
+                <p>
+                    <span role="img" aria-labelledby="hearts">💖</span>
+                    Made In India Initiative💖</p>
+                <p>Developed by <a href="https://jainprashul.now.sh" rel="noopener noreferrer" target="_blank">xpJain</a> </p>
+            </IonFooter>
         </IonPage>
     )
 }

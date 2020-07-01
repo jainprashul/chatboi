@@ -16,3 +16,12 @@ padding: 10px;
 
     
 }
+
+#linktag{
+    
+        cursor: pointer;
+    }
+  
+#linktag:hover{
+    color: aqua
+}

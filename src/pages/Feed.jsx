@@ -50,6 +50,28 @@ const Feed = () => {
                 });
             });
 
+            //  use to convert hashtags to links for fetching
+            var captions = document.querySelectorAll('#caption')
+            // console.log(captions);
+
+            if (captions.length > 0) captions.forEach(function (caption) {
+                
+                caption.innerHTML = caption.innerHTML.replace(/#(\S+)/g, '#<span id="linktag" >$1</span>')
+            })
+
+            var hashlinks = document.querySelectorAll('#linktag');
+            // console.log(hashlinks);
+            
+            if (hashlinks.length > 0) hashlinks.forEach((linkx) => {
+                let linkhash =linkx.innerHTML
+                linkx.addEventListener('click', () => {
+                    setLoadin(true)
+                    fetchData({ type: 'tagselect' }, linkhash)
+                })
+            })
+
+
+
         } catch (error) {
             console.log(error);
             setLoadin(false)
@@ -69,38 +91,40 @@ const Feed = () => {
 
 
 
-    const List = () => DataList.map((feed, i) => (
+    const List = () => DataList.map((feed, i) => {
+        return (
 
-        <IonCard key={i}>
-            <IonCardHeader >
-                <IonCardSubtitle>{feed.owner}</IonCardSubtitle>
-                {/* <IonCardTitle>{feed.title}</IonCardTitle> */}
-            </IonCardHeader>
-            {feed.isVideo ? (
-                <Player
-                    playsInline
-                    poster={feed.imgUrl}
-                    src={feed.videoUrl}
-                >
-                    <BigPlayButton position="center" />
-                </Player>
+            <IonCard key={i}>
+                <IonCardHeader >
+                    <IonCardSubtitle>{feed.owner}</IonCardSubtitle>
+                    {/* <IonCardTitle>{feed.title}</IonCardTitle> */}
+                </IonCardHeader>
+                {feed.isVideo ? (
+                    <Player
+                        playsInline
+                        poster={feed.imgUrl}
+                        src={feed.videoUrl}
+                    >
+                        <BigPlayButton position="center" />
+                    </Player>
 
-            ) : (
-                    <img loading='auto' alt='Content' src={feed.imgUrl} />
-                )}
+                ) : (
+                        <img loading='auto' alt='Content' src={feed.imgUrl} />
+                    )}
 
-            <IonCardContent>
-                {/* <p>
+                <IonCardContent>
+                    {/* <p>
                     <IonButton color='light' slot='end' onClick={()=> {}}>
                         <IonIcon icon={openOutline} />
                     </IonButton>
                 </p> */}
-                {/* <p>{moment(feed.timestamp).fromNow()}</p> */}
-                <p>{feed.caption}</p>
-            </IonCardContent>
-        </IonCard>
+                    {/* <p>{moment(feed.timestamp).fromNow()}</p> */}
+                    <p id='caption'>{feed.caption}</p>
+                </IonCardContent>
+            </IonCard>
 
-    ))
+        )
+    })
 
 
     return (
