@@ -18,10 +18,18 @@ padding: 10px;
 }
 
 #linktag{
-    
-        cursor: pointer;
+    color: aqua;
+    cursor: pointer;
     }
   
 #linktag:hover{
     color: aqua
+}
+#usertag{
+    color: chartreuse;
+    cursor: pointer;
+    }
+  
+#usertag:hover{
+    color: chartreuse;
 }

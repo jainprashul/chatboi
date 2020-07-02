@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel, IonSearchbar, IonButtons, IonButton, IonIcon } from '@ionic/react'
+import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel, IonSearchbar, IonButtons, IonButton, IonIcon, IonRow, IonCol } from '@ionic/react'
 import { Player, BigPlayButton } from 'video-react';
 import './feed.css'
 import "video-react/dist/video-react.css";
-import { instaFeedBYHashTag } from '../config/feedData';
+import { instaFeedBYHashTag, instaFeedBYUserName } from '../config/feedData';
 import { chevronDownCircleOutline, searchCircle, openOutline } from 'ionicons/icons';
 import { createToast } from '../config/hooks';
 let endpoint = '';
@@ -24,16 +24,22 @@ const Feed = () => {
     // console.log(DataList);
 
 
-    async function fetchData(e, tagval) {
+    async function fetchData(e, tagval, type = '#') {
         if (!(e.type === 'ionInfinite')) {
             tag = hashtags.random()
         }
 
-        if (e.type === 'tagselect') tag = tagval
+        if (e.type === 'tagselect') {
+            tag = tagval;
+            endpoint = ''
+
+        }
         console.log(tag);
 
         try {
-            const { data, nextEndpoint } = await instaFeedBYHashTag(tag, endpoint)
+
+
+            const { data, nextEndpoint } = type === "#" ? await instaFeedBYHashTag(tag, endpoint) : await instaFeedBYUserName(tag, endpoint)
             // const data = await tiktokFeed()
             if (e.type === 'ionRefresh' || (e.type === 'tagselect')) setDataList([...data])
             else setDataList(prevData => ([...prevData, ...data]))
@@ -55,21 +61,32 @@ const Feed = () => {
             // console.log(captions);
 
             if (captions.length > 0) captions.forEach(function (caption) {
-                
+
                 caption.innerHTML = caption.innerHTML.replace(/#(\S+)/g, '#<span id="linktag" >$1</span>')
+                caption.innerHTML = caption.innerHTML.replace(/@(\S+)/g, '@<span id="usertag" >$1</span>')
             })
 
             var hashlinks = document.querySelectorAll('#linktag');
-            // console.log(hashlinks);
-            
+            console.log(hashlinks);
+
             if (hashlinks.length > 0) hashlinks.forEach((linkx) => {
-                let linkhash =linkx.innerHTML
+                let linkhash = linkx.innerHTML
                 linkx.addEventListener('click', () => {
                     setLoadin(true)
                     fetchData({ type: 'tagselect' }, linkhash)
                 })
             })
 
+            var userlinks = document.querySelectorAll('#usertag');
+            console.log(userlinks);
+
+            if (userlinks.length > 0) userlinks.forEach((linkx) => {
+                let linkhash = linkx.innerHTML
+                linkx.addEventListener('click', () => {
+                    setLoadin(true)
+                    fetchData({ type: 'tagselect' }, linkhash, '@')
+                })
+            })
 
 
         } catch (error) {
@@ -93,35 +110,38 @@ const Feed = () => {
 
     const List = () => DataList.map((feed, i) => {
         return (
+            <IonCol key={i} size='12' sizeSm sizeMd='4'>
 
-            <IonCard key={i}>
-                <IonCardHeader >
-                    <IonCardSubtitle>{feed.owner}</IonCardSubtitle>
-                    {/* <IonCardTitle>{feed.title}</IonCardTitle> */}
-                </IonCardHeader>
-                {feed.isVideo ? (
-                    <Player
-                        playsInline
-                        poster={feed.imgUrl}
-                        src={feed.videoUrl}
-                    >
-                        <BigPlayButton position="center" />
-                    </Player>
+                <IonCard key={i}>
+                    <IonCardHeader >
+                        <IonCardSubtitle>{feed.owner}</IonCardSubtitle>
+                        {/* <IonCardTitle>{feed.title}</IonCardTitle> */}
+                    </IonCardHeader>
+                    {feed.isVideo ? (
+                        <Player
+                            playsInline
+                            poster={feed.imgUrl}
+                            src={feed.videoUrl}
+                        >
+                            <BigPlayButton position="center" />
+                        </Player>
 
-                ) : (
-                        <img loading='auto' alt='Content' src={feed.imgUrl} />
-                    )}
+                    ) : (
+                            <img loading='auto' alt='Content' src={feed.imgUrl} />
+                        )}
 
-                <IonCardContent>
-                    {/* <p>
+                    <IonCardContent>
+                        {/* <p>
                     <IonButton color='light' slot='end' onClick={()=> {}}>
                         <IonIcon icon={openOutline} />
                     </IonButton>
                 </p> */}
-                    {/* <p>{moment(feed.timestamp).fromNow()}</p> */}
-                    <p id='caption'>{feed.caption}</p>
-                </IonCardContent>
-            </IonCard>
+                        {/* <p>{moment(feed.timestamp).fromNow()}</p> */}
+                        <p id='caption'>{feed.caption}</p>
+                    </IonCardContent>
+                </IonCard>
+
+            </IonCol>
 
         )
     })
@@ -131,7 +151,7 @@ const Feed = () => {
         <IonPage >
             <IonHeader>
                 <IonToolbar >
-                    <IonTitle>Feed</IonTitle>
+                    <IonTitle>Feed - {tag}</IonTitle>
                     <IonButtons slot='end'>
                         <IonButton hidden={searchShow} color='dark' expand='full' onClick={() => { setSearchShow(true) }}>
                             <IonIcon icon={searchCircle} />
@@ -141,7 +161,12 @@ const Feed = () => {
                             if (q) {
                                 console.log(q)
                                 setLoadin(true)
-                                fetchData({ type: 'tagselect' }, q)
+                                if (q.startsWith('@')) {
+                                    q = q.replace(/@(\S+)/g, '$1')
+                                    fetchData({ type: 'tagselect' }, q, '@')
+                                } else {
+                                    fetchData({ type: 'tagselect' }, q)
+                                }
                             }
 
                         }} showCancelButton={"focus"} onIonCancel={e => setSearchShow(false)} debounce={1000}></IonSearchbar>
@@ -173,8 +198,9 @@ const Feed = () => {
 
                 {/* <IonSlides options={{ direction: 'vertical' }} onIonSlideReachEnd={fetchData} > */}
 
-
-                <List />
+                <IonRow>
+                    <List />
+                </IonRow>
                 {/* </IonSlides> */}
 
                 <IonInfiniteScroll threshold='1000px' onIonInfinite={fetchData}>
