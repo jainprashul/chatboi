@@ -7,9 +7,12 @@ export const ROUTE = {
     theme: '/chat/theme',
     feed: '/feed',
     settings: '/settings',
+    groups: '/createGroup'
 }
 
 export const user = require('../images/user.jpg');
+
+export const ting = require('../images/ting.mp3')
 
 export const AppString = {
     ID: 'id',
@@ -17,6 +20,7 @@ export const AppString = {
     NICKNAME: 'nickname',
     ABOUT_ME: 'aboutMe',
     MESSAGES: 'messages',
+    GROUPS : 'groups',
     USERS: 'users',
     UPLOAD_CHANGED: 'state_changed',
     DOC_ADDED: 'added',

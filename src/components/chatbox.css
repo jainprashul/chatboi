@@ -202,7 +202,9 @@ input::placeholder {
     border-top-right-radius: 8px;
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 8px;
-    color: white;
+    color:black;
+    
+
 }
 
 .viewItemLeft3 {
@@ -212,7 +214,6 @@ input::placeholder {
     border-top-right-radius: 8px;
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 8px;
-    color: white;
 }
 
 .peerAvatarLeft {

@@ -140,6 +140,13 @@ class Firebase {
 
    message = (chatid) => this.firestore.collection(AppString.MESSAGES).doc(chatid).collection(chatid);
 
+   group = (groupid) => this.firestore.collection(AppString.GROUPS).doc(groupid)
+   userGroups = (uid) => this.firestore.collection(AppString.USERS).doc(uid).collection(AppString.GROUPS).orderBy('lastMsgTime', 'desc');
+   getGroup = (gid) => this.firestore.collection(AppString.GROUPS).where(AppString.ID, '==', gid).get();
+
+   getAllGroups = () => this.firestore.collection(AppString.GROUPS).get();
+
+
 }
 
 export default Firebase

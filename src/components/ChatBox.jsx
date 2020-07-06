@@ -9,7 +9,7 @@ import'./themes.css'
 import moment from 'moment'
 import { useChatBox } from '../config/useChatBox';
 import ImagePreview from './ImagePreview';
-import { useUserList } from '../config/getUsers';
+import { useUserList } from '../config/useUserList';
 
 // let listMessage = []
 let theme = localStorage.getItem('ctheme')
@@ -18,7 +18,7 @@ let selectedTheme = theme ? parseInt(theme) : 0;
 const ChatBox = ({ peerUser, history }) => {
   // const [showStickers, setShowStickers] = useState(false);
 
-  const {removeFriend} = useUserList()
+  const {removeFriend, removeGroup} = useUserList()
   const [listMessage, setListMessage] = useState([]);
   const [modelOpen, setmodelOpen] = useState(false);
   // const [state, setstate] = useState(initialState)
@@ -32,7 +32,7 @@ const ChatBox = ({ peerUser, history }) => {
   const messagesEnd = useRef(null)
   const imgInput = useRef(null);
 
-  const { loading, removeListener, onSendMessage, onChoosePhoto, openListSticker, showStickers, getGifImage } = useChatBox(peerUser, setMsg, setListMessage);
+  const { loading, removeListener, onSendMessage, onChoosePhoto, openListSticker, showStickers, getGifImage, isGroupChat  } = useChatBox(peerUser, setMsg, setListMessage);
 
   let currentUser = {
     id: localStorage.getItem(AppString.ID),
@@ -146,6 +146,9 @@ const ChatBox = ({ peerUser, history }) => {
                   className="peerAvatarLeft"
                 />
                 <div className="viewItemLeft">
+                  {isGroupChat() &&
+                    <span><b>{item.From}</b> <br /></span>
+                  }
                   <span className="textContentItem">{isUrl(item.context) ? (<a target="_blank" rel="noopener noreferrer" href={item.context}>{item.context}</a>) : (item.context)}</span>
 
                 </div>
@@ -166,6 +169,9 @@ const ChatBox = ({ peerUser, history }) => {
                   className="peerAvatarLeft"
                 />
                 <div className="viewItemLeft2">
+                  {isGroupChat() &&
+                    <span style={{paddingLeft: 10}}><b>{item.From}</b> <br /></span>
+                  }
                   <img
                     className="imgItemLeft"
                     loading='auto'
@@ -193,6 +199,9 @@ const ChatBox = ({ peerUser, history }) => {
                   className="peerAvatarLeft"
                 />
                 <div className="viewItemLeft3" key={item.timestamp}>
+                  {isGroupChat() &&
+                    <span><b>{item.From}</b> <br /></span>
+                  }
                   <img
                     className="imgItemLeft"
                     src={getGifImage(item.context)}
@@ -288,6 +297,7 @@ const ChatBox = ({ peerUser, history }) => {
     )
   }
 
+
   return (
     <>
       <IonHeader className={` ${themes[selectedTheme]}-header`} >
@@ -349,13 +359,23 @@ const ChatBox = ({ peerUser, history }) => {
           onDidDismiss={e => setShowPopover({ open: false, event: undefined })}>
           <IonList >
             <IonItem lines='none' routerLink={ROUTE.theme}>Themes</IonItem>
+            {isGroupChat() && (
+              <IonItem lines='none' routerLink={'/groupEdit?a='+ peerUser.id}>
+                Add Members
+              </IonItem>
+            )}
             <IonItem lines='none' onClick={() => {
-              removeFriend(peerUser.id);
+              if (isGroupChat()) {
+                removeGroup(peerUser.id)
+              } else {
+                removeFriend(peerUser.id);
+              }
               setShowPopover(false)
               createToast('User Delete', 'danger');
             }}>Delete </IonItem>
           </IonList>
         </IonPopover>
+
       </IonContent>
       {/* View bottom */}
       <IonFooter>

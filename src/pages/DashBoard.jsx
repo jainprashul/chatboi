@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { IonPage, IonButton, useIonViewWillEnter } from '@ionic/react';
 import withAuthorization from '../context/withAuthorization';
 import ChatBox from '../components/ChatBox';
-import { useUserList } from '../config/getUsers';
+import { useUserList } from '../config/useUserList';
 import LoadingScreen from '../components/LoadingScreen';
+import {loadingController} from '@ionic/core'
 
 let deferredPrompt;
 const Dashboard = ({location, history}) => { 
@@ -50,6 +51,7 @@ const Dashboard = ({location, history}) => {
     // return () => {
     //   setPeerUser(JSON.parse(sessionStorage.getItem('peerUser')));
     // }
+    loadingController.dismiss()
   }, [])
   // console.log(peerUser);
 

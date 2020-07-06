@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar, useIonViewDidEnter } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonProgressBar, IonItem, IonAvatar, IonLabel, IonList, IonListHeader, IonIcon, IonRefresher, IonRefresherContent, IonActionSheet, IonModal, IonFab, IonFabButton, IonButtons, IonButton, IonSearchbar, useIonViewDidEnter, IonPopover } from '@ionic/react';
 import { ROUTE, logo, AppString } from '../config/const';
-import { chevronDownCircleOutline, egg, close, addCircle, add, shareSocial, personCircleOutline, peopleCircleOutline } from 'ionicons/icons';
+import { chevronDownCircleOutline, egg, close, addCircle, add, peopleCircleOutline, ellipsisVertical } from 'ionicons/icons';
 import withAuthorization from '../context/withAuthorization';
-import { useUserList } from '../config/getUsers';
+import { useUserList } from '../config/useUserList';
 import SkeletonList from '../components/SkeletonList';
 
 let deferredPrompt;
 const UserList = () => {
   const [installHide, setInstallHide] = useState(true);
-  const { loading, userListOnInit, onlineUsers, getListUser, addFriend, getFriendsList , friendsList, searchList, searchUsers} = useUserList();
+  const { loading, onlineUsers, getListUser, addFriend, getFriendsList , friendsList, chatList, searchList, searchUsers, userListOnInit} = useUserList();
   const [selectedUser, setSelectedUser] = useState(null);
   const [modelOpen, setModelOpen] = useState(false);
+  const [showPopover, setShowPopover] = useState({
+    open: false,
+    event: undefined
+  })
   
   useIonViewDidEnter(() => {
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -25,9 +29,11 @@ const UserList = () => {
     });
 
   });
+
   useEffect(() => {
     userListOnInit()
   }, [])
+  
 
 
   function doRefresh(e) {
@@ -35,7 +41,7 @@ const UserList = () => {
       getFriendsList(users);
       if(e) {
         e.detail.complete();
-        console.log(friendsList);
+        console.log(chatList);
       }
     });
   }
@@ -50,7 +56,7 @@ const UserList = () => {
 
   
 
-  const ListUser = () => friendsList.map(user => (
+  const ListUser = () => chatList.map(user => (
     <IonItem key={user.id} routerLink={ROUTE.chat + '?userid=' + user.id} onClick={() => {
       sessionStorage.setItem('peerUser', JSON.stringify(user))
     }}>
@@ -59,7 +65,9 @@ const UserList = () => {
       </IonAvatar>
       <IonLabel>
         {user.nickname}
-        <p>About me: {user.aboutMe}</p>
+        <p>{
+          user.lastMsg ? user.lastMsg : ('About me: ' +user.aboutMe)
+        }</p>
       </IonLabel>
       <IonIcon hidden={!onlineUsers.includes(user.id)} color='success' icon={egg} slot='end'></IonIcon>
     </IonItem>
@@ -89,15 +97,14 @@ const UserList = () => {
             <img src={logo} style={{ height: '2rem', left: '0' }} alt="" /> <span style={{ fontSize: '1.5rem', marginLeft: '6rem' }}>{AppString.APP_NAME}</span>
             
           </IonTitle>
-          <IonButtons hidden slot='end'>
-            <IonButton onClick={() => {
-              navigator.share({
-                title: 'ChatBoi',
-                text: 'ChatBoi by xpJain ! \n Download via Link : \n https://chatboi.now.sh/share/chatboi.apk \n \n Website: \n',
-                url: 'https://chatboi.now.sh',
+          <IonButtons slot='end'>
+            <IonButton onClick={(e) => {
+              setShowPopover({
+                open: true,
+                event: e.nativeEvent
               })
             }}>
-              <IonIcon size={24} icon={shareSocial}></IonIcon>
+              <IonIcon icon={ellipsisVertical} slot='icon-only'></IonIcon>
             </IonButton>
           </IonButtons>
         </IonToolbar>
@@ -147,31 +154,38 @@ const UserList = () => {
               {loading ? <SkeletonList/> : <ModelListUser/>}
           
           </IonContent>
-        </IonModal>
 
-        <IonActionSheet
-          isOpen={!!selectedUser}
-          buttons={[{
-            text: 'Add To Contacts',
-            role: 'added',
-            icon: addCircle,
-            handler: () => {
-              addFriend(selectedUser);
-              console.log('contact added');
-              setModelOpen(false);
-              searchUsers()
-              doRefresh()
-              
-            }
-          }, {
-            text: 'Cancel',
-            icon: close,
-            role: 'cancel'
-          }]}
-          onDidDismiss={() => {
-            setSelectedUser(null)
-          }}
-        />
+          <IonActionSheet
+            isOpen={!!selectedUser}
+            buttons={[{
+              text: 'Add To Contacts',
+              role: 'added',
+              icon: addCircle,
+              handler: () => {
+                addFriend(selectedUser);
+                console.log('contact added');
+                setModelOpen(false);
+                searchUsers()
+                doRefresh()
+              }
+            }, {
+              text: 'Cancel',
+              icon: close,
+              role: 'cancel'
+            }]}
+            onDidDismiss={() => {
+              setSelectedUser(null)
+            }}
+          />
+        </IonModal>
+        <IonPopover isOpen={showPopover.open}
+          event={showPopover.event}
+          onDidDismiss={e => setShowPopover({ open: false, event: undefined })}>
+          <IonList >
+            <IonItem lines='none' routerLink={ROUTE.groups}>Create Group</IonItem>
+          </IonList>
+        </IonPopover>
+        
       </IonContent>
     </IonPage>
   );

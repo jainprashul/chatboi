@@ -42,6 +42,8 @@ import FirstScreen from './pages/FirstScreen';
 import Themes from './components/Themes';
 import Feed from './pages/Feed';
 import Settings from './pages/Settings';
+import GroupCreate from './pages/GroupCreate';
+import AddToGroup from './pages/AddToGroup';
 
 const App = () => {
   const firebase = useContext(FirebaseContext);
@@ -65,6 +67,8 @@ const App = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
+            <Route path={'/groupEdit'} component={AddToGroup} exact={true} />
+            <Route path={ROUTE.groups} component={GroupCreate} exact={true} />
             <Route path={ROUTE.settings} component={Settings} exact={true} />
             <Route path={ROUTE.feed} component={Feed} exact={true} />
             <Route path={ROUTE.theme} component={Themes} exact={true} />

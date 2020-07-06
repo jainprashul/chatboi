@@ -1,12 +1,12 @@
 import { FirebaseContext } from "../context/FirebaseContext";
 import { useContext, useState, useEffect } from "react";
-import { AppString , images} from "./const";
+import { AppString , images, ting} from "./const";
 import { createToast, compressImage } from "./hooks";
 
 let removeListener = null;
 // let listMessage = []
 let currentPhotoFile = null;
-let groupChatId = null;
+let chatId = null;
 export function useChatBox(peerUser, setMsg, setListMessage) {
     let currentUser = {
         id: localStorage.getItem(AppString.ID),
@@ -20,7 +20,11 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
 
     useEffect(()=>{
         getMsgHistory()
-    },[])
+    }, [])
+    
+    function isGroupChat() {
+        return (peerUser.id).startsWith('G-');
+    }
 
     async function getMsgHistory() {
         console.log('peerUser: ', (peerUser));  
@@ -32,17 +36,21 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
         // listMessage.length = 0
         let msgList = []
         setLoading(true);
-        groupChatId = (hashString(currentUser.id) <= hashString(peerUser.id)) ? `${currentUser.id}-${peerUser.id}` : `${peerUser.id}-${currentUser.id}`;
-        console.log(groupChatId);
+        if(isGroupChat()) chatId = peerUser.id
+        else chatId = (hashString(currentUser.id) <= hashString(peerUser.id)) ? `${currentUser.id}-${peerUser.id}` : `${peerUser.id}-${currentUser.id}`;
+        console.log(chatId);
 
-        removeListener = firebase.message(groupChatId).onSnapshot(snapshot => {
+        removeListener = firebase.message(chatId).onSnapshot(snapshot => {
             snapshot.docChanges().forEach(change => {
                 if (change.type === AppString.DOC_ADDED) {
                     // msgList.push(change.doc.data());
                     let data = change.doc.data();
-                    // console.log(data);
 
                     msgList.push(data);
+
+                    let audio = new Audio(ting);
+                    audio.play();
+
                 }
             })
             setListMessage(msgList)
@@ -86,24 +94,37 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
             type
         }
         // console.log(groupChatId, timestamp);
-        firebase.message(groupChatId).doc(timestamp).set(msgItem).then(() => {
+        firebase.message(chatId).doc(timestamp).set(msgItem).then(() => {
             setMsg('')
         }).catch(err => createToast(err.toString()));
         // setMsg('');
 
-        firebase.user(currentUser.id).collection('friends').doc(peerUser.id).update({
-            lastMsgTime: parseInt(timestamp)
-        })
-        firebase.user(peerUser.id).collection('friends').doc(currentUser.id).update({
-            lastMsgTime: parseInt(timestamp)
-        })
+        if (!isGroupChat()) {
+            firebase.user(currentUser.id).collection('friends').doc(peerUser.id).update({
+                lastMsgTime: parseInt(timestamp),
+                lastMsg: msgItem.context
+            })
+            firebase.user(peerUser.id).collection('friends').doc(currentUser.id).update({
+                lastMsgTime: parseInt(timestamp),
+                lastMsg: msgItem.context
+            })
+        } else {
+            firebase.user(currentUser.id).collection('groups').doc(peerUser.id).update({
+                lastMsgTime: parseInt(timestamp),
+                lastMsg: msgItem.context
+            })
+            firebase.user(peerUser.id).collection('groups').doc(currentUser.id).update({
+                lastMsgTime: parseInt(timestamp),
+                lastMsg: msgItem.context
+            })
+        }
     };
 
     function uploadPhoto() {
         if (currentPhotoFile) {
             const timestamp = (Date.now()).toString();
 
-            const uploadTask = firebase.storage.ref(`${AppString.CHATBOX_SHARED}/${groupChatId}`).child(timestamp).put(currentPhotoFile);
+            const uploadTask = firebase.storage.ref(`${AppString.CHATBOX_SHARED}/${chatId}`).child(timestamp).put(currentPhotoFile);
             uploadTask.on(AppString.UPLOAD_CHANGED, null, err => {
                 setLoading(false);
                 createToast(err.message)
@@ -175,7 +196,7 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
         showStickers,
         onSendMessage,
         onChoosePhoto,
-        getGifImage
+        getGifImage, isGroupChat
     }
 }
 

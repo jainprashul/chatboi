@@ -4,6 +4,7 @@ import { FirebaseContext } from "../context/FirebaseContext";
 import { AppString } from "./const";
 
 let friendsListUnlistener = null;
+let groupListUnlistener = null;
 export function useUserList() {
     const firebase = useContext(FirebaseContext);
     const [onlineUsers, setOnlineUsers] = useState([])
@@ -11,6 +12,7 @@ export function useUserList() {
     // const [user, setUser] = useState({});
     const [searchList, setSearchList] = useState([]);
     const [friendsList, setFriendsList] = useState([]);
+    const [groupsList, setGroupsList] = useState([]);
     const [loading, setLoading] = useState(false)
 
 
@@ -20,6 +22,10 @@ export function useUserList() {
         nickname: localStorage.getItem(AppString.NICKNAME),
     }
 
+    useEffect(() => {
+        userListOnInit()
+    }, [])
+
     const userListOnInit = () => {
         if (friendsListUnlistener) {
             friendsListUnlistener()
@@ -28,6 +34,7 @@ export function useUserList() {
         firebase.checkPresence(currentUser.id);
         getListUser().then(users => {
             getFriendsList(users);
+            getGroupList();
             // setSearchList(users)
         });
         isOnlineData()
@@ -76,6 +83,17 @@ export function useUserList() {
         )
     }
 
+    const removeGroup = (grpUID) => {
+        firebase.user(currentUser.id).collection('groups').doc(grpUID).delete().then(res => {
+            console.log('grp removed', res);
+        }).catch((err) => console.log(err)
+        )
+        firebase.group(grpUID).collection('members').doc(currentUser.id).delete().then(res => {
+            console.log('memeber removed', res);
+
+        }).catch((err) => console.log(err));
+    }
+
     const getFriendsList = async (users = userList) => {
         if (currentUser.id) {
             let flist = []
@@ -91,7 +109,7 @@ export function useUserList() {
                     // console.log(data, type , change);
                     if (change.type === AppString.DOC_ADDED) {
                         flist.push(data);
-                    } else if (change.type === AppString.DOC_MODIFIED) {
+                    } else if (change.type === AppString.DOC_MODIFIED) {                        
                         const i = flist.findIndex((f) => f.uid === data.uid);
                         flist[i] = data;
                     } else if (change.type === AppString.DOC_REMOVED) {
@@ -103,38 +121,61 @@ export function useUserList() {
                 // console.log(uidList);
                 setFriendsList(users.filter(user => {
                     let fr = flist.find(o => o.uid === user.id);
-                    if (fr) user.lastMsgTime = fr.lastMsgTime;
+                    if (fr) {
+                        user.lastMsgTime = fr.lastMsgTime;
+                        user.lastMsg = fr.lastMsg;
+                    }
                     // console.log(user , fr);
 
                     return uidList.includes(user.id)
                 }).sort((a, b) => b.lastMsgTime - a.lastMsgTime)
                 );
             });
-
-            
-
-            // Promise.all(flist).then(f => {
-            //     let uidList = f.map(f => f.uid)
-            //     console.log(uidList);
-            //     setFriendsList(users.filter(user => {
-            //         let fr = f.find(o => o.uid === user.id);
-            //         if(fr)  user.lastMsgTime = fr.lastMsgTime;
-            //         // console.log(user , fr);
-                    
-            //         return uidList.includes(user.id)
-            //     }).sort((a, b) => b.lastMsgTime - a.lastMsgTime)
-            //     );
-            // })
-            // console.log(friendsList);
-            
-            // console.log(flist);
-            // console.log(userList);
-            // return userList.filter(user => friends.includes(user.id));
             
         }
     }
 
-    
+    const getGroupList = async () => {
+        if (currentUser.id) {
+            let glist = []
+
+            groupListUnlistener = firebase.userGroups(currentUser.id).onSnapshot(snapshot => {
+                snapshot.docChanges().forEach(change => {
+                    let data = change.doc.data()
+                    // console.log(data, type , change);
+                    if (change.type === AppString.DOC_ADDED) {
+                        glist.push(data);
+                    } else if (change.type === AppString.DOC_MODIFIED) {
+                        const i = glist.findIndex((f) => f.uid === data.uid);
+                        glist[i] = data;
+                    } else if (change.type === AppString.DOC_REMOVED) {
+                        const i = glist.findIndex((f) => f.uid === data.uid);
+                        glist.splice(i, 1)
+                    }
+                })
+
+                getListGroups().then(groups => {
+                    if (groups) {
+                        let uidList = glist.map(f => f.uid)
+                        // console.log(uidList);
+                        setGroupsList(groups.filter(user => {
+                            let fr = glist.find(o => o.uid === user.id);
+                            if (fr) {
+                                user.lastMsgTime = fr.lastMsgTime;
+                                user.lastMsg = fr.lastMsg;
+                            }
+                            // console.log(user , fr);
+
+                            return uidList.includes(user.id)
+                        }).sort((a, b) => b.lastMsgTime - a.lastMsgTime)
+                        );
+                    }
+                })
+
+            });
+        }
+    }
+
 
     async function searchUsers(query) {
         setLoading(true);
@@ -178,9 +219,35 @@ export function useUserList() {
         }
     }
 
+    async function getListGroups() {
+        let grpList = [];
+        const res = await firebase.getAllGroups();
+
+        if (res.docs.length > 0) {
+            res.docs.forEach(doc => {
+                let data = doc.data();
+                if (data.id !== currentUser.id) {
+                    grpList.push(data);
+                }
+
+            });
+            // console.log(usrList);
+            setUserList(grpList);
+            setLoading(false);
+
+            return grpList
+        }
+    }
+
 
     async function getUser(uid) {
-        const res = await firebase.getUser(uid);
+        let res 
+        if (uid.startsWith('G-')) {
+            res = await firebase.getGroup(uid);
+        } else {
+            res = await firebase.getUser(uid);
+        }
+        
         if (res.docs.length > 0) {
             const userData = res.docs[0].data();
             userData && sessionStorage.setItem('peerUser', JSON.stringify(userData))
@@ -204,7 +271,8 @@ export function useUserList() {
         loading,
         onlineUsers,
         userList,
-        friendsList,
+        friendsList, groupsList,
+        chatList: [...friendsList, ...groupsList].sort((a, b) => b.lastMsgTime - a.lastMsgTime),
         getListUser,
         currentUser,
         /**
@@ -214,6 +282,7 @@ export function useUserList() {
         getUser,
         addFriend,
         removeFriend,
+        removeGroup,
         getFriendsList,
         searchList,
         searchUsers,

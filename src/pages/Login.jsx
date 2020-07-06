@@ -16,6 +16,7 @@ const Login = () => {
     const [phoneNo, setPhoneNo] = useState('');
     const [verifyCode, setVerifyCode] = useState('');
     const [showVerification, setShowVerification] = useState(false);
+    const [loadin, setLoadin] = useState(false)
 
     useIonViewWillEnter(() => {
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -103,7 +104,7 @@ const Login = () => {
                 <IonToolbar>
                     <IonTitle>{AppString.APP_NAME}</IonTitle>
                 </IonToolbar>
-                <IonProgressBar hidden={!loading} type='indeterminate'></IonProgressBar>
+                <IonProgressBar hidden={!loading || !loadin} type='indeterminate'></IonProgressBar>
 
             </IonHeader>
             <IonContent className='ion-margin ion-padding ion-text-center'>
@@ -134,11 +135,11 @@ const Login = () => {
                         <div hidden={showVerification}>
                             <IonItem>
                                 <IonLabel position='stacked'>Phone</IonLabel>
-                                <IonInput placeholder="Phone Number" value={phoneNo} debounce={800} onIonChange={(e) => setPhoneNo(e.target.value)} ></IonInput>
+                                <IonInput placeholder="Phone Number" value={phoneNo} type='number' debounce={800} onIonChange={(e) => setPhoneNo(e.target.value)} ></IonInput>
                             </IonItem>
                             <div id='recaptcha_verifier'></div>
-                            <IonButton  disabled={loading} onClick={() => {
-                                
+                            <IonButton  disabled={loadin} onClick={() => {
+                                setLoadin(true)
                                 var appVerifier = new firebase.app.auth.RecaptchaVerifier(
                                     'recaptcha_verifier', { 
                                         'size': 'invisible',
