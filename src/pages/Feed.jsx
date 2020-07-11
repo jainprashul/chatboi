@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel, IonSearchbar, IonButtons, IonButton, IonIcon, IonRow, IonCol } from '@ionic/react'
+import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel, IonSearchbar, IonButtons, IonButton, IonIcon, IonRow, IonCol, useIonViewDidEnter } from '@ionic/react'
 import { Player, BigPlayButton } from 'video-react';
 import './feed.css'
 import "video-react/dist/video-react.css";
 import { instaFeedBYHashTag, instaFeedBYUserName } from '../config/feedData';
-import { chevronDownCircleOutline, searchCircle, openOutline } from 'ionicons/icons';
+import { chevronDownCircleOutline, searchCircle } from 'ionicons/icons';
 import { createToast } from '../config/hooks';
+import { Link } from 'react-router-dom';
+import { ROUTE } from '../config/const';
 let endpoint = '';
 let tag = ''
 // eslint-disable-next-line no-extend-native
@@ -13,7 +15,7 @@ Array.prototype.random = function () {
     return this[Math.floor((Math.random() * this.length))];
 }
 
-const Feed = () => {
+const Feed = ({location, history}) => {
     const [DataList, setDataList] = useState([])
     const [searchShow, setSearchShow] = useState(false)
     const [loadin, setLoadin] = useState(true)
@@ -22,6 +24,21 @@ const Feed = () => {
         fetchData({ type: 'first' })
     }, [])
     // console.log(DataList);
+
+    useIonViewDidEnter(() => {
+        console.log(history.location);
+        setLoadin(true);
+        let q = new URLSearchParams(history.location.search).get('q')
+        if (q) {
+            if (q.startsWith('@')) {
+                q = q.replace(/@(\S+)/g, '$1')
+                fetchData({ type: 'tagselect' }, q, '@')
+            } else {
+                fetchData({ type: 'tagselect' }, q)
+            }
+        }
+        
+    })
 
 
     async function fetchData(e, tagval, type = '#') {
@@ -67,24 +84,28 @@ const Feed = () => {
             })
 
             var hashlinks = document.querySelectorAll('#linktag');
-            console.log(hashlinks);
+            // console.log(hashlinks);
 
             if (hashlinks.length > 0) hashlinks.forEach((linkx) => {
                 let linkhash = linkx.innerHTML
                 linkx.addEventListener('click', () => {
                     setLoadin(true)
-                    fetchData({ type: 'tagselect' }, linkhash)
+                    // fetchData({ type: 'tagselect' }, linkhash)
+                    history.push(ROUTE.feed + '?q=' + linkhash)
+
                 })
             })
 
             var userlinks = document.querySelectorAll('#usertag');
-            console.log(userlinks);
+            // console.log(userlinks);
 
             if (userlinks.length > 0) userlinks.forEach((linkx) => {
                 let linkhash = linkx.innerHTML
                 linkx.addEventListener('click', () => {
                     setLoadin(true)
-                    fetchData({ type: 'tagselect' }, linkhash, '@')
+                    // fetchData({ type: 'tagselect' }, linkhash, '@')
+                    history.push(ROUTE.feed + '?q=@' + linkhash)
+
                 })
             })
 
@@ -160,13 +181,7 @@ const Feed = () => {
                             let q = (e.detail.value).toLowerCase().trim();
                             if (q) {
                                 console.log(q)
-                                setLoadin(true)
-                                if (q.startsWith('@')) {
-                                    q = q.replace(/@(\S+)/g, '$1')
-                                    fetchData({ type: 'tagselect' }, q, '@')
-                                } else {
-                                    fetchData({ type: 'tagselect' }, q)
-                                }
+                                history.push(ROUTE.feed + '?q='+q)
                             }
 
                         }} showCancelButton={"focus"} onIonCancel={e => setSearchShow(false)} debounce={1000}></IonSearchbar>
@@ -188,11 +203,10 @@ const Feed = () => {
                 </IonRefresher>
                 <div className='tags'>{
                     hashtags.map((tag, i) => (
-                        <div className="tag" key={i}><IonChip onClick={() => {
+                        <Link to={ROUTE.feed + '?q='+tag} className="tag" key={i}><IonChip onClick={() => {
                             setLoadin(true)
-                            fetchData({ type: 'tagselect' }, tag)
 
-                        }}> <IonLabel>{tag}</IonLabel>  </IonChip></div>
+                        }}> <IonLabel>{tag}</IonLabel>  </IonChip></Link>
                     ))
                 }</div>
 
