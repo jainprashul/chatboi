@@ -48,8 +48,8 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
 
                     msgList.push(data);
 
-                    let audio = new Audio(ting);
-                    audio.play();
+                    // let audio = new Audio(ting);
+                    // audio.play();
 
                 }
             })

@@ -4,6 +4,7 @@ import { logoGoogle, logoFacebook } from 'ionicons/icons';
 import { FirebaseContext } from '../context/FirebaseContext';
 import { createToast, useRouter, } from '../config/hooks';
 import { AppString } from '../config/const';
+import {loadingController } from '@ionic/core'
 
 let deferredPrompt;
 let verifyPhoneNum;
@@ -54,12 +55,12 @@ const Login = () => {
                 const result = await firebase.getUser(user.uid);
                 // console.log(result);
                 if (result.docs.length === 0) {
-                    setNewUserData(user).then(() => {
+                    setNewUserData(user).then((res) => {
                         // save to local
-                        localStorage.setItem(AppString.ID, user.uid);
-                        localStorage.setItem(AppString.NICKNAME, user.displayName);
-                        localStorage.setItem(AppString.PHOTO_URL, user.photoURL);
-
+                        localStorage.setItem(AppString.ID, res.id);
+                        localStorage.setItem(AppString.NICKNAME, res.nickname);
+                        localStorage.setItem(AppString.PHOTO_URL, res.photoUrl);
+                        localStorage.setItem(AppString.PHOTO_URL, res.aboutMe);
                     })
 
                     router.replace('/profile')
@@ -87,15 +88,21 @@ const Login = () => {
         })
     }
 
-    function setNewUserData(userData) {
-        return firebase.user(userData.uid).set({
+    async function setNewUserData(userData) {
+
+        console.log(userData);
+        let nickname = userData.phoneNumber ? userData.phoneNumber : 'usr-'+ userData.displayName
+        let photoURL = userData.photoURL ? userData.photoURL : 'https://image.flaticon.com/icons/svg/847/847969.svg'
+        const newUser = {
             id: userData.uid,
             email: userData.email,
-            nickname: userData.phoneNumber ? userData.phoneNumber : userData.displayName,
+            nickname: nickname,
             aboutMe: '',
-            photoUrl: userData.photoURL,
+            photoUrl: photoURL,
             phoneNumber: userData.phoneNumber
-        })
+        }
+        await firebase.user(userData.uid).set(newUser);
+        return newUser
     }
 
     return (
@@ -140,6 +147,11 @@ const Login = () => {
                             <div id='recaptcha_verifier'></div>
                             <IonButton  disabled={loadin} onClick={() => {
                                 setLoadin(true)
+                                loadingController.create({
+                                    message: 'Signing In ..',
+                                    spinner: 'dots',
+                                    animated: true
+                                }).then(r => r.present());
                                 var appVerifier = new firebase.app.auth.RecaptchaVerifier(
                                     'recaptcha_verifier', { 
                                         'size': 'invisible',
@@ -150,7 +162,8 @@ const Login = () => {
                                         }
                                     });;
 
-                                firebase.doSignInWithPhoneNumber('+91'+phoneNo, appVerifier).then(async (confirmationRes) => {
+                                firebase.doSignInWithPhoneNumber('+91' + phoneNo, appVerifier).then(async (confirmationRes) => {
+                                    loadingController.dismiss();
                                     verifyPhoneNum = confirmationRes;
                                     setShowVerification(true)
                                 })
