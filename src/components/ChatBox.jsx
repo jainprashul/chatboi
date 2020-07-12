@@ -59,7 +59,6 @@ const ChatBox = ({ peerUser, history }) => {
   useEffect(() => {
     scrollToBottom();
     // getMsgHistory();
-    return;
   });
 
 
