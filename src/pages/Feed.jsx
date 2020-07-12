@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel, IonSearchbar, IonButtons, IonButton, IonIcon, IonRow, IonCol, useIonViewDidEnter } from '@ionic/react'
+import React, { useEffect, useState, useContext } from 'react'
+import { IonPage, IonContent, IonHeader, IonToolbar, IonTitle, IonInfiniteScroll, IonInfiniteScrollContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardContent, IonProgressBar, IonRefresher, IonRefresherContent, IonChip, IonLabel, IonSearchbar, IonButtons, IonButton, IonIcon, IonRow, IonCol, useIonViewDidEnter, IonModal, IonItem, IonCheckbox, IonAvatar, IonFooter } from '@ionic/react'
 import { Player, BigPlayButton } from 'video-react';
 import './feed.css'
 import "video-react/dist/video-react.css";
 import { instaFeedBYHashTag, instaFeedBYUserName } from '../config/feedData';
-import { chevronDownCircleOutline, searchCircle } from 'ionicons/icons';
+import { chevronDownCircleOutline, searchCircle, send, close } from 'ionicons/icons';
 import { createToast } from '../config/hooks';
 import { Link } from 'react-router-dom';
-import { ROUTE } from '../config/const';
+import { ROUTE, AppString } from '../config/const';
+import SkeletonList from '../components/SkeletonList';
+import { useUserList } from '../config/useUserList';
+import { hashString } from '../config/useChatBox';
+import { FirebaseContext } from '../context/FirebaseContext';
+
 let endpoint = '';
 let tag = ''
 // eslint-disable-next-line no-extend-native
@@ -18,7 +23,14 @@ Array.prototype.random = function () {
 const Feed = ({location, history}) => {
     const [DataList, setDataList] = useState([])
     const [searchShow, setSearchShow] = useState(false)
+    const [selectedLink, setSelectedLink] = useState(null);
     const [loadin, setLoadin] = useState(true)
+    const [groupMembers, setGroupMembers] = useState([])
+    const firebase = useContext(FirebaseContext);
+
+
+
+    const { searchUsers, searchList, chatList } = useUserList();
     const hashtags = ['poems', 'desimeme', 'art', 'travel', 'dankmeme', 'feeltheburn', 'latesttech', 'wwe', 'animeme', 'bollywood', 'pubg', 'babes', 'kapilsharma', 'tarakmehtakaultachashma']
     useEffect(() => {
         fetchData({ type: 'first' })
@@ -127,6 +139,74 @@ const Feed = ({location, history}) => {
 
     // instaFeed('thegoodquote');
 
+    function sendFeed(users, feed) {
+        let currentUser = {
+            id: localStorage.getItem(AppString.ID),
+            avatar: localStorage.getItem(AppString.PHOTO_URL),
+            nickname: localStorage.getItem(AppString.NICKNAME),
+        }
+
+        if (users.length > 0) {
+            for (const peerUser of users) {
+                let chatId;
+                if ((peerUser.id).startsWith('G-')) chatId = peerUser.id
+                else chatId = (hashString(currentUser.id) <= hashString(peerUser.id)) ? `${currentUser.id}-${peerUser.id}` : `${peerUser.id}-${currentUser.id}`;
+
+                function sendMessage(content, type) {
+
+                    // if no content or msg
+                    if (content.trim() === '') return;
+
+                    const timestamp = (Date.now()).toString();
+
+                    const msgItem = {
+                        idFrom: currentUser.id,
+                        idTo: peerUser.id,
+                        From: currentUser.nickname,
+                        To: peerUser.nickname,
+                        timestamp,
+                        context: content.trim(),
+                        type
+                    }
+                    // console.log(groupChatId, timestamp);
+                    firebase.message(chatId).doc(timestamp).set(msgItem).then(() => {
+                    }).catch(err => createToast(err.toString()));
+                    // setMsg('');
+
+                    if ((peerUser.id).startsWith('G-')) {
+                        firebase.user(currentUser.id).collection('groups').doc(peerUser.id).update({
+                            lastMsgTime: parseInt(timestamp),
+                            lastMsg: msgItem.context
+                        })
+                        firebase.user(peerUser.id).collection('groups').doc(currentUser.id).update({
+                            lastMsgTime: parseInt(timestamp),
+                            lastMsg: msgItem.context
+                        })
+                    } else {
+                        
+                        firebase.user(currentUser.id).collection('friends').doc(peerUser.id).update({
+                            lastMsgTime: parseInt(timestamp),
+                            lastMsg: msgItem.context
+                        })
+                        firebase.user(peerUser.id).collection('friends').doc(currentUser.id).update({
+                            lastMsgTime: parseInt(timestamp),
+                            lastMsg: msgItem.context
+                        })
+                    }
+                };
+                if (feed.isVideo) {
+                    sendMessage(feed.videoUrl, 3)
+                } else {
+                    sendMessage(feed.imgUrl, 1)
+                }
+            }
+        } else {
+            createToast('No user selected', 'warning');
+        }
+
+        setSelectedLink(null)
+    }
+
 
 
     const List = () => DataList.map((feed, i) => {
@@ -152,11 +232,11 @@ const Feed = ({location, history}) => {
                         )}
 
                     <IonCardContent>
-                        {/* <p>
-                    <IonButton color='light' slot='end' onClick={()=> {}}>
-                        <IonIcon icon={openOutline} />
+                        
+                    <IonButton color='light' expand='block' onClick={()=> {setSelectedLink(feed)}}>
+                        <IonIcon icon={send} />
                     </IonButton>
-                </p> */}
+            
                         {/* <p>{moment(feed.timestamp).fromNow()}</p> */}
                         <p id='caption'>{feed.caption}</p>
                     </IonCardContent>
@@ -166,6 +246,7 @@ const Feed = ({location, history}) => {
 
         )
     })
+
 
 
     return (
@@ -216,6 +297,72 @@ const Feed = ({location, history}) => {
                     <List />
                 </IonRow>
                 {/* </IonSlides> */}
+
+                <IonModal isOpen={!!selectedLink} onDidDismiss={() => { setSelectedLink(null) }}>
+                    <IonHeader>
+                        <IonToolbar>
+                            <IonTitle>Search Users</IonTitle>
+                            <IonButtons slot='end'>
+                                <IonButton onClick={() => { setSelectedLink(null) }}>
+                                    <IonIcon icon={close} slot='icon-only' ></IonIcon>
+                                </IonButton>
+                            </IonButtons>
+                        </IonToolbar>
+                    </IonHeader>
+                    <IonContent className='ion-padding'>
+                        <IonSearchbar debounce={800} onIonChange={e => searchUsers(e.detail.value)} animated></IonSearchbar>
+                        {
+                            searchList.length ? searchList.map(user => (
+                                <IonItem key={user.id}>
+                                    <IonCheckbox slot='end' checked={user.checked} color='secondary' onIonChange={e => {
+                                        if (e.detail.checked) {
+                                            groupMembers.push(user)
+                                            user.checked = true
+                                        } else {
+                                            groupMembers.pop()
+                                            user.checked = false
+
+                                        }
+
+                                        console.log(groupMembers);
+
+                                    }} />
+                                    <IonAvatar slot='start'>
+                                        <img src={user.photoUrl} alt="avatar" />
+                                    </IonAvatar>
+                                    <IonLabel>{user.nickname}</IonLabel>
+                                </IonItem>
+                            )) : chatList.map(user => (
+                                <IonItem key={user.id}>
+                                    <IonCheckbox slot='end' checked={user.checked} color='secondary' onIonChange={e => {
+                                        if (e.detail.checked) {
+                                            groupMembers.push(user)
+                                            user.checked = true
+                                        } else {
+                                            groupMembers.pop()
+                                            user.checked = false
+
+                                        }
+
+                                        console.log(groupMembers);
+
+                                    }} />
+                                    <IonAvatar slot='start'>
+                                        <img src={user.photoUrl} alt="avatar" />
+                                    </IonAvatar>
+                                    <IonLabel>{user.nickname}</IonLabel>
+                                </IonItem>
+                            ))
+
+                        }
+                    </IonContent>
+                    <IonFooter className="ion-text-center">
+                        <IonButton expand='block' onClick={() => { sendFeed(groupMembers, selectedLink) }}>Send</IonButton>
+
+                    </IonFooter>
+
+                    
+                </IonModal>
 
                 <IonInfiniteScroll threshold='1000px' onIonInfinite={fetchData}>
                     <IonInfiniteScrollContent

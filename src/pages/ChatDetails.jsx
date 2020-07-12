@@ -49,7 +49,7 @@ const ChatDetails = ({location}) => {
 
                         <IonCardHeader className='ion-padding ion-text-center'>
                             <br />
-                            <img src={chat.photoUrl} height='180' />
+                            <img alt="" src={chat.photoUrl} height='200' />
                             <IonCardTitle>{chat.nickname}</IonCardTitle>
                             {isGroupChat() && <IonCardSubtitle>Created By : {chat.createdBy.nickname}, {moment(chat.dateCreated).fromNow()}</IonCardSubtitle>}
                         </IonCardHeader>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, IonInput, IonFooter, IonHeader, IonProgressBar, IonContent, IonBackButton, IonTitle, useIonViewDidEnter, IonList, IonItem, IonPopover } from '@ionic/react';
 import { image, pricetag, send, handRight, ellipsisVertical } from 'ionicons/icons';
-import { } from '@ionic/core';
+import { Player, BigPlayButton } from 'video-react';
 import { AppString, images, themes, ROUTE } from '../config/const';
 import { useTabHide, createToast, isUrl } from '../config/hooks';
 import './chatbox.css'
@@ -32,7 +32,7 @@ const ChatBox = ({ peerUser, history }) => {
   const messagesEnd = useRef(null)
   const imgInput = useRef(null);
 
-  const { loading, removeListener, onSendMessage, onChoosePhoto, openListSticker, showStickers, getGifImage, isGroupChat  } = useChatBox(peerUser, setMsg, setListMessage);
+  const { loading, removeListener, onSendMessage, onChoosePhoto, openListSticker, showStickers, getGifImage, isGroupChat, getMsgHistory  } = useChatBox(peerUser, setMsg, setListMessage);
 
   let currentUser = {
     id: localStorage.getItem(AppString.ID),
@@ -50,6 +50,10 @@ const ChatBox = ({ peerUser, history }) => {
 
     console.log("Entered chat box", peerUser.id);
   });
+
+  useEffect(() => {
+    getMsgHistory()
+  }, [])
 
 
   useEffect(() => {
@@ -121,7 +125,7 @@ const ChatBox = ({ peerUser, history }) => {
             </div>
           )
         }
-        else {
+        else if (item.type === 2){
           return(
             <div className="viewItemRight2" key={item.timestamp}>
               <img
@@ -129,6 +133,21 @@ const ChatBox = ({ peerUser, history }) => {
                 src={getGifImage(item.context)}
                 alt="context message"
               />
+              <p className="textTimeRight">
+                {moment(Number(item.timestamp)).fromNow()}
+              </p>
+            </div>
+          )
+        }
+        else {
+          return(
+            <div className="viewItemRight2" key={item.timestamp}>
+              <Player
+                playsInline
+                src={item.context}
+              >
+                <BigPlayButton position="center" />
+              </Player>
               <p className="textTimeRight">
                 {moment(Number(item.timestamp)).fromNow()}
               </p>
@@ -190,7 +209,7 @@ const ChatBox = ({ peerUser, history }) => {
               </p>
             </div>
           )
-        } else {
+        } else if (item.type === 2) {
           return(
             <div className="viewWrapItemLeft2" key={item.timestamp}>
               <div className="viewWrapItemLeft3">
@@ -208,6 +227,33 @@ const ChatBox = ({ peerUser, history }) => {
                     src={getGifImage(item.context)}
                     alt="content message"
                   />
+                </div>
+              </div>
+              <p className="textTimeLeft">
+                {moment(Number(item.timestamp)).fromNow()}
+              </p>
+            </div>
+          )
+        }
+        else {
+          return(
+            <div className="viewWrapItemLeft2" key={item.timestamp}>
+              <div className="viewWrapItemLeft3">
+                <img
+                  src={peerUser.photoUrl}
+                  alt="avatar"
+                  className="peerAvatarLeft"
+                />
+                <div className="viewItemLeft3" key={item.timestamp}>
+                  {isGroupChat() &&
+                    <span><b>{item.From}</b> <br /></span>
+                  }
+                  <Player
+                    playsInline
+                    src={item.context}
+                  >
+                    <BigPlayButton position="center" />
+                  </Player>
                 </div>
               </div>
               <p className="textTimeLeft">

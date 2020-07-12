@@ -18,9 +18,7 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
     const [showStickers, setShowStickers] = useState(false);
 
 
-    useEffect(()=>{
-        getMsgHistory()
-    }, [])
+    
     
     function isGroupChat() {
         return (peerUser.id).startsWith('G-');
@@ -72,7 +70,7 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
   * @type type 0 = text
   * @type type 1 = images
   * @type type 2 = stickers 
-  * @type type 3 = fullstickers 
+  * @type type 3 = videos 
   */
     function onSendMessage(content, type) {
         //close stickerbox
@@ -201,7 +199,7 @@ export function useChatBox(peerUser, setMsg, setListMessage) {
 }
 
 
-function hashString(str) {
+export function hashString(str) {
     let hash = 0
     for (let i = 0; i < str.length; i++) {
         hash += Math.pow(str.charCodeAt(i) * 31, str.length - i)
