@@ -60,6 +60,10 @@ export function useGroups() {
 
     return {
         currentUser,
-        addMember , removeMember, groupMembersList
+        addMember, removeMember,
+        /** Get The List of Group Members of ID 
+         * @param GrpID
+         */
+        groupMembersList
     }
 }

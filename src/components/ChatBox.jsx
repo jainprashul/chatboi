@@ -55,6 +55,7 @@ const ChatBox = ({ peerUser, history }) => {
   useEffect(() => {
     scrollToBottom();
     // getMsgHistory();
+    return;
   });
 
 
@@ -306,7 +307,11 @@ const ChatBox = ({ peerUser, history }) => {
             <IonBackButton />
           </IonButtons>
           <IonTitle>
-            <div className="headerChatBoard">
+            <div className="headerChatBoard" onClick={()=> {
+              history.push(ROUTE.chatDetails , {
+                chat : peerUser
+              })
+              }}>
               <img
                 className="viewAvatarItem"
                 src={peerUser.photoUrl}

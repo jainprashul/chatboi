@@ -23,7 +23,6 @@ export function useUserList() {
         nickname: localStorage.getItem(AppString.NICKNAME),
     }
 
-    console.log(userList);
     useEffect(() => {
         userListOnInit()
     }, [])

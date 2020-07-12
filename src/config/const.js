@@ -7,7 +7,9 @@ export const ROUTE = {
     theme: '/chat/theme',
     feed: '/feed',
     settings: '/settings',
-    groups: '/createGroup'
+    groups: '/createGroup',
+    chatDetails: '/chat/details',
+    addToGroup:  '/user/groupEdit'
 }
 
 export const user = require('../images/user.jpg');
