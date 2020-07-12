@@ -173,7 +173,7 @@ const Login = () => {
                         <div hidden={!showVerification}>
                             <IonItem>
                                 <IonLabel position='stacked'>Code</IonLabel>
-                                <IonInput placeholder="Code" value={verifyCode} debounce={800} onIonChange={(e) => setVerifyCode(e.target.value)} ></IonInput>
+                                <IonInput placeholder="Code" value={verifyCode} type='number' debounce={800} onIonChange={(e) => setVerifyCode(e.target.value)} ></IonInput>
                             </IonItem>
                             <IonButton disabled={loading} onClick={() => {
                                 signIn(verifyPhoneNum.confirm(verifyCode))

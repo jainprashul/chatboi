@@ -13,6 +13,7 @@ export function useUserList() {
     const [searchList, setSearchList] = useState([]);
     const [friendsList, setFriendsList] = useState([]);
     const [groupsList, setGroupsList] = useState([]);
+    const [usrGroupList, setUsrGroupList] = useState([]);
     const [loading, setLoading] = useState(false)
 
 
@@ -22,6 +23,7 @@ export function useUserList() {
         nickname: localStorage.getItem(AppString.NICKNAME),
     }
 
+    console.log(userList);
     useEffect(() => {
         userListOnInit()
     }, [])
@@ -32,11 +34,12 @@ export function useUserList() {
         }
         setLoading(true)
         firebase.checkPresence(currentUser.id);
-        getListUser().then(users => {
-            getFriendsList(users);
-            getGroupList();
-            // setSearchList(users)
-        });
+
+        
+        Promise.all([getListUserAll(), getListGroupsAll()]).then(([users, groups]) => {
+        Promise.all([getFriendsList(users), getGroupList(groups)])
+        } )
+        
         isOnlineData()
     }
 
@@ -117,6 +120,7 @@ export function useUserList() {
                         flist.splice(i, 1)
                     }
                 })
+
                 let uidList = flist.map(f => f.uid)
                 // console.log(uidList);
                 setFriendsList(users.filter(user => {
@@ -135,7 +139,7 @@ export function useUserList() {
         }
     }
 
-    const getGroupList = async () => {
+    const getGroupList = async (groups = groupsList) => {
         if (currentUser.id) {
             let glist = []
 
@@ -154,11 +158,10 @@ export function useUserList() {
                     }
                 })
 
-                getListGroups().then(groups => {
-                    if (groups) {
+                if (groups) {
                         let uidList = glist.map(f => f.uid)
                         // console.log(uidList);
-                        setGroupsList(groups.filter(user => {
+                        let grpList = groups.filter(user => {
                             let fr = glist.find(o => o.uid === user.id);
                             if (fr) {
                                 user.lastMsgTime = fr.lastMsgTime;
@@ -167,10 +170,12 @@ export function useUserList() {
                             // console.log(user , fr);
 
                             return uidList.includes(user.id)
-                        }).sort((a, b) => b.lastMsgTime - a.lastMsgTime)
-                        );
+                        }).sort((a, b) => b.lastMsgTime - a.lastMsgTime);
+
+                        setUsrGroupList(grpList);
                     }
-                })
+
+                
 
             });
         }
@@ -179,10 +184,11 @@ export function useUserList() {
 
     async function searchUsers(query) {
         setLoading(true);
+        console.log(query , userList);
         if (query) {
             let q = query.toLowerCase();
             let list = userList.filter((user => {
-                return user.nickname.toLowerCase().indexOf(q) > -1;
+                return user.nickname.toLowerCase().startsWith(q);
             }))
             setSearchList(list)
             setTimeout(() => {
@@ -199,7 +205,7 @@ export function useUserList() {
     /**
      * Get all User data List 
      */
-    async function getListUser() {
+    async function getListUserAll() {
         let usrList = [];
         const res = await firebase.getAllUsers();
 
@@ -219,7 +225,7 @@ export function useUserList() {
         }
     }
 
-    async function getListGroups() {
+    async function getListGroupsAll() {
         let grpList = [];
         const res = await firebase.getAllGroups();
 
@@ -232,7 +238,7 @@ export function useUserList() {
 
             });
             // console.log(usrList);
-            setUserList(grpList);
+            setGroupsList(grpList);
             setLoading(false);
 
             return grpList
@@ -271,9 +277,9 @@ export function useUserList() {
         loading,
         onlineUsers,
         userList,
-        friendsList, groupsList,
-        chatList: [...friendsList, ...groupsList].sort((a, b) => b.lastMsgTime - a.lastMsgTime),
-        getListUser,
+        friendsList, groupsList, usrGroupList,
+        chatList: [...friendsList, ...usrGroupList].sort((a, b) => b.lastMsgTime - a.lastMsgTime),
+        getListUser: getListUserAll,
         currentUser,
         /**
          * Get userData , store & return it in the database 
