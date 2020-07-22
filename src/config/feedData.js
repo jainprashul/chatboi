@@ -1,3 +1,5 @@
+import { text } from "ionicons/icons";
+
 let imgUrlPath = 'node.display_url';
 let captionPath = 'node.edge_media_to_caption.edges'
 let ownerPath = 'node.owner.username'
@@ -10,14 +12,17 @@ let usernamePath = 'graphql.user.username'
 
 function mapDataList(arr) {
     return arr.map(async (node, i) => {
-        let x = path(node, captionPath)[0].node.text;
+        let textCaption = path(node, captionPath)[0].node.text;
         let shortcode = path(node, shortCodePath)
         let isVideo = path(node, isVideoPath);
+
+        textCaption = textCaption.replace(/#(\S+)/g, '#<span id="linktag" >$1</span>')
+        textCaption = textCaption.replace(/@(\S+)/g, '@<span id="usertag" >$1</span>')
         // console.log(i+1, x);
         let obj = {
             i: i + 1,
             imgUrl: path(node, imgUrlPath),
-            caption: x,
+            caption: textCaption,
             owner: path(node, ownerPath),
             timestamp: path(node, timePath),
             isVideo,
@@ -30,7 +35,7 @@ function mapDataList(arr) {
                 let obj1 = {
                     i: i + 1,
                     imgUrl: path(node, imgUrlPath),
-                    caption: x,
+                    caption: textCaption,
                     owner: path(node, ownerPath),
                     timestamp: path(node, timePath),
                     isVideo,

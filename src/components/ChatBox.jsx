@@ -410,7 +410,7 @@ const ChatBox = ({ peerUser, history }) => {
           <IonList >
             <IonItem lines='none' routerLink={ROUTE.theme}>Themes</IonItem>
             {isGroupChat() && (
-              <IonItem lines='none' routerLink={'/groupEdit?a='+ peerUser.id}>
+              <IonItem lines='none' routerLink={ROUTE.addToGroup+'?a='+ peerUser.id}>
                 Add Members
               </IonItem>
             )}

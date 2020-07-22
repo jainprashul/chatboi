@@ -12,6 +12,7 @@ import SkeletonList from '../components/SkeletonList';
 import { useUserList } from '../config/useUserList';
 import { hashString } from '../config/useChatBox';
 import { FirebaseContext } from '../context/FirebaseContext';
+import { useFeed, RawHTML } from '../config/useFeed';
 
 let endpoint = '';
 let tag = ''
@@ -23,17 +24,14 @@ Array.prototype.random = function () {
 const Feed = ({location, history}) => {
     const [DataList, setDataList] = useState([])
     const [searchShow, setSearchShow] = useState(false)
-    const [selectedLink, setSelectedLink] = useState(null);
     const [loadin, setLoadin] = useState(true)
     const [groupMembers, setGroupMembers] = useState([])
-    const firebase = useContext(FirebaseContext);
-
-
-
+    // const firebase = useContext(FirebaseContext);
+    const { setSelectedLink, selectedLink, sendFeed } = useFeed();
     const { searchUsers, searchList, chatList } = useUserList();
-    const hashtags = ['poems', 'desimeme', 'art', 'travel', 'dankmeme', 'feeltheburn', 'latesttech', 'wwe', 'animeme', 'bollywood', 'pubg', 'babes', 'kapilsharma', 'tarakmehtakaultachashma']
+
+    const hashtags = ['poems', 'desimeme', 'videos', 'starvideos', 'art', 'travel', 'dankmeme', 'feeltheburn', 'latesttech', 'wwe', 'animeme', 'bollywood', 'pubg', 'babes', 'kapilsharma', 'tarakmehtakaultachashma']
     useEffect(() => {
-        fetchData({ type: 'first' })
     }, [])
     // console.log(DataList);
 
@@ -48,6 +46,8 @@ const Feed = ({location, history}) => {
             } else {
                 fetchData({ type: 'tagselect' }, q)
             }
+        } else {
+            fetchData({ type: 'first' })
         }
         
     })
@@ -75,14 +75,20 @@ const Feed = ({location, history}) => {
             setLoadin(false)
             endpoint = nextEndpoint;
 
+        } catch (error) {
+            console.log(error);
+            setLoadin(false)
+            createToast('Error loading', 'warning', 'bottom')
+
+        } finally {
             //plsy 
             var medias = Array.prototype.slice.apply(document.querySelectorAll('audio,video'));
             medias.forEach(function (media) {
-                media.addEventListener('play', function (event) {
+                media.onplay = function (event) {
                     medias.forEach(function (media) {
                         if (event.target != media) media.pause();
                     });
-                });
+                }
             });
 
             //  use to convert hashtags to links for fetching
@@ -96,36 +102,35 @@ const Feed = ({location, history}) => {
             })
 
             var hashlinks = document.querySelectorAll('#linktag');
-            // console.log(hashlinks);
+            console.log(hashlinks);
 
             if (hashlinks.length > 0) hashlinks.forEach((linkx) => {
                 let linkhash = linkx.innerHTML
-                linkx.addEventListener('click', () => {
+                linkx.onclick = () => {
                     setLoadin(true)
+                    console.log(linkhash);
                     // fetchData({ type: 'tagselect' }, linkhash)
                     history.push(ROUTE.feed + '?q=' + linkhash)
 
-                })
+                }
             })
 
             var userlinks = document.querySelectorAll('#usertag');
-            // console.log(userlinks);
+            console.log(userlinks);
 
             if (userlinks.length > 0) userlinks.forEach((linkx) => {
                 let linkhash = linkx.innerHTML
-                linkx.addEventListener('click', () => {
+
+                linkx.onclick = () => {
                     setLoadin(true)
-                    // fetchData({ type: 'tagselect' }, linkhash, '@')
+                    console.log(linkhash);
+                    // fetchData({ type: 'tagselect' }, linkhash)
                     history.push(ROUTE.feed + '?q=@' + linkhash)
 
-                })
+                }
+
             })
 
-
-        } catch (error) {
-            console.log(error);
-            setLoadin(false)
-            createToast('Error loading', 'warning', 'bottom')
 
         }
         if (!(e.type === 'first')) {
@@ -139,73 +144,7 @@ const Feed = ({location, history}) => {
 
     // instaFeed('thegoodquote');
 
-    function sendFeed(users, feed) {
-        let currentUser = {
-            id: localStorage.getItem(AppString.ID),
-            avatar: localStorage.getItem(AppString.PHOTO_URL),
-            nickname: localStorage.getItem(AppString.NICKNAME),
-        }
-
-        if (users.length > 0) {
-            for (const peerUser of users) {
-                let chatId;
-                if ((peerUser.id).startsWith('G-')) chatId = peerUser.id
-                else chatId = (hashString(currentUser.id) <= hashString(peerUser.id)) ? `${currentUser.id}-${peerUser.id}` : `${peerUser.id}-${currentUser.id}`;
-
-                function sendMessage(content, type) {
-
-                    // if no content or msg
-                    if (content.trim() === '') return;
-
-                    const timestamp = (Date.now()).toString();
-
-                    const msgItem = {
-                        idFrom: currentUser.id,
-                        idTo: peerUser.id,
-                        From: currentUser.nickname,
-                        To: peerUser.nickname,
-                        timestamp,
-                        context: content.trim(),
-                        type
-                    }
-                    // console.log(groupChatId, timestamp);
-                    firebase.message(chatId).doc(timestamp).set(msgItem).then(() => {
-                    }).catch(err => createToast(err.toString()));
-                    // setMsg('');
-
-                    if ((peerUser.id).startsWith('G-')) {
-                        firebase.user(currentUser.id).collection('groups').doc(peerUser.id).update({
-                            lastMsgTime: parseInt(timestamp),
-                            lastMsg: msgItem.context
-                        })
-                        firebase.user(peerUser.id).collection('groups').doc(currentUser.id).update({
-                            lastMsgTime: parseInt(timestamp),
-                            lastMsg: msgItem.context
-                        })
-                    } else {
-                        
-                        firebase.user(currentUser.id).collection('friends').doc(peerUser.id).update({
-                            lastMsgTime: parseInt(timestamp),
-                            lastMsg: msgItem.context
-                        })
-                        firebase.user(peerUser.id).collection('friends').doc(currentUser.id).update({
-                            lastMsgTime: parseInt(timestamp),
-                            lastMsg: msgItem.context
-                        })
-                    }
-                };
-                if (feed.isVideo) {
-                    sendMessage(feed.videoUrl, 3)
-                } else {
-                    sendMessage(feed.imgUrl, 1)
-                }
-            }
-        } else {
-            createToast('No user selected', 'warning');
-        }
-
-        setSelectedLink(null)
-    }
+    
 
 
 
@@ -238,7 +177,9 @@ const Feed = ({location, history}) => {
                     </IonButton>
             
                         {/* <p>{moment(feed.timestamp).fromNow()}</p> */}
-                        <p id='caption'>{feed.caption}</p>
+                        
+                            <RawHTML id='caption'>{feed.caption}</RawHTML>
+                        
                     </IonCardContent>
                 </IonCard>
 
