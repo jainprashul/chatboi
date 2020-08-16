@@ -4,8 +4,8 @@ import { IonPage, IonContent, useIonViewDidEnter, IonFab, IonFabButton, IonIcon,
 import { FirebaseContext } from '../context/FirebaseContext';
 import {  caretUp, camera, call, exit, addCircle } from 'ionicons/icons';
 import Peer from 'peerjs';
+import { useTabHide } from '../config/hooks';
 
-let localStream;
 let remoteStream;
 let peer;
 
@@ -18,22 +18,24 @@ const VideoChat = ({ match }) => {
     console.log(peerID);
 
     const firebase = useContext(FirebaseContext);
-    const [id, setId] = useState('');
-    const [inputID, setInputID] = useState('')
+    const [id, setId] = useState();
+    const [currentCall, setcurrentCall] = useState()
+    const [localStream, setLocalStream] = useState()
     let myId = localStorage.getItem('id')
-    let currentCall;
 
 
     let startTime = null;
 
-    const localVideo = useRef();
+    const localVideo = useRef(HTMLVideoElement);
     const remoteVideo = useRef();
     const callButton = useRef();
     const startButton = useRef();
     const hangupButton = useRef();
 
-
+    useTabHide();
     useIonViewWillEnter(() => {
+        window.onclose = () => peer.destroy();
+        
         peer = new Peer(myId);
 
 
@@ -43,6 +45,12 @@ const VideoChat = ({ match }) => {
 
         peer.on('error', (err) => {
             console.log(err);
+            localStream.forEach(function (track) {
+                if (track.readyState == 'live') {
+                    track.stop()
+                }
+            });
+            
         })
 
 
@@ -60,11 +68,16 @@ const VideoChat = ({ match }) => {
 
         // handle incoming video connection
         peer.on('call', call => {
-            currentCall = call;
+            setcurrentCall(call)
+
+            console.log('getting call',currentCall);
             navigator.mediaDevices.getUserMedia({
                 audio: true,
                 video: true
             }).then(stream => {
+
+                setLocalStream(stream);
+
                 call.answer(stream);
                 localVideo.current.srcObject = stream;
 
@@ -72,6 +85,7 @@ const VideoChat = ({ match }) => {
 
                 call.on('close', () => {
                     console.log('call disconnected / closed.');
+                   
                 })
 
                 call.on('error', err => console.log(err));
@@ -88,6 +102,7 @@ const VideoChat = ({ match }) => {
 
         peer.on('close', (s) => {
             console.log('connection closed: ', s);
+
         })
 
     })
@@ -128,36 +143,34 @@ const VideoChat = ({ match }) => {
 
         return (
             <IonPage>
-                <IonContent fullscreen >
-                    <h1>Video Chat</h1>
-                    <span id="currentRoom"></span>
-                    <span>{id}</span>
+                <IonContent className='ion-padding' fullscreen >
+                    <h1>Video Calling...</h1>
                     <br />
-                    <video ref={localVideo} autoPlay playsInline ></video>
-                    <video ref={remoteVideo} autoPlay playsInline ></video>
+                    <div id='box'>
+                        <video id='remoteVideo' ref={remoteVideo} autoPlay playsInline ></video>
+                        <video id='localVideo' ref={localVideo} autoPlay muted ></video>
+                </div>
 
                     <form onSubmit={(e) => {
                         e.preventDefault()
                         connectTo(peerID)
                     }}>
-                        {/* <IonItem>
-                        <IonLabel position='stacked'>connection Id</IonLabel>
-                        <IonInput required placeholder="id" value={inputID} type='text' onIonChange={(e) => setInputID(e.target.value)} ></IonInput>
-                    </IonItem> */}
+                        
                       
-                            <IonButton color='light' ref={callButton} type='submit' onClick={() => { console.log(peerID) }}>
+                        <IonButton id='callbtn' color='success' ref={callButton} fill='clear' shape='round' type='submit' onClick={() => { console.log(peerID) }}>
                                 <IonIcon icon={call} />
                             </IonButton>
 
-                            <IonButton color='light' fill='clear' disabled={!currentCall} ref={hangupButton} onClick={() => {
-                                if (currentCall) {
-                                    currentCall.close().then(() => { console.log('call disconnected'); });
-
+                        <IonButton id='hangbtn' color='danger' fill='clear' shape='round' ref={hangupButton} onClick={() => {
+                            console.log('call ' + currentCall);
+                            if (currentCall) { 
+                                currentCall.close();
                                 }
                             }}>
                                 <IonIcon icon={exit} />
                             </IonButton>
-                  
+                        <IonText color='light' id='peerID'>{id}</IonText>
+
 
                     </form>
 

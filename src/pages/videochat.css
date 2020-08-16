@@ -6,3 +6,42 @@ video {
   max-width: 100%;
   width: 320px;
 }
+
+#box {
+  
+}
+
+#remoteVideo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vh;
+  height: 100vh;
+}
+
+#localVideo{ 
+  position: absolute;
+  bottom: 5px;
+  right: 0;
+  width: 20vh;
+  height: 25vh;
+}
+
+#hangbtn {
+  position: absolute;
+  left: 30%;
+  bottom: 5rem;
+
+}
+
+#callbtn {
+  position: absolute;
+  left: 10%;
+  bottom: 5rem;
+}
+
+#peerID {
+  position: absolute;
+  bottom: 5px;
+  /* color: #706d6d; */
+}
