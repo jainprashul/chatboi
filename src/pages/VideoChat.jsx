@@ -1,6 +1,6 @@
 import React, { useRef, useContext, useState } from 'react'
 import './videochat.css'
-import { IonPage, IonContent, useIonViewDidEnter, IonFab, IonFabButton, IonIcon, IonFabList, useIonViewWillEnter, IonText, IonItem, IonLabel, IonInput, IonButton } from '@ionic/react'
+import { IonPage, IonContent, useIonViewDidEnter, IonFab, IonFabButton, IonIcon, IonFabList, useIonViewWillEnter, IonText, IonItem, IonLabel, IonInput, IonButton, useIonViewDidLeave } from '@ionic/react'
 import { FirebaseContext } from '../context/FirebaseContext';
 import {  caretUp, camera, call, exit, addCircle } from 'ionicons/icons';
 import Peer from 'peerjs';
@@ -33,7 +33,16 @@ const VideoChat = ({ match }) => {
     const hangupButton = useRef();
 
     useTabHide();
+
+    useIonViewDidLeave(() => {
+        const tabbar = document.querySelector("ion-tab-bar");
+        tabbar.classList.toggle('ion-hide', false);
+    })
+    
     useIonViewWillEnter(() => {
+
+        const tabbar = document.querySelector("ion-tab-bar");
+        tabbar.classList.toggle('ion-hide', true); 
         window.onclose = () => peer.destroy();
         
         peer = new Peer(myId);
