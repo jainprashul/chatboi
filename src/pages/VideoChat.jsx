@@ -21,6 +21,7 @@ const VideoChat = ({ match }) => {
     const [id, setId] = useState();
     const [currentCall, setcurrentCall] = useState()
     const [localStream, setLocalStream] = useState()
+    const [header, setHeader] = useState('Video Chat')
     let myId = localStorage.getItem('id')
 
 
@@ -32,7 +33,6 @@ const VideoChat = ({ match }) => {
     const startButton = useRef();
     const hangupButton = useRef();
 
-    useTabHide();
 
     useIonViewDidLeave(() => {
         const tabbar = document.querySelector("ion-tab-bar");
@@ -153,7 +153,7 @@ const VideoChat = ({ match }) => {
         return (
             <IonPage>
                 <IonContent className='ion-padding' fullscreen >
-                    <h1>Video Calling...</h1>
+                    <h1>{header}</h1>
                     <br />
                     <div id='box'>
                         <video id='remoteVideo' ref={remoteVideo} autoPlay playsInline ></video>

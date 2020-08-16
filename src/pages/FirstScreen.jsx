@@ -17,7 +17,7 @@ const FirstScreen = () => {
                 <br/>
                 <img alt='' src={logo} className="avatar" />
                 <p>Now Fun Is Simple N Secure <span role='img'>❤️</span></p>
-                <IonButton routerLink={ROUTE.signin}>Get started</IonButton>
+                <IonButton routerDirection='none' routerLink={ROUTE.signin}>Get started</IonButton>
             </IonContent>
             <IonFooter className="ion-text-center">
                 <p>
