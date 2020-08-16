@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IonToolbar, IonButtons, IonButton, IonIcon, useIonViewDidLeave, IonInput, IonFooter, IonHeader, IonProgressBar, IonContent, IonBackButton, IonTitle, useIonViewDidEnter, IonList, IonItem, IonPopover } from '@ionic/react';
-import { image, pricetag, send, handRight, ellipsisVertical } from 'ionicons/icons';
+import { image, pricetag, send, handRight, ellipsisVertical, call } from 'ionicons/icons';
 import { Player, BigPlayButton } from 'video-react';
 import { AppString, images, themes, ROUTE } from '../config/const';
 import { useTabHide, createToast, isUrl } from '../config/hooks';
@@ -369,6 +369,9 @@ const ChatBox = ({ peerUser, history }) => {
 
           </IonTitle>
           <IonButtons slot='end'>
+            <IonButton routerLink={'/video/'+ peerUser.id}>
+              <IonIcon icon={call} slot='icon-only'></IonIcon>
+            </IonButton>
             <IonButton onClick={(e) => {
               setShowPopover({
                 open: true,

@@ -45,6 +45,7 @@ import Settings from './pages/Settings';
 import GroupCreate from './pages/GroupCreate';
 import AddToGroup from './pages/AddToGroup';
 import ChatDetails from './pages/ChatDetails';
+import VideoChat from './pages/VideoChat';
 
 const App = () => {
   const firebase = useContext(FirebaseContext);
@@ -68,6 +69,7 @@ const App = () => {
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
+            <Route path={ROUTE.videoChat} component={VideoChat} exact={true} />
             <Route path={ROUTE.chatDetails} component={ChatDetails} exact={true} />
             <Route path={ROUTE.addToGroup} component={AddToGroup} exact={true} />
             <Route path={ROUTE.groups} component={GroupCreate} exact={true} />

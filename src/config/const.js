@@ -9,7 +9,8 @@ export const ROUTE = {
     settings: '/settings',
     groups: '/createGroup',
     chatDetails: '/chat/details',
-    addToGroup:  '/user/groupEdit'
+    addToGroup: '/user/groupEdit',
+    videoChat: '/video/:id'
 }
 
 export const user = require('../images/user.jpg');
