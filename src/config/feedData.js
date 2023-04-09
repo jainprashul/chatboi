@@ -1,4 +1,5 @@
 import { text } from "ionicons/icons";
+import { requestOptions } from "./const"
 
 let imgUrlPath = 'node.display_url';
 let captionPath = 'node.edge_media_to_caption.edges'
@@ -56,7 +57,7 @@ function mapDataList(arr) {
 export async function getUserID(user_name) {
     let url = `https://www.instagram.com/${user_name}/?__a=1&max_id=$max`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, requestOptions );
     const json = await response.json();
 
     const username = path(json, usernamePath);
@@ -75,7 +76,7 @@ export async function instaFeedBYUserName(userName, endpoint = '') {
     // const url = `https://www.instagram.com/graphql/query/?query_hash=3e7706b09c6184d5eafd8b032dbcf487&variables={"tag_name":"${hashtag}","first":10 ,"after":"${endpoint}"}`;
     console.log(url);
 
-    const res = await fetch(url);
+    const res = await fetch(url, requestOptions)
     const json = await res.json();
     console.log(json);
 
@@ -94,7 +95,7 @@ export async function instaFeedBYHashTag(hashtag = 'quotes', endpoint = '') {
     const url = `https://www.instagram.com/graphql/query/?query_hash=3e7706b09c6184d5eafd8b032dbcf487&variables={"tag_name":"${hashtag}","first":10 ,"after":"${endpoint}"}`;
     console.log(url);
     
-    const res = await fetch(url);
+    const res = await fetch(url, requestOptions)
     const json = await res.json();
     console.log(json);
 
@@ -113,7 +114,7 @@ export async function instaFeedBYHashTag(hashtag = 'quotes', endpoint = '') {
 
 async function getVideoUrl(shortcode) {
     let url = `https://www.instagram.com/p/${shortcode}/?__a=1`;
-    const res = await fetch(url);
+    const res = await fetch(url, requestOptions)
     const json = await res.json();
     let dash_info = path(json, 'graphql.shortcode_media.dash_info');
     let videoUrl = path(json, 'graphql.shortcode_media.video_url');
@@ -122,7 +123,7 @@ async function getVideoUrl(shortcode) {
 
 
 export async function tiktokFeed() {
-    const q = await fetch('/api/tiktokFeed');
+    const q = await fetch('/api/tiktokFeed', requestOptions)
     const json = await q.json();
     return json;
 }
